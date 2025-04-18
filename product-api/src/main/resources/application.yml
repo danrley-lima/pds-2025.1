@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: gestao-tarefas
+  mvc:
+    format:
+      enums:
+        ignore-case: true
+  profiles:
+    active:
+      - dev
+
+api:
+  security:
+    token:
+      secret: gise-terces
+      expiration: 86400000

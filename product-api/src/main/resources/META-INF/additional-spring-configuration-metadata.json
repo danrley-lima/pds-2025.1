@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "api.security.token.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'api.security.token.secret'"
+  },
+  {
+    "name": "api.security.token.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'api.security.token.expiration'"
+  },
+  {
+    "name": "spring.mvc.format.enums.ignore-case",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.format.enums.ignore-case'"
+  },
+  {
+    "name": "app.database-seeder-enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'app.database-seeder-enabled'"
+  }
+]}
