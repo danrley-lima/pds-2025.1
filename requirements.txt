@@ -1,0 +1,9 @@
+fastapi[standard] 
+uvicorn
+openai
+sqlalchemy
+pydantic
+python-dotenv
+psycopg2-binary
+# google-generativeai
+google-genai
