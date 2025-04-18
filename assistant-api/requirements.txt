@@ -6,4 +6,7 @@ pydantic
 python-dotenv
 psycopg2-binary
 # google-generativeai
-google-genai
+# google-genai
+langchain
+langchain-google-genai
+tiktoken

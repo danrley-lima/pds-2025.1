@@ -7,13 +7,19 @@ class ReceitaRequest(BaseModel):
 
 
 class IngredienteOut(BaseModel):
-    ingrediente: str
+    id: str
     quantidade: str
 
 
 class ProdutoOut(BaseModel):
-    ingrediente: str
+    id: str
     produto: str
     marca: str
-    preco: float
+    preco: str
+    quantidade_total: str
+    embalagens_necessarias: str
+
+
+class ProdutoNaoEncontrado(BaseModel):
+    nome: str
     quantidade: str

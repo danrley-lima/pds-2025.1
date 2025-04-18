@@ -123,6 +123,7 @@ public class GlobalExceptionHandler {
             "Invalid email or password"));
   }
 
+  @SuppressWarnings("null")
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorResponseDto> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
     boolean isDev = Arrays.asList(environment.getActiveProfiles()).contains("dev");

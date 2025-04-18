@@ -1,22 +1,28 @@
-from typing import List
-
+from database.database import get_db
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
+from schemas import ProdutoNaoEncontrado, ProdutoOut, ReceitaRequest
+from services.ingredientes import buscar_produtos_por_ingredientes
+from services.llm import extrair_ingredientes
 from sqlalchemy.orm import Session
-
-from app.database.database import get_db
-from app.schemas import ProdutoOut, ReceitaRequest
-from app.services.ingredientes import buscar_produtos_por_ingredientes
-from app.services.llm import extrair_ingredientes
 
 router = APIRouter()
 
 
-# @router.post("/receita", response_model=List[ProdutoOut])
-@router.post("/receita", response_model=List[ProdutoOut])
-async def gerar_carrinho(req: ReceitaRequest, db: Session = Depends(get_db)):
-    # 1) usa Gemini para extrair ingredientes
-    itens_ing = await extrair_ingredientes(req.receita)
-    print("ingredientes extraídos", itens_ing)
-    # 2) mapeia cada ingrediente em produtos (com tua lógica em services/ingredientes.py)
+class CarrinhoResponse(BaseModel):
+    produtos: list[ProdutoOut]
+    produtos_nao_encontrados: list[ProdutoNaoEncontrado]
+
+
+@router.post("/receita", response_model=CarrinhoResponse)
+async def gerar_carrinho(
+    req: ReceitaRequest, db: Session = Depends(get_db)
+) -> CarrinhoResponse:
+    """
+    Gera um carrinho de compras a partir de uma receita, retornando produtos encontrados e não encontrados.
+    """
+    itens_ing, produtos_nao_encontrados = await extrair_ingredientes(req.receita, db)
     resultados = buscar_produtos_por_ingredientes(itens_ing, db)
-    return resultados
+    return CarrinhoResponse(
+        produtos=resultados, produtos_nao_encontrados=produtos_nao_encontrados
+    )
