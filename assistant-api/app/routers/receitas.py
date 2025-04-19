@@ -21,8 +21,8 @@ async def gerar_carrinho(
     """
     Gera um carrinho de compras a partir de uma receita, retornando produtos encontrados e não encontrados.
     """
-    itens_ing, produtos_nao_encontrados = await extrair_ingredientes(req.receita, db)
-    resultados = buscar_produtos_por_ingredientes(itens_ing, db)
+    itens_ing, produtos_nao_encontrados = await extrair_ingredientes(req.receita)
+    resultados = buscar_produtos_por_ingredientes(itens_ing)
     return CarrinhoResponse(
         produtos=resultados, produtos_nao_encontrados=produtos_nao_encontrados
     )

@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Float, Integer, String, Boolean, Enum
-from database.database import Base
 import enum
+
+from database.database import Base
+from sqlalchemy import Boolean, Column, Enum, Float, Integer, String
 
 
 class UnitTypeEnum(str, enum.Enum):

@@ -1,32 +1,33 @@
 import json
 import re
+import time
 from typing import List, Tuple
 
+import requests
 import tiktoken
 from langchain.chat_models import init_chat_model
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain_core.messages import AIMessage
-from models.models import Produto
 from schemas import IngredienteOut, ProdutoNaoEncontrado
-from sqlalchemy.orm import Session
 
 _produtos_cache = None
+_produtos_cache_timestamp = None
+CACHE_EXPIRATION_SECONDS = 60  # Expira após 1 minutos
 
 
-def buscar_produtos_disponiveis(db: Session) -> list[dict]:
-    global _produtos_cache
-    if _produtos_cache is not None:
+def buscar_produtos_disponiveis() -> list[dict]:
+    global _produtos_cache, _produtos_cache_timestamp
+    current_time = time.time()
+    if (
+        _produtos_cache is not None
+        and _produtos_cache_timestamp is not None
+        and (current_time - _produtos_cache_timestamp) < CACHE_EXPIRATION_SECONDS
+    ):
         return _produtos_cache
-    produtos = db.query(Produto).all()
-    _produtos_cache = [
-        {
-            "id": str(p.id),
-            "nome": p.nome,
-            "marca": p.marca,
-            "quantidade": p.quantidade,
-        }
-        for p in produtos
-    ]
+    response = requests.get("http://localhost:3000/api/products")
+    response.raise_for_status()
+    _produtos_cache = response.json()
+    _produtos_cache_timestamp = current_time
     return _produtos_cache
 
 
@@ -51,8 +52,9 @@ prompt_template = ChatPromptTemplate.from_messages(
             "Aqui está a lista de produtos disponíveis no formato: id,nome,marca,quantidade;:\n"
             "{produtos_disponiveis}\n\n"
             "Com base apenas nesses produtos disponíveis, extraia os produtos e quantidades necessários para a receita solicitada abaixo.\n\n"
-            "Sempre converta as quantidades para valores numéricos de medida padrão (gramas, mililitros, litros, quilos, etc.), nunca utilize unidades como xícara, colher, pitada, unidade, etc.\n\n"
-            "Se algum produto necessário para a receita não estiver disponível no banco de dados, inclua-o em uma lista separada chamada 'produtos_nao_encontrados', informando apenas o nome e a quantidade desejada.\n\n"
+            "Sempre converta as quantidades para valores numéricos de medida padrão (gramas, mililitros, litros, quilos, etc.), "
+            "e SEMPRE informe a unidade junto ao valor, por exemplo: '200g', '2L', '500ml', '1kg'. Nunca retorne apenas o número.\n\n"
+            "Se algum produto necessário para a receita não estiver disponível no banco de dados, inclua-o em uma lista separada chamada 'produtos_nao_encontrados', informando apenas o nome e a quantidade desejada, também com unidade.\n\n"
             "Se houver mais de um produto disponível que atenda ao mesmo propósito (por exemplo, diferentes marcas de arroz ou produtos substitutos), escolha apenas UM produto para cada necessidade. Priorize o produto de melhor reputação. Caso haja empate, escolha o de maior quantidade. Não repita produtos equivalentes na lista final.\n\n"
             "Se a receita não especificar detalhes adicionais, como quantidade de pessoas ou porções, considere que a receita é para 1 pessoa.\n\n"
             "Formato esperado:\n"
@@ -79,13 +81,15 @@ chain = prompt_template | llm | limpar_json
 
 
 async def extrair_ingredientes(
-    texto: str, db: Session
+    texto: str,
 ) -> Tuple[List[IngredienteOut], list[ProdutoNaoEncontrado]]:
-    produtos = buscar_produtos_disponiveis(db)
+    produtos = buscar_produtos_disponiveis()
     produtos_str = "; ".join(
-        [f"{p['id']},{p['nome']},{p['marca']},{p['quantidade']}" for p in produtos]
+        [
+            f"{p['id']},{p['name']},{p['brand']},{p['unitWeight']} {p['unitType']},{p['unitPrice']}"
+            for p in produtos
+        ]
     )
-
     prompt_final = prompt_template.format(
         texto=texto, produtos_disponiveis=produtos_str
     )

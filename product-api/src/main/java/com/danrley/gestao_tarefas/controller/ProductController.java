@@ -23,6 +23,11 @@ public class ProductController {
   @Autowired
   private ProductService productService;
 
+  @PostMapping("/batch")
+  public List<ProductResponseDTO> getByIds(@RequestBody List<Long> ids) {
+      return productService.getByIds(ids);
+  }
+
   @GetMapping
   public List<ProductResponseDTO> getAll() {
     return productService.getAll();

@@ -47,16 +47,23 @@ public class ProductService {
   }
 
   private void mapRequestToProduct(ProductRequestDTO dto, Product product) {
-    product.setName(dto.name);
-    product.setBrand(dto.brand);
-    product.setUnitWeight(dto.unitWeight);
-    product.setUnitType(dto.unitType);
-    product.setStockQuantity(dto.stockQuantity);
-    product.setUnitPrice(dto.unitPrice);
-
-    Category category = categoryRepository.findById(dto.categoryId)
-        .orElseThrow(() -> new RuntimeException("Category not found"));
-    product.setCategory(category);
+    if (dto.name != null)
+      product.setName(dto.name);
+    if (dto.brand != null)
+      product.setBrand(dto.brand);
+    if (dto.unitWeight != null)
+      product.setUnitWeight(dto.unitWeight);
+    if (dto.unitType != null)
+      product.setUnitType(dto.unitType);
+    if (dto.stockQuantity != null)
+      product.setStockQuantity(dto.stockQuantity);
+    if (dto.unitPrice != null)
+      product.setUnitPrice(dto.unitPrice);
+    if (dto.categoryId != null) {
+      Category category = categoryRepository.findById(dto.categoryId)
+          .orElseThrow(() -> new RuntimeException("Category not found"));
+      product.setCategory(category);
+    }
   }
 
   private ProductResponseDTO toResponse(Product product) {
@@ -72,4 +79,11 @@ public class ProductService {
     dto.categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
     return dto;
   }
+
+  public List<ProductResponseDTO> getByIds(List<Long> ids) {
+    return productRepository.findAllById(ids)
+        .stream()
+        .map(this::toResponse)
+        .collect(Collectors.toList());
+}
 }

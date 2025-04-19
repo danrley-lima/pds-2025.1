@@ -1,20 +1,20 @@
 import re
 from typing import List
 
-from models.models import Product
+from llm import buscar_produtos_disponiveis
 from schemas import IngredienteOut, ProdutoOut
-from sqlalchemy.orm import Session
-
 
 _produtos_cache = None
 
 
-def get_produtos_cache(db: Session) -> list:
-    global _produtos_cache
-    if _produtos_cache is not None:
-        return _produtos_cache
-    _produtos_cache = db.query(Product).all()
-    return _produtos_cache
+# def get_produtos_cache() -> list:
+#     global _produtos_cache
+#     if _produtos_cache is not None:
+#         return _produtos_cache
+#     response = requests.get("http://localhost:3000/api/products")
+#     response.raise_for_status()
+#     _produtos_cache = response.json()
+#     return _produtos_cache
 
 
 def parse_quantidade(qtd: str) -> float:
@@ -39,37 +39,39 @@ def parse_quantidade(qtd: str) -> float:
     return 0
 
 
-def buscar_produtos_por_ingredientes(
-    itens: List[IngredienteOut], db: Session
-) -> List[ProdutoOut]:
-    ids = [int(ing.id) for ing in itens if ing.id is not None]
+def buscar_produtos_por_ingredientes(itens: List[IngredienteOut]) -> List[ProdutoOut]:
+    ids = [str(ing.id) for ing in itens if ing.id is not None]
     if not ids:
         return []
 
-    # produtos = db.query(Produto).filter(Produto.id.in_(ids)).all()
-    # produtos_dict = {str(p.id): p for p in produtos}
-    produtos = get_produtos_cache(db)
-    produtos_dict = {str(p.id): p for p in produtos if str(p.id) in map(str, ids)}
+    produtos = buscar_produtos_disponiveis()
+    produtos_dict = {str(p["id"]): p for p in produtos if str(p["id"]) in ids}
 
     resultado = []
     for ing in itens:
-        produto = produtos_dict.get(ing.id)
+        produto = produtos_dict.get(str(ing.id))
         if not produto:
             continue
         qtd_receita = parse_quantidade(ing.quantidade)
-        qtd_embalagem = parse_quantidade(str(produto.quantidade))
+        # Monta a quantidade do produto no formato "100g", "1kg", etc.
+        unit_weight = produto.get("unitWeight", "")
+        unit_type = produto.get("unitType", "")
+        quantidade_produto = (
+            f"{unit_weight}{unit_type}".lower() if unit_weight and unit_type else ""
+        )
+        qtd_embalagem = parse_quantidade(quantidade_produto)
         if qtd_embalagem == 0:
             unidades = 1
         else:
             unidades = int(-(-qtd_receita // qtd_embalagem))  # Arredondamento para cima
         resultado.append(
             ProdutoOut(
-                id=str(produto.id),
-                produto=str(produto.nome),
-                marca=str(produto.marca),
-                preco=str(produto.preco),
+                id=str(produto["id"]),
+                nome=str(produto.get("name", "")),
+                marca=str(produto.get("brand", "")),
+                preco=str(produto.get("unitPrice", "")),
                 quantidade_total=ing.quantidade,
-                embalagens_necessarias=f"{unidades} unidade(s) de {produto.quantidade}",
+                embalagens_necessarias=f"{unidades} unidade(s) de {quantidade_produto}",
             )
         )
     return resultado

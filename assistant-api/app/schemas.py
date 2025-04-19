@@ -1,4 +1,3 @@
-# app/schemas.py
 from pydantic import BaseModel
 
 
@@ -13,7 +12,7 @@ class IngredienteOut(BaseModel):
 
 class ProdutoOut(BaseModel):
     id: str
-    produto: str
+    nome: str
     marca: str
     preco: str
     quantidade_total: str
