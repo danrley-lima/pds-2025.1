@@ -1,7 +1,9 @@
 package com.danrley.gestao_tarefas.model.product;
 
 import com.danrley.gestao_tarefas.model.category.Category;
+import com.danrley.gestao_tarefas.model.promotion.Promotion;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -56,6 +59,9 @@ public class Product {
   private Category category;
 
   private boolean available;
+
+  @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+  private Promotion promotion;
 
   public Long getId() {
     return id;
