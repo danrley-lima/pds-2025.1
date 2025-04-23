@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from llm import buscar_produtos_disponiveis
+from services.llm import buscar_produtos_disponiveis
 from schemas import IngredienteOut, ProdutoOut
 
 _produtos_cache = None
