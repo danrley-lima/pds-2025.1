@@ -21,10 +21,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "promotions")
 public class Promotion {
+    public Promotion(double promotionalPrice, LocalDate startDate, LocalDate endDate, Product product) {
+        this.promotionalPrice = promotionalPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.product = product;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private double promotionalPrice;
     private LocalDate startDate;
     private LocalDate endDate;

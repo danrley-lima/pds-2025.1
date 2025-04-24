@@ -1,5 +1,6 @@
 package com.danrley.gestao_tarefas.config;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Component;
 import com.danrley.gestao_tarefas.model.category.Category;
 import com.danrley.gestao_tarefas.model.product.Product;
 import com.danrley.gestao_tarefas.model.product.UnitType;
+import com.danrley.gestao_tarefas.model.promotion.Promotion;
 import com.danrley.gestao_tarefas.repository.CategoryRepository;
 import com.danrley.gestao_tarefas.repository.ProductRepository;
+import com.danrley.gestao_tarefas.repository.PromotionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +29,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
   private final CategoryRepository categoryRepository;
   private final ProductRepository productRepository;
+  private final PromotionRepository promotionRepository;
 
   @Override
   public void run(String... args) throws Exception {
@@ -148,6 +152,19 @@ public class DatabaseSeeder implements CommandLineRunner {
       System.out.println("🟢 Produtos inseridos com sucesso!");
     } else {
       System.out.println("🔵 Produtos já existem. Seed ignorado.");
+    }
+
+    if (promotionRepository.count() == 0) {
+      Product product = productRepository.findByName("Frango em Cubos").orElseThrow();
+      
+      Promotion promotion = new Promotion();
+      promotion.setPromotionalPrice(5.99);
+      promotion.setStartDate(LocalDate.of(2025, 4, 10));
+      promotion.setEndDate(LocalDate.of(2025, 4, 20));
+      promotion.setProduct(product);
+      System.out.println("Produto encontrado: " + promotion.getId());
+      promotionRepository.save(promotion);
+      System.out.println("🟢 Promoções inseridas com sucesso!");
     }
   }
 }

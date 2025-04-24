@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danrley.gestao_tarefas.dto.promotion.ProductWithPromotionResponse;
+import com.danrley.gestao_tarefas.dto.promotion.PromotionResponseDTO;
 import com.danrley.gestao_tarefas.dto.promotion.PromotionRequestDTO;
 import com.danrley.gestao_tarefas.service.PromotionService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -23,13 +24,13 @@ public class PromotionController {
     private PromotionService promotionService;
 
     @PostMapping
-    public ProductWithPromotionResponse create(@RequestBody PromotionRequestDTO dto) {
+    public PromotionResponseDTO create(@RequestBody PromotionRequestDTO dto) {
         System.out.println("Product ID received: " + dto.productId);
         return promotionService.create(dto);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductWithPromotionResponse>> listarPromocoes() {
+    public ResponseEntity<List<PromotionResponseDTO>> listarPromocoes() {
         return ResponseEntity.ok(promotionService.listarItensEmPromocao());
     }
 }

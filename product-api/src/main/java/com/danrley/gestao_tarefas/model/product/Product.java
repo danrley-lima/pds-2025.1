@@ -60,8 +60,6 @@ public class Product {
 
   private boolean available;
 
-  @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-  private Promotion promotion;
 
   public Long getId() {
     return id;

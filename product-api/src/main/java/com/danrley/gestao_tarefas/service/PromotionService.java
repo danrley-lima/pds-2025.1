@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.danrley.gestao_tarefas.dto.promotion.PromotionRequestDTO;
-import com.danrley.gestao_tarefas.dto.promotion.ProductWithPromotionResponse;
+import com.danrley.gestao_tarefas.dto.promotion.PromotionResponseDTO;
 import com.danrley.gestao_tarefas.model.product.Product;
 import com.danrley.gestao_tarefas.model.promotion.Promotion;
 import com.danrley.gestao_tarefas.repository.ProductRepository;
@@ -23,22 +23,16 @@ public class PromotionService {
     @Autowired
     private PromotionRepository promotionRepo;
 
-    public ProductWithPromotionResponse create(PromotionRequestDTO dto) {
+    public PromotionResponseDTO create(PromotionRequestDTO dto) {
         Promotion promotion = new Promotion();
         mapRequestToPromotion(dto, promotion);
         return toResponse(promotionRepo.save(promotion));
     }
 
-    public List<ProductWithPromotionResponse> listarItensEmPromocao() {
+    public List<PromotionResponseDTO> listarItensEmPromocao() {
         LocalDate hoje = LocalDate.now();
         return promotionRepo.findByEndDateAfter(hoje).stream().map(promo -> {
-            Product prod = promo.getProduct();
-            ProductWithPromotionResponse dto = new ProductWithPromotionResponse();
-            dto.productName = prod.getName();
-            dto.originalPrice = prod.getUnitPrice();
-            dto.promotionalPrice = promo.getPromotionalPrice();
-            dto.endDate = promo.getEndDate();
-            return dto;
+            return toResponse(promo);
         }).collect(Collectors.toList());
     }
 
@@ -54,8 +48,9 @@ public class PromotionService {
         promocao.setProduct(produto);
     }
 
-    private ProductWithPromotionResponse toResponse(Promotion promotion) {
-        ProductWithPromotionResponse dto = new ProductWithPromotionResponse();
+    private PromotionResponseDTO toResponse(Promotion promotion) {
+        PromotionResponseDTO dto = new PromotionResponseDTO();
+        dto.id = promotion.getId();
         dto.originalPrice = promotion.getProduct().getUnitPrice();
         dto.promotionalPrice = promotion.getPromotionalPrice();
         dto.endDate = promotion.getEndDate();
