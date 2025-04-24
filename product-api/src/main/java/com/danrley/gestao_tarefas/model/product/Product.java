@@ -60,6 +60,8 @@ public class Product {
 
   private boolean available;
 
+  @OneToOne(mappedBy = "product")
+  private Promotion promotion;
 
   public Long getId() {
     return id;

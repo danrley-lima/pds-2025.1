@@ -10,5 +10,6 @@ import com.danrley.gestao_tarefas.model.promotion.Promotion;
 
 
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
-    List<Promotion> findByEndDateAfter(LocalDate hoje);
+    List<Promotion> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate hoje1, LocalDate hoje2);
+
 }
