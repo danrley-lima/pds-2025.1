@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { ShoppingCart, Package, Home } from "lucide-react"
+import { ShoppingCart, Package, Home, CheckSquare } from "lucide-react"
 
 export default function NavBar() {
   const pathname = usePathname()
@@ -40,6 +40,17 @@ export default function NavBar() {
             >
               <Package className="h-4 w-4 mr-1" />
               Gerenciar Produtos
+            </Link>
+
+            <Link
+              href="/checklist"
+              className={cn(
+                "flex items-center text-sm font-medium transition-colors hover:text-purple-600",
+                pathname.startsWith("/checklist") ? "text-purple-600" : "text-gray-600",
+              )}
+            >
+              <CheckSquare className="h-4 w-4 mr-1" />
+              Checklist
             </Link>
           </nav>
         </div>

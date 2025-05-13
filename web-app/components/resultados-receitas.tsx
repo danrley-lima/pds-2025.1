@@ -1,8 +1,11 @@
+"use client"
+
 import { Card, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { obterResultadosReceitas } from "@/lib/api"
 import type { Receita } from "@/lib/types"
 import Image from "next/image"
+import { useChecklist } from "@/lib/checklist-context"
 
 export default async function ResultadosReceitas({ consulta }: { consulta: string }) {
   // Em um app real, isso buscaria da sua API
@@ -26,6 +29,43 @@ export default async function ResultadosReceitas({ consulta }: { consulta: strin
 }
 
 function CardReceita({ receita }: { receita: Receita }) {
+  const { addItem } = useChecklist()
+
+  // Função para adicionar os ingredientes da receita ao checklist
+  const adicionarIngredientesAoChecklist = () => {
+    // Em um app real, você buscaria os ingredientes da receita
+    // Para este exemplo, vamos simular alguns ingredientes
+    const ingredientes = [
+      {
+        id: `ing-${receita.id}-1`,
+        nome: `Ingrediente 1 para ${receita.titulo}`,
+        categoria: "Diversos",
+        marca: "Marca A",
+        preco: 5.99,
+        quantidade: "500g",
+      },
+      {
+        id: `ing-${receita.id}-2`,
+        nome: `Ingrediente 2 para ${receita.titulo}`,
+        categoria: "Diversos",
+        marca: "Marca B",
+        preco: 3.49,
+        quantidade: "250g",
+      },
+      {
+        id: `ing-${receita.id}-3`,
+        nome: `Ingrediente 3 para ${receita.titulo}`,
+        categoria: "Diversos",
+        marca: "Marca C",
+        preco: 7.99,
+        quantidade: "1kg",
+      },
+    ]
+
+    // Adicionar cada ingrediente ao checklist
+    ingredientes.forEach((ingrediente) => addItem(ingrediente))
+  }
+
   return (
     <Card className="overflow-hidden">
       <div className="md:flex">
@@ -47,8 +87,8 @@ function CardReceita({ receita }: { receita: Receita }) {
             <Button variant="outline" size="sm">
               Ver Receita
             </Button>
-            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
-              Adicionar Tudo ao Carrinho
+            <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={adicionarIngredientesAoChecklist}>
+              Adicionar Tudo ao Checklist
             </Button>
           </div>
         </div>

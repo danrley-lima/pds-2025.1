@@ -3,10 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ShoppingCart, Plus, Minus } from "lucide-react"
+import { ShoppingCart, Plus, Minus, PlusCircle } from "lucide-react"
 import { obterListaCompras } from "@/lib/api"
 import type { Produto } from "@/lib/types"
 import { useState } from "react"
+import { useChecklist } from "@/lib/checklist-context"
 
 export default async function ListaCompras({ consulta }: { consulta: string }) {
   // Em um app real, isso buscaria da sua API
@@ -37,6 +38,8 @@ function ListaComprasCliente({ produtosIniciais }: { produtosIniciais: Produto[]
     })),
   )
 
+  const { addItem, isInChecklist } = useChecklist()
+
   const atualizarQuantidade = (id: string, delta: number) => {
     setProdutos(
       produtos.map((p) =>
@@ -50,6 +53,11 @@ function ListaComprasCliente({ produtosIniciais }: { produtosIniciais: Produto[]
   }
 
   const precoTotal = produtos.reduce((soma, p) => soma + p.preco * p.quantidadeSelecionada, 0)
+
+  // Função para adicionar um produto ao checklist
+  const adicionarAoChecklist = (produto: Produto) => {
+    addItem(produto)
+  }
 
   return (
     <div className="space-y-4">
@@ -97,6 +105,16 @@ function ListaComprasCliente({ produtosIniciais }: { produtosIniciais: Produto[]
                     <Plus className="h-3 w-3" />
                   </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-purple-600 hover:text-purple-800 hover:bg-purple-50"
+                  onClick={() => adicionarAoChecklist(produto)}
+                  disabled={isInChecklist(produto.id)}
+                  title={isInChecklist(produto.id) ? "Já adicionado ao checklist" : "Adicionar ao checklist"}
+                >
+                  <PlusCircle className="h-5 w-5" />
+                </Button>
               </li>
             ))}
           </ul>

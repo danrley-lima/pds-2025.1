@@ -3,14 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ShoppingCart, Plus, Minus } from "lucide-react"
-import { getShoppingList } from "@/lib/api"
-import type { Product } from "@/lib/types"
+import { ShoppingCart, Plus, Minus, PlusCircle } from "lucide-react"
+import { obterListaCompras } from "@/lib/api"
+import type { Produto } from "@/lib/types"
 import { useState } from "react"
+import { useChecklist } from "@/lib/checklist-context"
 
 export default async function ShoppingList({ query }: { query: string }) {
   // Em um app real, isso buscaria da sua API
-  const products = await getShoppingList(query)
+  const products = await obterListaCompras(query)
 
   return (
     <Card>
@@ -28,7 +29,7 @@ export default async function ShoppingList({ query }: { query: string }) {
 }
 
 // Componente cliente para lidar com interatividade
-function ShoppingListClient({ initialProducts }: { initialProducts: Product[] }) {
+function ShoppingListClient({ initialProducts }: { initialProducts: Produto[] }) {
   const [products, setProducts] = useState(
     initialProducts.map((p) => ({
       ...p,
@@ -36,6 +37,7 @@ function ShoppingListClient({ initialProducts }: { initialProducts: Product[] })
       selected: false,
     })),
   )
+  const { addItem, isInChecklist } = useChecklist()
 
   const updateQuantity = (id: string, delta: number) => {
     setProducts(products.map((p) => (p.id === id ? { ...p, quantity: Math.max(1, p.quantity + delta) } : p)))
@@ -45,7 +47,19 @@ function ShoppingListClient({ initialProducts }: { initialProducts: Product[] })
     setProducts(products.map((p) => (p.id === id ? { ...p, selected: !p.selected } : p)))
   }
 
-  const totalPrice = products.reduce((sum, p) => sum + p.price * p.quantity, 0)
+  const totalPrice = products.reduce((sum, p) => sum + p.preco * p.quantity, 0)
+
+  // Função para adicionar um produto ao checklist
+  const addToChecklist = (product: Produto) => {
+    addItem({
+      id: product.id,
+      nome: product.nome,
+      categoria: product.categoria,
+      marca: product.marca,
+      preco: product.preco,
+      quantidade: product.quantidade,
+    })
+  }
 
   return (
     <div className="space-y-4">
@@ -66,12 +80,12 @@ function ShoppingListClient({ initialProducts }: { initialProducts: Product[] })
                     htmlFor={`product-${product.id}`}
                     className={`font-medium ${product.selected ? "line-through text-gray-400" : ""}`}
                   >
-                    {product.name}
+                    {product.nome}
                   </label>
                   <div className="flex items-center text-sm text-gray-500">
-                    <span>R$ {product.price.toFixed(2)}</span>
+                    <span>R$ {product.preco.toFixed(2)}</span>
                     <span className="mx-2">•</span>
-                    <span>{product.brand}</span>
+                    <span>{product.marca}</span>
                   </div>
                 </div>
                 <div className="flex items-center space-x-1">
@@ -93,6 +107,16 @@ function ShoppingListClient({ initialProducts }: { initialProducts: Product[] })
                     <Plus className="h-3 w-3" />
                   </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-purple-600 hover:text-purple-800 hover:bg-purple-50"
+                  onClick={() => addToChecklist(product)}
+                  disabled={isInChecklist(product.id)}
+                  title={isInChecklist(product.id) ? "Já adicionado ao checklist" : "Adicionar ao checklist"}
+                >
+                  <PlusCircle className="h-5 w-5" />
+                </Button>
               </li>
             ))}
           </ul>
