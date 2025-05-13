@@ -156,14 +156,46 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     if (promotionRepository.count() == 0) {
       Product product = productRepository.findByName("Frango em Cubos").orElseThrow();
+      Product product2 = productRepository.findByName("Carne Moída").orElseThrow();
+      Product product3 = productRepository.findByName("Cebola").orElseThrow();
+      Product product4 = productRepository.findByName("Café").orElseThrow();
       
-      Promotion promotion = new Promotion();
-      promotion.setPromotionalPrice(5.99);
-      promotion.setStartDate(LocalDate.of(2025, 4, 10));
-      promotion.setEndDate(LocalDate.of(2025, 4, 20));
-      promotion.setProduct(product);
-      System.out.println("Produto encontrado: " + promotion.getId());
-      promotionRepository.save(promotion);
+      Promotion promotion1 = new Promotion();
+      promotion1.setPromotionalPrice(5.99);
+      promotion1.setStartDate(LocalDate.of(2025, 5, 10));
+      promotion1.setEndDate(LocalDate.of(2025, 5, 20));
+      promotion1.setDescription("Dia das carnes!!");
+      promotion1.setProduct(product);
+      System.out.println("Produto encontrado: " + promotion1.getId());
+      promotionRepository.save(promotion1);
+
+      Promotion promotion2 = new Promotion();
+      promotion2.setPromotionalPrice(15.99);
+      promotion2.setStartDate(LocalDate.of(2025, 5, 10));
+      promotion2.setEndDate(LocalDate.of(2025, 5, 20));
+      promotion2.setDescription("Dia das carnes!!");
+      promotion2.setProduct(product2);
+      System.out.println("Produto encontrado: " + promotion2.getId());
+      promotionRepository.save(promotion2);
+
+      Promotion promotion3 = new Promotion();
+      promotion3.setPromotionalPrice(2.99);
+      promotion3.setStartDate(LocalDate.of(2025, 5, 10));
+      promotion3.setEndDate(LocalDate.of(2025, 5, 20));
+      promotion3.setDescription("Dia das verduras!");
+      promotion3.setProduct(product3);
+      System.out.println("Produto encontrado: " + promotion3.getId());
+      promotionRepository.save(promotion3);
+
+      Promotion promotion4 = new Promotion();
+      promotion4.setPromotionalPrice(9.99);
+      promotion4.setStartDate(LocalDate.of(2025, 5, 10));
+      promotion4.setEndDate(LocalDate.of(2025, 5, 20));
+      promotion4.setDescription("Oferta do dia!");
+      promotion4.setProduct(product4);
+      System.out.println("Produto encontrado: " + promotion4.getId());
+      promotionRepository.save(promotion4);
+      
       System.out.println("🟢 Promoções inseridas com sucesso!");
     }
   }

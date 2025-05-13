@@ -22,3 +22,13 @@ class Product(Base):
     stock_quantity = Column(Integer, nullable=True)  # unidades em estoque
     unit_price = Column(Float, nullable=True)
     available = Column(Boolean, default=True)
+
+class Promotion(Base):
+    __tablename__ = "promotions"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String, nullable=True)
+    product_name = Column(String, nullable=False)
+    original_price = Column(Float, nullable=False)
+    promotional_price = Column(Float, nullable=False)
+    initial_date = Column(Date, nullable=False)
+    final_date = Column(Date, nullable=False)

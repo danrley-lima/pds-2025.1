@@ -3,7 +3,6 @@ package com.danrley.gestao_tarefas.model.product;
 import com.danrley.gestao_tarefas.model.category.Category;
 import com.danrley.gestao_tarefas.model.promotion.Promotion;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

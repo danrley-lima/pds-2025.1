@@ -21,8 +21,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "promotions")
 public class Promotion {
-    public Promotion(double promotionalPrice, LocalDate startDate, LocalDate endDate, Product product) {
+    public Promotion(double promotionalPrice, String description, LocalDate startDate, LocalDate endDate, Product product) {
         this.promotionalPrice = promotionalPrice;
+        this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.product = product;
@@ -35,6 +36,7 @@ public class Promotion {
     private double promotionalPrice;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String description;
 
     @OneToOne
     @JoinColumn(name = "product_id")

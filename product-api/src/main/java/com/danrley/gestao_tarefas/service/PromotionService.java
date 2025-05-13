@@ -69,6 +69,8 @@ public class PromotionService {
           promocao.setStartDate(dto.startDate);
         if (dto.endDate != null)
           promocao.setEndDate(dto.endDate);
+        if(dto.description != null)
+            promocao.setDescription(dto.description);
         Product produto = productRepository.findById(dto.productId)
           .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         promocao.setProduct(produto);
@@ -78,8 +80,9 @@ public class PromotionService {
         PromotionResponseDTO dto = new PromotionResponseDTO();
         dto.id = promotion.getId();
         dto.originalPrice = promotion.getProduct().getUnitPrice();
+        dto.description = promotion.getDescription();
         dto.promotionalPrice = promotion.getPromotionalPrice();
-        dto.endDate = promotion.getEndDate();
+        dto.finalDate = promotion.getEndDate();
         dto.productName = promotion.getProduct() != null ? promotion.getProduct().getName() : null;
         return dto;
     }

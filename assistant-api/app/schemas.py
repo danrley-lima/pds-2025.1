@@ -24,3 +24,18 @@ class ProdutoOut(BaseModel):
 class ProdutoNaoEncontrado(BaseModel):
     nome: str
     quantidade: str
+
+class PromocaoRequest(BaseModel):
+    promocao: str
+
+class PromocaoOut(BaseModel):
+    id: str
+    descricao: str
+    nome_do_produto: str
+    preco_original: str
+    preco_promocional: str
+    data_inicial: str
+    data_final: str
+
+class PromocaoNaoEncontrada(BaseModel):
+    data: str

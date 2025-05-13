@@ -1,5 +1,5 @@
 from database.database import Base, SessionLocal, engine
-from models.models import Product
+from models.models import Product, Promotion
 
 # Base.metadata.create_all(bind=engine)
 
@@ -612,6 +612,96 @@ produtos.extend(
 # Insere todos
 db.add_all(produtos)
 db.commit()
+
+produtos_db_query = db.query(Produto).all()
+
+promocoes = [
+    Promocao(
+        titulo="Semana do Molho de Tomate",
+        descricao="Aproveite o molho de tomate Predilecta com 20% de desconto!",
+        desconto_percentual=20.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=7),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Molho de Tomate Tradicional"),
+    ),
+    Promocao(
+        titulo="Oferta Especial de Lasanha",
+        descricao="Massa para lasanha Dona Benta com 15% off.",
+        desconto_percentual=15.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=10),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Massa para Lasanha"),
+    ),
+    Promocao(
+        titulo="Desconto em Arroz Tio João",
+        descricao="Arroz Branco Tipo 1 com super desconto de 10%.",
+        desconto_percentual=10.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=5),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Arroz Branco Tipo 1"),
+    ),
+    Promocao(
+        titulo="Feijão da Semana",
+        descricao="Feijão Carioca Kicaldo com 12% de desconto.",
+        desconto_percentual=12.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=6),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Feijão Carioca"),
+    ),
+    Promocao(
+        titulo="Oferta no Óleo Liza",
+        descricao="Óleo de soja Liza com 18% de desconto.",
+        desconto_percentual=18.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=7),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Óleo de Soja"),
+    ),
+    Promocao(
+        titulo="Semana do Leite Parmalat",
+        descricao="Leite Integral Parmalat com 10% off.",
+        desconto_percentual=10.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=4),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Leite Integral"),
+    ),
+    Promocao(
+        titulo="Chá Leão em Oferta",
+        descricao="Leve mais pagando menos: 25% de desconto no Chá Mate Leão.",
+        desconto_percentual=25.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=8),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Chá Mate"),
+    ),
+    Promocao(
+        titulo="Desconto no Queijo Polenghi",
+        descricao="Queijo mussarela ralado Polenghi com 20% de desconto.",
+        desconto_percentual=20.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=5),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Queijo Mussarela Ralada"),
+    ),
+    Promocao(
+        titulo="Promoção do Café Pilão",
+        descricao="Café torrado e moído com 10% off.",
+        desconto_percentual=10.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=6),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Café Torrado e Moído"),
+    ),
+    Promocao(
+        titulo="Açúcar União em Promoção",
+        descricao="Leve 1kg de açúcar refinado com 5% de desconto!",
+        desconto_percentual=5.0,
+        data_inicio=datetime.now(),
+        data_fim=datetime.now() + timedelta(days=3),
+        produto_id=next(p.id for p in produtos_db_query if p.nome == "Açúcar Refinado"),
+    ),
+]
+
+db.add_all(promocoes)
+db.commit()
+
 db.close()
 
 print(f"{len(produtos)} produtos inseridos no banco.")
+print(f"{len(promocoes)} promocoes inseridas no banco.")

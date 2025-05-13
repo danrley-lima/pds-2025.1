@@ -4,8 +4,10 @@ import java.time.LocalDate;
 
 public class PromotionResponseDTO {
     public Long id;
+    public String description;
     public String productName;
     public double originalPrice;
     public double promotionalPrice;
-    public LocalDate endDate;
+    public LocalDate initialDate;
+    public LocalDate finalDate;
 }
