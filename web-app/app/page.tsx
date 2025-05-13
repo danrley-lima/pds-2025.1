@@ -3,8 +3,14 @@ import AssistenteCompras from "@/components/assistente-compras"
 import PesquisasRecentes from "@/components/pesquisas-recentes"
 import ReceitasPopulares from "@/components/receitas-populares"
 import { Loader2 } from "lucide-react"
+import { promotionsApi } from "@/lib/api"
 
 export default function Home() {
+  var list = promotionsApi.listar;
+    
+  console.log("Passei aqui");
+  console.log(list);
+  
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-2">Assistente Inteligente de Compras</h1>

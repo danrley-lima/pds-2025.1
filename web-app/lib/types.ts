@@ -16,3 +16,13 @@ export interface Produto {
   preco: number
   quantidade: string
 }
+
+export interface Promocao {
+  id: string
+  descricao: string
+  nomeDoProduto: string
+  precoOriginal: number
+  precoPromocional: number
+  dataInicial: Date
+  dataFinal: Date
+}
