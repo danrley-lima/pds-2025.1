@@ -243,12 +243,14 @@ async def extrair_promocoes(
     except json.JSONDecodeError as e:
         print(f"Erro ao decodificar JSON: {response} | Exception: {e}")
         return [], []
-    
+        
+    print(f"Resposta do LLM: {resp_json}")
+
     promocoes = [
         PromocaoOut(
             id=item.get("id", ""),
             descricao=item.get("descricao", ""),
-            id_do_produto=item.get("nome_produto", ""),
+            nome_produto=item.get("nome_produto", ""),
             preco_original=item.get("preco_original", ""),
             preco_promocional=item.get("preco_promocional", ""),
             data_inicial=item.get("data_inicial", ""),

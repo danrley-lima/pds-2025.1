@@ -22,7 +22,7 @@ def buscar_promocoes(itens: List[PromocaoOut]) -> List[PromocaoOut]:
             PromocaoOut(
                 id=str(promocao["id"]),
                 descricao=str(promocao.get("description", "")),
-                nome_do_produto=str(promocao.get("productName", "")),
+                nome_produto=str(promocao.get("productName", "")),
                 preco_original=str(promocao.get("promotionalPrice", "")),
                 preco_promocional=str(promocao.get("originalPrice", "")),
                 data_inicial=str(promocao.get("initialDate", "")),
