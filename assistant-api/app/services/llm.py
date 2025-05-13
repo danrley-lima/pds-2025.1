@@ -136,25 +136,19 @@ prompt_template_promocao = ChatPromptTemplate.from_messages(
         HumanMessagePromptTemplate.from_template(
             "Você é um assistente que recebe um pedido de todas as promoções ativas daquele dia de um cliente e deve retornar "
             "apenas um JSON puro e válido, sem explicações, sem texto adicional e sem marcação markdown.\n\n"
-            "Aqui está a lista de promoções ativas no formato: id,preco_promocional,data_inicial,data_final,id_do_produto:\n"
+            "Aqui está a lista de promoções ativas no formato: id,description,productName,originalPrice,promotionalPrice,initialDate,finalDate:\n"
             "{promocoes_disponiveis}\n\n"
-            "Com base apenas nessas promoções disponíveis, extraia as promo iguais ou semelhantes aos que "
+            "Com base apenas nessas promoções ativas, extraia as promoções iguais ou semelhantes aos que "
             "o cliente solicitou.\n\n"
-            "Sempre converta as quantidades para valores numéricos de medida padrão (gramas, mililitros, "
-            "litros, quilos, etc.), "
-            "e SEMPRE informe a unidade junto ao valor, por exemplo: '200g', '2L', '500ml', '1kg'. Nunca "
-            "retorne apenas o número.\n\n"
-            "Se algum produto que o usuário pediu não estiver disponível no banco de dados, inclua-o "
-            "em uma lista separada chamada 'produtos_nao_encontrados', informando apenas o nome e a quantidade "
-            "desejada, também com unidade.\n\n"
-            "Se houver mais de um produto disponível que atenda ao mesmo propósito (por exemplo, diferentes "
-            "marcas de arroz ou produtos substitutos), escolha TODOS os produtos que atendam o pedido. "
-            "Priorize o produto de melhor reputação. Caso haja empate, escolha o de maior quantidade. Não "
-            "repita produtos equivalentes na lista final.\n\n"
+            "Se alguma promoção que o usuário consultou não estiver disponível no banco de dados, inclua-o "
+            "em uma lista separada chamada 'promocoes_nao_encontradas', informando apenas a data de hoje.\n\n"
+            "Se houver mais de uma promoção ativa que atenda ao mesmo propósito (por exemplo, diferentes "
+            "marcas de arroz ou produtos substitutos), escolha TODaS as promoções que atendam o pedido. "
+            "Priorize a promoção de melhor reputação. Caso haja empate, escolha por ordem alfabetica.\n\n"
             "Formato esperado:\n"
             "{{\n"
             '  "promocoes": [\n'
-            '    {{"id": "string", "descricao": "string", "preco_promocional": "string", "data_inicial": "string", "data_final": "string", "product_id": "string"}}\n'
+            '    {{"id": "string", "descricao": "string", "nome_produto": "string", "preco_original": "string", "preco_promocional": "string", "data_inicial": "string", "data_final": "string"}}\n'
             "  ],\n"
             '  "promocoes_nao_encontradas": [\n'
             '    {{"data": "string"}}\n'
@@ -187,6 +181,7 @@ async def extrair_produtos(
             for p in produtos
         ]
     )
+
     prompt_final = prompt_template_produto.format(
         texto=texto, produtos_disponiveis=produtos_str
     )
@@ -230,10 +225,11 @@ async def extrair_promocoes(
     promocoes = buscar_promocoes_disponiveis()
     promo_str = "; ".join(
         [
-            f"{p['id']},{p['description']},{p['originalPrice']},{p['productName']},{p['promotionalPrice']},{p['initialDate']},{p['finalDate']}"
+            f"{p['id']},{p['description']},{p['productName']},{p['originalPrice']},{p['promotionalPrice']},{p['initialDate']},{p['finalDate']}"
             for p in promocoes
         ]
     )
+
     prompt_final = prompt_template_promocao.format(
         texto=texto, promocoes_disponiveis=promo_str
     )
@@ -251,15 +247,16 @@ async def extrair_promocoes(
     promocoes = [
         PromocaoOut(
             id=item.get("id", ""),
-            preco_promocional=item.get("preco_promocional", ""),
             descricao=item.get("descricao", ""),
+            id_do_produto=item.get("nome_produto", ""),
+            preco_original=item.get("preco_original", ""),
+            preco_promocional=item.get("preco_promocional", ""),
             data_inicial=item.get("data_inicial", ""),
             data_final=item.get("data_final", ""),
-            id_do_produto=item.get("id_do_produto", ""),
         )
         for item in resp_json.get("promocoes", [])
-        if item.get("id") and item.get("preco_promocional") and item.get("descricao")
-        and item.get("data_inicial") and item.get("data_final") and item.get("id_do_produto")
+        if item.get("id") and item.get("descricao") and item.get("nome_produto")
+        and item.get("preco_original") and item.get("preco_promocional") and item.get("data_inicial") and item.get("data_final")
     ]
 
     promocoes_nao_encontradas = [

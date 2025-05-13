@@ -17,7 +17,7 @@ async def gerar_promocoes(
     req: PromocaoRequest, db: Session = Depends(get_db)
 ) -> PromotionsResponse:
     print(req.promocao)
-    itens_promo, promos_nao_encontradas = await extrair_promocoes(req.produto)
+    itens_promo, promos_nao_encontradas = await extrair_promocoes(req.promocao)
     resultados = buscar_promocoes(itens_promo)
     return PromotionsResponse(
         promocoes=resultados, promocoes_nao_encontradas=promos_nao_encontradas

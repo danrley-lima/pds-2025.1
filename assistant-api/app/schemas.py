@@ -31,7 +31,7 @@ class PromocaoRequest(BaseModel):
 class PromocaoOut(BaseModel):
     id: str
     descricao: str
-    nome_do_produto: str
+    nome_produto: str
     preco_original: str
     preco_promocional: str
     data_inicial: str

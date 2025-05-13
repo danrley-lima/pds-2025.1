@@ -82,6 +82,7 @@ public class PromotionService {
         dto.originalPrice = promotion.getProduct().getUnitPrice();
         dto.description = promotion.getDescription();
         dto.promotionalPrice = promotion.getPromotionalPrice();
+        dto.initialDate = promotion.getStartDate();
         dto.finalDate = promotion.getEndDate();
         dto.productName = promotion.getProduct() != null ? promotion.getProduct().getName() : null;
         return dto;
