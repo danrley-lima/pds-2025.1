@@ -9,6 +9,8 @@ class IngredienteOut(BaseModel):
     id: str
     quantidade: str
 
+class ProdutoRequest(BaseModel):
+    produto: str
 
 class ProdutoOut(BaseModel):
     id: str

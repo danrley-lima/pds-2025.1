@@ -9,20 +9,20 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-class CarrinhoResponse(BaseModel):
+class CarrinhoReceitaResponse(BaseModel):
     produtos: list[ProdutoOut]
     produtos_nao_encontrados: list[ProdutoNaoEncontrado]
 
 
-@router.post("/receita", response_model=CarrinhoResponse)
+@router.post("/receita", response_model=CarrinhoReceitaResponse)
 async def gerar_carrinho(
     req: ReceitaRequest, db: Session = Depends(get_db)
-) -> CarrinhoResponse:
+) -> CarrinhoReceitaResponse:
     """
     Gera um carrinho de compras a partir de uma receita, retornando produtos encontrados e não encontrados.
     """
     itens_ing, produtos_nao_encontrados = await extrair_ingredientes(req.receita)
     resultados = buscar_produtos_por_ingredientes(itens_ing)
-    return CarrinhoResponse(
+    return CarrinhoReceitaResponse(
         produtos=resultados, produtos_nao_encontrados=produtos_nao_encontrados
     )
