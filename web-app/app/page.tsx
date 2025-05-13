@@ -10,6 +10,7 @@ export default function Home() {
     
   console.log("Passei aqui");
   console.log(list);
+  
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-2">Assistente Inteligente de Compras</h1>

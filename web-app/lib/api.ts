@@ -4,7 +4,7 @@ import { Promocao } from "./types"
 const API_BASE_URL = "http://localhost:3000/api"
 
 async function get<T>(endpoint: string, headers?: HeadersInit): Promise<T> {
-  const response = await fetch(${API_BASE_URL}${endpoint}, {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -15,7 +15,7 @@ async function get<T>(endpoint: string, headers?: HeadersInit): Promise<T> {
 }
 
 async function post<T, Body = any>(endpoint: string, body: Body, headers?: HeadersInit): Promise<T> {
-  const response = await fetch(${API_BASE_URL}${endpoint}, {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +27,7 @@ async function post<T, Body = any>(endpoint: string, body: Body, headers?: Heade
 }
 
 async function put<T, Body = any>(endpoint: string, body: Body, headers?: HeadersInit): Promise<T> {
-  const response = await fetch(${API_BASE_URL}${endpoint}, {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -39,7 +39,7 @@ async function put<T, Body = any>(endpoint: string, body: Body, headers?: Header
 }
 
 async function del<T>(endpoint: string, headers?: HeadersInit): Promise<T> {
-  const response = await fetch(${API_BASE_URL}${endpoint}, {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export const promotionsApi = {
 
   async atualizar(id: string, data: Partial<Omit<Promocao, "id">>): Promise<Promocao> {
     try {
-      const result = await put<Promocao>(/promotions/${id}, data)
+      const result = await put<Promocao>(`/promotions/${id}`, data)
       return parsePromocao(result)
     } catch (error) {
       handleError(error, "Erro ao atualizar promoção")
@@ -79,7 +79,7 @@ export const promotionsApi = {
 
   async excluir(id: string): Promise<void> {
     try {
-      await del(/promotions/${id})
+      await del(`/promotions/${id}`)
     } catch (error) {
       handleError(error, "Erro ao excluir promoção")
     }
