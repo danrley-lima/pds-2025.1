@@ -9,6 +9,11 @@ spring:
     active:
       - dev
 
+ai:
+  recipe:
+    api:
+      url: http://localhost:8000/api
+
 api:
   security:
     token:
