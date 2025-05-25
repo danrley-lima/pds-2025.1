@@ -5,22 +5,22 @@ import java.util.List;
 import com.danrley.gestao_tarefas.dto.product.ProductResponseDTO;
 
 public class AIRequestPayload {
-    private String receita;
-    private List<ProductResponseDTO> produtosDisponiveis;
+  private String pedido;
+  private List<ProductResponseDTO> produtosDisponiveis;
 
-    public String getReceita() {
-        return receita;
-    }
+  public String getPedido() {
+    return pedido;
+  }
 
-    public void setReceita(String receita) {
-        this.receita = receita;
-    }
+  public void setPedido(String pedido) {
+    this.pedido = pedido;
+  }
 
-    public List<ProductResponseDTO> getProdutosDisponiveis() {
-        return produtosDisponiveis;
-    }
+  public List<ProductResponseDTO> getProdutosDisponiveis() {
+    return produtosDisponiveis;
+  }
 
-    public void setProdutosDisponiveis(List<ProductResponseDTO> produtosDisponiveis) {
-        this.produtosDisponiveis = produtosDisponiveis;
-    }
+  public void setProdutosDisponiveis(List<ProductResponseDTO> produtosDisponiveis) {
+    this.produtosDisponiveis = produtosDisponiveis;
+  }
 }

@@ -35,14 +35,14 @@ public class RecipeAIClient {
   public RecipeResponseDTO getRecipeSuggestions(String recipe, List<ProductResponseDTO> availableProducts) {
     try {
       AIRequestPayload payload = new AIRequestPayload();
-      payload.setReceita(recipe);
+      payload.setPedido(recipe);
       payload.setProdutosDisponiveis(availableProducts);
 
       HttpEntity<String> requestEntity = new HttpEntity<>(
           objectMapper.writeValueAsString(payload));
 
       ResponseEntity<String> response = restTemplate.exchange(
-          apiUrl,
+          apiUrl + "/receita",
           HttpMethod.POST,
           requestEntity,
           String.class);
