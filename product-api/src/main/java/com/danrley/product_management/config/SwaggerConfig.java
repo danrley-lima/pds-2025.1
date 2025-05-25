@@ -17,9 +17,9 @@ public class SwaggerConfig {
   OpenAPI customOpenAPI() {
     return new OpenAPI()
         .info(new Info()
-            .title("Gestão de Tarefas API")
+            .title("Gestão de Produtos API")
             .version("1.0.0")
-            .description("API para gerenciamento de tarefas"))
+            .description("API para gerenciamento de produtos"))
         .components(new Components()
             .addSecuritySchemes(securitySchemeName, new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
