@@ -1,6 +1,6 @@
 spring:
   application:
-    name: gestao-tarefas
+    name: product-management
   mvc:
     format:
       enums:
@@ -8,6 +8,11 @@ spring:
   profiles:
     active:
       - dev
+
+ai:
+  recipe:
+    api:
+      url: http://localhost:8000/api
 
 api:
   security:
