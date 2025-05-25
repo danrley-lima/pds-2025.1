@@ -217,7 +217,8 @@ public class ProductService {
             .collect(Collectors.toList());
 
         if (!missingIds.isEmpty()) {
-          throw new ProductNotFoundException("Os seguintes produtos não foram encontrados: " + missingIds);
+          // Usar o construtor específico para lista de IDs
+          throw new ProductNotFoundException(missingIds);
         }
       }
 
