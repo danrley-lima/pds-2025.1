@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.danrley.gestao_tarefas.dto.promotion.PromotionRequestDTO;
 import com.danrley.gestao_tarefas.dto.promotion.PromotionResponseDTO;
+import com.danrley.gestao_tarefas.exception.custom.ProductNotFoundException;
+import com.danrley.gestao_tarefas.exception.custom.ProductValidationException;
+import com.danrley.gestao_tarefas.exception.custom.PromotionNotFoundException;
 import com.danrley.gestao_tarefas.model.product.Product;
 import com.danrley.gestao_tarefas.model.promotion.Promotion;
 import com.danrley.gestao_tarefas.repository.ProductRepository;
@@ -17,74 +20,89 @@ import com.danrley.gestao_tarefas.repository.PromotionRepository;
 @Service
 public class PromotionService {
 
-    @Autowired
-    private ProductRepository productRepository;
+  @Autowired
+  private ProductRepository productRepository;
 
-    @Autowired
-    private PromotionRepository promotionRepository;
+  @Autowired
+  private PromotionRepository promotionRepository;
 
-    public List<PromotionResponseDTO> getAll() {
-        return promotionRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+  public List<PromotionResponseDTO> getAll() {
+    return promotionRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+  }
+
+  public PromotionResponseDTO getById(Long id) {
+    return promotionRepository.findById(id)
+        .map(this::toResponse)
+        .orElseThrow(() -> new PromotionNotFoundException(id));
+  }
+
+  public PromotionResponseDTO create(PromotionRequestDTO dto) {
+    validatePromotionRequest(dto);
+    Promotion promotion = new Promotion();
+    mapRequestToPromotion(dto, promotion);
+    return toResponse(promotionRepository.save(promotion));
+  }
+
+  public PromotionResponseDTO update(Long id, PromotionRequestDTO dto) {
+    validatePromotionRequest(dto);
+    Promotion promotion = promotionRepository.findById(id)
+        .orElseThrow(() -> new PromotionNotFoundException(id));
+    mapRequestToPromotion(dto, promotion);
+    return toResponse(promotionRepository.save(promotion));
+  }
+
+  public void delete(Long id) {
+    Promotion promotion = promotionRepository.findById(id)
+        .orElseThrow(() -> new PromotionNotFoundException(id));
+
+    Product product = promotion.getProduct();
+    if (product != null) {
+      product.setPromotion(null);
+      productRepository.save(product);
     }
 
-    public PromotionResponseDTO getById(Long id) {
-        return promotionRepository.findById(id).map(this::toResponse).orElse(null);
+    promotionRepository.delete(promotion);
+  }
+
+  public List<PromotionResponseDTO> promocoesAtivas() {
+    LocalDate hoje = LocalDate.now();
+    return promotionRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(hoje, hoje)
+        .stream().map(this::toResponse).collect(Collectors.toList());
+  }
+
+  private void validatePromotionRequest(PromotionRequestDTO dto) {
+    if (dto.promotionalPrice <= 0) {
+      throw new ProductValidationException("O preço promocional deve ser maior que zero");
     }
 
-    public PromotionResponseDTO create(PromotionRequestDTO dto) {
-        Promotion promotion = new Promotion();
-        mapRequestToPromotion(dto, promotion);
-        return toResponse(promotionRepository.save(promotion));
+    if (dto.startDate != null && dto.endDate != null && dto.startDate.isAfter(dto.endDate)) {
+      throw new ProductValidationException("A data inicial não pode ser posterior à data final");
     }
+  }
 
-    public PromotionResponseDTO update(Long id, PromotionRequestDTO dto) {
-        Promotion promotion = promotionRepository.findById(id).orElseThrow();
-        mapRequestToPromotion(dto, promotion);
-        return toResponse(promotionRepository.save(promotion));
-    }
+  private void mapRequestToPromotion(PromotionRequestDTO dto, Promotion promocao) {
+    if (dto.promotionalPrice != 0)
+      promocao.setPromotionalPrice(dto.promotionalPrice);
+    if (dto.startDate != null)
+      promocao.setStartDate(dto.startDate);
+    if (dto.endDate != null)
+      promocao.setEndDate(dto.endDate);
+    if (dto.description != null)
+      promocao.setDescription(dto.description);
+    Product produto = productRepository.findById(dto.productId)
+        .orElseThrow(() -> new ProductNotFoundException(dto.productId));
+    promocao.setProduct(produto);
+  }
 
-    public void delete(Long id) {
-        Promotion promotion = promotionRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Promoção não encontrada"));
-
-        Product product = promotion.getProduct();
-        if (product != null) {
-            product.setPromotion(null);
-            productRepository.save(product);
-        }
-
-        promotionRepository.delete(promotion);
-    }
-
-    public List<PromotionResponseDTO> promocoesAtivas() {
-        LocalDate hoje = LocalDate.now();
-        return promotionRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(hoje, hoje)
-          .stream().map(this::toResponse).collect(Collectors.toList());
-    }
-
-    private void mapRequestToPromotion(PromotionRequestDTO dto, Promotion promocao) {
-        if (dto.promotionalPrice != 0)
-          promocao.setPromotionalPrice(dto.promotionalPrice);
-        if (dto.startDate != null)
-          promocao.setStartDate(dto.startDate);
-        if (dto.endDate != null)
-          promocao.setEndDate(dto.endDate);
-        if(dto.description != null)
-            promocao.setDescription(dto.description);
-        Product produto = productRepository.findById(dto.productId)
-          .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-        promocao.setProduct(produto);
-    }
-
-    private PromotionResponseDTO toResponse(Promotion promotion) {
-        PromotionResponseDTO dto = new PromotionResponseDTO();
-        dto.id = promotion.getId();
-        dto.originalPrice = promotion.getProduct().getUnitPrice();
-        dto.description = promotion.getDescription();
-        dto.promotionalPrice = promotion.getPromotionalPrice();
-        dto.initialDate = promotion.getStartDate();
-        dto.finalDate = promotion.getEndDate();
-        dto.productName = promotion.getProduct() != null ? promotion.getProduct().getName() : null;
-        return dto;
-    }
+  private PromotionResponseDTO toResponse(Promotion promotion) {
+    PromotionResponseDTO dto = new PromotionResponseDTO();
+    dto.id = promotion.getId();
+    dto.originalPrice = promotion.getProduct().getUnitPrice();
+    dto.description = promotion.getDescription();
+    dto.promotionalPrice = promotion.getPromotionalPrice();
+    dto.initialDate = promotion.getStartDate();
+    dto.finalDate = promotion.getEndDate();
+    dto.productName = promotion.getProduct() != null ? promotion.getProduct().getName() : null;
+    return dto;
+  }
 }

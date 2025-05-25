@@ -12,6 +12,8 @@ import com.danrley.gestao_tarefas.model.category.Category;
 import com.danrley.gestao_tarefas.model.product.Product;
 import com.danrley.gestao_tarefas.repository.CategoryRepository;
 import com.danrley.gestao_tarefas.repository.ProductRepository;
+import com.danrley.gestao_tarefas.exception.custom.ProductNotFoundException;
+import com.danrley.gestao_tarefas.exception.custom.CategoryNotFoundException;
 
 @Service
 public class ProductService {
@@ -27,7 +29,9 @@ public class ProductService {
   }
 
   public ProductResponseDTO getById(Long id) {
-    return productRepository.findById(id).map(this::toResponse).orElse(null);
+    return productRepository.findById(id)
+        .map(this::toResponse)
+        .orElseThrow(() -> new ProductNotFoundException(id));
   }
 
   public ProductResponseDTO create(ProductRequestDTO dto) {
@@ -61,7 +65,7 @@ public class ProductService {
       product.setUnitPrice(dto.unitPrice);
     if (dto.categoryId != null) {
       Category category = categoryRepository.findById(dto.categoryId)
-          .orElseThrow(() -> new RuntimeException("Category not found"));
+          .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
       product.setCategory(category);
     }
   }
@@ -85,5 +89,5 @@ public class ProductService {
         .stream()
         .map(this::toResponse)
         .collect(Collectors.toList());
-}
+  }
 }

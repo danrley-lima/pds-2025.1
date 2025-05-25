@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.danrley.gestao_tarefas.dto.category.CategoryRequestDTO;
 import com.danrley.gestao_tarefas.dto.category.CategoryResponseDTO;
+import com.danrley.gestao_tarefas.exception.custom.CategoryNotFoundException;
 import com.danrley.gestao_tarefas.model.category.Category;
 import com.danrley.gestao_tarefas.model.category.CategoryMapper;
 import com.danrley.gestao_tarefas.repository.CategoryRepository;
@@ -35,18 +36,21 @@ public class CategoryService {
   public CategoryResponseDTO findById(Long id) {
     return categoryRepository.findById(id)
         .map(CategoryMapper::toDTO)
-        .orElseThrow(() -> new RuntimeException("Category not found"));
+        .orElseThrow(() -> new CategoryNotFoundException(id));
   }
 
   public CategoryResponseDTO update(Long id, CategoryRequestDTO request) {
     Category category = categoryRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Category not found"));
+        .orElseThrow(() -> new CategoryNotFoundException(id));
 
     category.setName(request.getName());
     return CategoryMapper.toDTO(categoryRepository.save(category));
   }
 
   public void delete(Long id) {
+    if (!categoryRepository.existsById(id)) {
+      throw new CategoryNotFoundException(id);
+    }
     categoryRepository.deleteById(id);
   }
 }

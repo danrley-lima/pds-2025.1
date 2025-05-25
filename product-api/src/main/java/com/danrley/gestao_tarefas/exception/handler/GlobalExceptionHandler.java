@@ -14,9 +14,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.danrley.gestao_tarefas.dto.ErrorResponseDto;
+import com.danrley.gestao_tarefas.exception.custom.CategoryNotFoundException;
 import com.danrley.gestao_tarefas.exception.custom.EmailAlreadyExistsException;
 import com.danrley.gestao_tarefas.exception.custom.InvalidCredentialsException;
 import com.danrley.gestao_tarefas.exception.custom.InvalidTokenException;
+import com.danrley.gestao_tarefas.exception.custom.ProductNotFoundException;
+import com.danrley.gestao_tarefas.exception.custom.ProductValidationException;
+import com.danrley.gestao_tarefas.exception.custom.PromotionNotFoundException;
+import com.danrley.gestao_tarefas.exception.custom.RecipeAIServiceException;
 import com.danrley.gestao_tarefas.exception.custom.TaskNotFoundException;
 import com.danrley.gestao_tarefas.exception.custom.TokenGenerationException;
 import com.danrley.gestao_tarefas.exception.custom.UserNotFoundException;
@@ -144,4 +149,55 @@ public class GlobalExceptionHandler {
             "Invalid parameter",
             details != null ? details : "Check the request parameters."));
   }
+
+  @ExceptionHandler(ProductNotFoundException.class)
+  public ResponseEntity<ErrorResponseDto> handleProductNotFound(ProductNotFoundException ex) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponseDto(
+            404,
+            "Not Found",
+            ex.getMessage()));
+  }
+
+  @ExceptionHandler(CategoryNotFoundException.class)
+  public ResponseEntity<ErrorResponseDto> handleCategoryNotFound(CategoryNotFoundException ex) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponseDto(
+            404,
+            "Not Found",
+            ex.getMessage()));
+  }
+
+  @ExceptionHandler(ProductValidationException.class)
+  public ResponseEntity<ErrorResponseDto> handleProductValidation(ProductValidationException ex) {
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponseDto(
+            400,
+            "Validation Error",
+            ex.getMessage()));
+  }
+
+  @ExceptionHandler(PromotionNotFoundException.class)
+  public ResponseEntity<ErrorResponseDto> handlePromotionNotFound(PromotionNotFoundException ex) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponseDto(
+            404,
+            "Not Found",
+            ex.getMessage()));
+  }
+
+  @ExceptionHandler(RecipeAIServiceException.class)
+  public ResponseEntity<ErrorResponseDto> handleRecipeAIServiceException(RecipeAIServiceException ex) {
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ErrorResponseDto(
+            500,
+            "Erro no Serviço de IA",
+            "Ocorreu um erro ao processar a solicitação de receita: " + ex.getMessage()));
+  }
+
 }
