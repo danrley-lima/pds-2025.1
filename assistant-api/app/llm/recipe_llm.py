@@ -2,7 +2,7 @@ import logging
 from typing import List
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from llm.abstract_llm_handler import LLMHandler
-from models.request import ProductInput, PromotionInput
+from models.request import ProductInput
 
 
 class RecipeLLMHandler(LLMHandler):
@@ -10,11 +10,9 @@ class RecipeLLMHandler(LLMHandler):
         self.logger = logging.getLogger(__name__)
         super().__init__()
 
-    def format_products(self, products: List[ProductInput], promotions: List[PromotionInput]) -> str:
-        promotions_dict = {p.product_id: p for p in promotions}
+    def format_products(self, products: List[ProductInput]) -> str:
         return "; ".join([
-            f"{p.id},{p.name},{p.brand},{p.category_name},{p.unit_weight} {p.unit_type},{p.unit_price},{p.stock_quantity},{p.priority}" +
-            (f",PROMO:{promotions_dict[p.id].description},{promotions_dict[p.id].promotional_price},{promotions_dict[p.id].initial_date},{promotions_dict[p.id].final_date}" if p.id in promotions_dict else "")
+            f"{p.id},{p.name},{p.brand},{p.category_name},{p.unit_weight} {p.unit_type},{p.unit_price},{p.available},{p.on_promotion},{p.promotional_price},{p.stock_quantity},{p.priority}"
             for p in products
         ])
 
@@ -26,10 +24,7 @@ class RecipeLLMHandler(LLMHandler):
                     "apenas um JSON puro e válido, sem explicações, sem texto adicional e sem "
                     "marcação markdown.\n\n"
                     "Aqui está a lista de produtos disponíveis no formato: id,name,brand,category_name,"
-                    "unit_weight unit_type,unit_price,stock_quantity,priority; "
-                    "Ou quando houver promoção, ele ficará no formata: id,name,brand,category_name,"
-                    "unit_weight unit_type,unit_price,stock_quantity,priority,PROMO:description,"
-                    "promotional_price,initial_date,final_date;:\n"
+                    "unit_weight unit_type,unit_price,available,on_promotion,promotional_price,stock_quantity,priority;:\n"
                     "{products}\n\n"
                     "Com base apenas nesses produtos disponíveis, extraia os produtos e quantidades necessários "
                     "para a receita solicitada abaixo.\n\n"
