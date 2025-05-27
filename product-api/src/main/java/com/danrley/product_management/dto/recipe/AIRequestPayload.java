@@ -3,9 +3,13 @@ package com.danrley.product_management.dto.recipe;
 import java.util.List;
 
 import com.danrley.product_management.dto.product.ProductResponseDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AIRequestPayload {
+  @JsonProperty("customer_message")
   private String pedido;
+
+  @JsonProperty("products")
   private List<ProductResponseDTO> produtosDisponiveis;
 
   public String getPedido() {

@@ -173,8 +173,7 @@ public class ProductService {
       product.setStockQuantity(dto.stockQuantity);
     if (dto.unitPrice != null)
       product.setUnitPrice(dto.unitPrice);
-    if (dto.priority != null)
-      product.setPriority(dto.priority);
+    product.setPriority(dto.priority);
     if (dto.categoryId != null) {
       Category category = categoryRepository.findById(dto.categoryId)
           .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));

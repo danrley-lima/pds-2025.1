@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -38,12 +40,15 @@ public class RecipeAIClient {
       payload.setPedido(recipe);
       payload.setProdutosDisponiveis(availableProducts);
 
-      HttpEntity<String> requestEntity = new HttpEntity<>(
-          objectMapper.writeValueAsString(payload));
+      HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+      // Criar a requisição com o corpo JSON e os headers
+      String jsonBody = objectMapper.writeValueAsString(payload);
+      HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
       
-      ResponseEntity<String> response = restTemplate.exchange(
+      ResponseEntity<String> response = restTemplate.postForEntity(
           apiUrl + "/recommendations",
-          HttpMethod.POST,
           requestEntity,
           String.class);
 

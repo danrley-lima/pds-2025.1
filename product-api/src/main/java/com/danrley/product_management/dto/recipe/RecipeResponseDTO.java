@@ -10,11 +10,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class RecipeResponseDTO {
 
   @Schema(description = "Lista de produtos necessários para a receita")
-  @JsonProperty("produtos")
+  @JsonProperty("products")
   private List<ProductSuggestionDTO> produtos;
 
   @Schema(description = "Lista de produtos que não foram encontrados no estoque")
-  @JsonProperty("produtos_nao_encontrados")
+  @JsonProperty("notFoundProducts")
   private List<MissingProductDTO> produtosNaoEncontrados;
 
   public List<ProductSuggestionDTO> getProdutos() {

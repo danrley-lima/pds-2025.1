@@ -31,7 +31,7 @@ public class ProductSuggestionDTO {
   private String embalagensNecessarias;
 
   @Schema(description = "Categoria do produto")
-  @JsonProperty("category")
+  @JsonProperty("categoryName")
   private String categoria;
 
   @Schema(description = "Preço promocional do produto, se aplicável")

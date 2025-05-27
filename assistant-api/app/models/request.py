@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 from app.models.enums import UnitTypeEnum
 from typing import List
 
@@ -14,7 +15,7 @@ class ProductInput(BaseModel):
     priority: bool
     category_name: str = Field(..., alias="categoryName")
     on_promotion: bool = Field(..., alias="onPromotion")
-    promotional_price: float = Field(None, alias="promotionalPrice")
+    promotional_price: Optional[float] = Field(None, alias="promotionalPrice")
 
 
 class RecommendationRequest(BaseModel):
