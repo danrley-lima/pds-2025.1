@@ -1,31 +1,33 @@
-from pydantic import BaseModel
-from app.models.enums import UnitTypeEnum
+from pydantic import BaseModel, Field
+from models.enums import UnitTypeEnum
 from datetime import date
+from typing import List
 
 class ProductInput(BaseModel):
     id: int
     name: str
     brand: str
-    quantity: float
-    unitWeight: float
-    unitType: UnitTypeEnum
-    stockQuantity: float
-    unitPrice: float
+    unit_weight: float = Field(..., alias="unitWeight")
+    unit_type: UnitTypeEnum = Field(..., alias="unitType")
+    stock_quantity: float = Field(..., alias="stockQuantity")
+    unit_price: float = Field(..., alias="unitPrice")
     available: bool
-    categoryName: str
+    priority: bool
+    category_name: str = Field(..., alias="categoryName")
+
 
 class PromotionInput(BaseModel):
     id: int
     description: str
-    productName: str
-    originalPrice: float
-    promotionalPrice: float
-    productId: int
-    initialDate: date
-    finalDate: date
+    product_name: str = Field(..., alias="productName")
+    original_price: float = Field(..., alias="originalPrice")
+    promotional_price: float = Field(..., alias="promotionalPrice")
+    product_id: int = Field(..., alias="productId")
+    initial_date: date = Field(..., alias="initialDate")
+    final_date: date = Field(..., alias="finalDate")
 
-class recommendationRequest(BaseModel):
-    text: str
-    products: list[ProductInput]
-    promotions: list[ProductInput]
+class RecommendationRequest(BaseModel):
+    customer_message: str
+    products: List[ProductInput]
+    promotions: List[PromotionInput]
 

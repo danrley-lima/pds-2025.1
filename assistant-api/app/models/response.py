@@ -1,43 +1,37 @@
-class CarrinhoProdutosResponse(BaseModel):
-    produtos: list[ProdutoOut]
-    produtos_nao_encontrados: list[ProdutoNaoEncontrado]
-
-class CarrinhoReceitaResponse(BaseModel):
-    produtos: list[ProdutoOut]
-    produtos_nao_encontrados: list[ProdutoNaoEncontrado]
-
-class PromotionsResponse(BaseModel):
-    promocoes: list[PromocaoOut]
-    promocoes_nao_encontradas: list[PromocaoNaoEncontrada]
-
-class IngredienteOut(BaseModel):
-    id: str
-    quantidade: str
-
-class PromocaoOut(BaseModel):
-    id: str
-    descricao: str
-    nome_produto: str
-    preco_original: str
-    preco_promocional: str
-    data_inicial: str
-    data_final: str
-
+from pydantic import BaseModel, Field
+from typing import List
+from typing import Optional
 
 class ProductOut(BaseModel):
     id: str
-    nome: str
-    marca: str
-    preco: str
-    quantidade_total: str
-    embalagens_necessarias: str
+    name: str
+    brand: str
+    category_name: str = Field(..., alias="categoryName")
+    unit_price: str = Field(..., alias="unitPrice")
+    promotional_price: Optional[str] = Field(None, alias="promotionalPrice")
+    stock_quantity: str = Field(..., alias="stockQuantity")
+    required_quantity: Optional[str] = Field(None, alias="requiredQuantity")
+
+    class Config:
+        populate_by_name = True
+        alias_generator = None
+        json_encoders = {}
+        allow_population_by_field_name = True
 
 
-class ProdutoNaoEncontrado(BaseModel):
-    nome: str
-    quantidade: str
+class ProductNotFound(BaseModel):
+    name: str
+    quantity: str
+
+    class Config:
+        populate_by_name = True
+        allow_population_by_field_name = True
 
 
+class RecommendationResponse(BaseModel):
+    products: List[ProductOut]
+    not_found_products: List[ProductNotFound] = Field(..., alias="notFoundProducts")
 
-class PromocaoNaoEncontrada(BaseModel):
-    data: str
+    class Config:
+        populate_by_name = True
+        allow_population_by_field_name = True

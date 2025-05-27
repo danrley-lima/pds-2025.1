@@ -1,44 +1,33 @@
-from database.database import get_db
-from fastapi import APIRouter, Depends
-from services.produtos import buscar_produtos
-from services.llm import extrair_produtos
-from sqlalchemy.orm import Session
+import logging
+from fastapi import APIRouter, HTTPException
+from llm.selector import classify_text
+from models.request import RecommendationRequest
+from models.response import RecommendationResponse
+from services.recipe_service import recipe_products
+from services.product_service import search_product
+from services.promotion_service import search_promotion
+
 
 router = APIRouter()
 
-@router.post("/recommendations", response_model=CarrinhoProdutosResponse)
-async def gerar_carrinho_produtos(
-    req: ProdutoRequest, db: Session = Depends(get_db)
-) -> CarrinhoProdutosResponse:
-    print(req.produto)
-    itens_prod, produtos_nao_encontrados = await extrair_produtos(req.produto)
-    resultados = buscar_produtos(itens_prod)
-    return CarrinhoProdutosResponse(
-        produtos=resultados, produtos_nao_encontrados=produtos_nao_encontrados
-    )
+@router.post("/recommendations", response_model=RecommendationResponse)
+async def recommend_products(
+    request: RecommendationRequest
+) -> RecommendationResponse:
+    try:
+        category = classify_text(request.customer_message)
+        print(f"Classified category: {category}")
+        if category == "recipe":
+            return recipe_products(request)
+        elif category == "searchProduct":
+            return search_product(request)
+        elif category == "searchPromotion":
+            return search_promotion(request)
+        else:
+            raise HTTPException(status_code=404, detail="Request category not recognized")
 
-
-@router.post("/promocao", response_model=PromotionsResponse)
-async def gerar_promocoes(
-    req: PromocaoRequest, db: Session = Depends(get_db)
-) -> PromotionsResponse:
-    print(req.promocao)
-    itens_promo, promos_nao_encontradas = await extrair_promocoes(req.promocao)
-    resultados = buscar_promocoes(itens_promo)
-    return PromotionsResponse(
-        promocoes=resultados, promocoes_nao_encontradas=promos_nao_encontradas
-    )
-
-
-@router.post("/receita", response_model=CarrinhoReceitaResponse)
-async def gerar_carrinho(
-    req: ReceitaRequest, db: Session = Depends(get_db)
-) -> CarrinhoReceitaResponse:
-    """
-    Gera um carrinho de compras a partir de uma receita, retornando produtos encontrados e não encontrados.
-    """
-    itens_ing, produtos_nao_encontrados = await extrair_ingredientes(req.receita)
-    resultados = buscar_produtos_por_ingredientes(itens_ing)
-    return CarrinhoReceitaResponse(
-        produtos=resultados, produtos_nao_encontrados=produtos_nao_encontrados
-    )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logging.exception("Unexpected error in recommend_products")
+        raise HTTPException(status_code=500, detail="Internal server error")

@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from routes import facade_route
 
-app = FastAPI(title="API de Compras por Receita")
+app = FastAPI(title="LLM para recomendações de produtos")
 
 app.include_router(facade_route.router, prefix="/llm")
 
