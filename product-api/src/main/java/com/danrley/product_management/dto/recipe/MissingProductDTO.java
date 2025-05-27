@@ -8,11 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MissingProductDTO {
 
   @Schema(description = "Nome do produto não encontrado")
-  @JsonProperty("nome")
+  @JsonProperty("name")
   private String nome;
 
   @Schema(description = "Quantidade necessária do produto")
-  @JsonProperty("quantidade")
+  @JsonProperty("quantity")
   private String quantidade;
 
   public String getNome() {

@@ -40,9 +40,9 @@ public class RecipeAIClient {
 
       HttpEntity<String> requestEntity = new HttpEntity<>(
           objectMapper.writeValueAsString(payload));
-
+      
       ResponseEntity<String> response = restTemplate.exchange(
-          apiUrl + "/receita",
+          apiUrl + "/recommendations",
           HttpMethod.POST,
           requestEntity,
           String.class);

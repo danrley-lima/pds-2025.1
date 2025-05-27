@@ -11,24 +11,32 @@ public class ProductSuggestionDTO {
   private String id;
 
   @Schema(description = "Nome do produto")
-  @JsonProperty("nome")
+  @JsonProperty("name")
   private String nome;
 
   @Schema(description = "Marca do produto")
-  @JsonProperty("marca")
+  @JsonProperty("brand")
   private String marca;
 
   @Schema(description = "Preço unitário do produto")
-  @JsonProperty("preco")
+  @JsonProperty("unitPrice")
   private String preco;
 
   @Schema(description = "Quantidade total necessária para a receita")
-  @JsonProperty("quantidade_total")
+  @JsonProperty("stockQuantity")
   private String quantidadeTotal;
 
   @Schema(description = "Descrição das embalagens necessárias")
-  @JsonProperty("embalagens_necessarias")
+  @JsonProperty("requiredQuantity")
   private String embalagensNecessarias;
+
+  @Schema(description = "Categoria do produto")
+  @JsonProperty("category")
+  private String categoria;
+
+  @Schema(description = "Preço promocional do produto, se aplicável")
+  @JsonProperty("promotionalPrice")
+  private String precoPromocional;
 
   public String getId() {
     return id;
@@ -76,5 +84,21 @@ public class ProductSuggestionDTO {
 
   public void setEmbalagensNecessarias(String embalagensNecessarias) {
     this.embalagensNecessarias = embalagensNecessarias;
+  }
+
+  public String getCategoria() {
+    return categoria;
+  }
+
+  public void setCategoria(String categoria) {
+    this.categoria = categoria;
+  }
+
+  public String getPrecoPromocional() {
+    return precoPromocional;
+  }
+  
+  public void setPrecoPromocional(String precoPromocional) {
+    this.precoPromocional = precoPromocional;
   }
 }
