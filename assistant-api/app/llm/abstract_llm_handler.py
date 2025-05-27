@@ -9,7 +9,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableSerializable
 from models.response import ProductOut, ProductNotFound
-from models.request import ProductInput, PromotionInput
+from models.request import ProductInput
 
 
 class LLMHandler(ABC):
@@ -19,8 +19,8 @@ class LLMHandler(ABC):
         self.chain: RunnableSerializable[dict, str] = (self.prompt_template | self.llm | self.limpar_json)
 
     # Método template
-    def search_products(self, customer_message: str, products, promotions) -> Tuple[List, List]:
-        products_str = self.format_products(products, promotions)
+    def search_products(self, customer_message: str, products) -> Tuple[List, List]:
+        products_str = self.format_products(products)
 
         prompt_final = self.prompt_template.format(
             customer_message=customer_message,
@@ -68,7 +68,7 @@ class LLMHandler(ABC):
         return len(encoding.encode(texto))
     
     @abstractmethod
-    def format_products(self, products: List[ProductInput], promotions: List[PromotionInput]) -> str:
+    def format_products(self, products: List[ProductInput]) -> str:
         pass
     
     def parse_response(self, response: str) -> Tuple[List, List]:
@@ -77,7 +77,7 @@ class LLMHandler(ABC):
         except json.JSONDecodeError:
             self.logger.exception(f"Erro ao decodificar JSON da resposta da LLM: {response}")
             raise HTTPException(status_code=500, detail="Resposta inválida da LLM")
-
+        
         products = [
             ProductOut(
                 id=item.get("id", ""),
