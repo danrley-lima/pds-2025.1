@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from models.enums import UnitTypeEnum
+from app.models.enums import UnitTypeEnum
 from typing import List
 
 class ProductInput(BaseModel):

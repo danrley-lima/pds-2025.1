@@ -1,8 +1,8 @@
 import logging
 from typing import List
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
-from llm.abstract_llm_handler import LLMHandler
-from models.request import ProductInput
+from app.llm.abstract_llm_handler import LLMHandler
+from app.models.request import ProductInput
 
 
 class PromotionLLMHandler(LLMHandler):

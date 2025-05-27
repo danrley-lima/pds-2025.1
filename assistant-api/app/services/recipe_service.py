@@ -1,6 +1,6 @@
-from models.request import RecommendationRequest
-from models.response import RecommendationResponse
-from llm.recipe_llm import RecipeLLMHandler
+from app.models.request import RecommendationRequest
+from app.models.response import RecommendationResponse
+from app.llm.recipe_llm import RecipeLLMHandler
 
 
 def recipe_products(request: RecommendationRequest) -> RecommendationResponse:

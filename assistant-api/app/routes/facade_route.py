@@ -1,11 +1,11 @@
 import logging
 from fastapi import APIRouter, HTTPException
-from llm.selector import classify_text
-from models.request import RecommendationRequest
-from models.response import RecommendationResponse
-from services.recipe_service import recipe_products
-from services.product_service import search_product
-from services.promotion_service import search_promotion
+from app.llm.selector import classify_text
+from app.models.request import RecommendationRequest
+from app.models.response import RecommendationResponse
+from app.services.recipe_service import recipe_products
+from app.services.product_service import search_product
+from app.services.promotion_service import search_promotion
 
 
 router = APIRouter()
