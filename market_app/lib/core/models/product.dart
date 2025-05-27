@@ -8,6 +8,7 @@ class Product {
   final int stockQuantity;
   final bool available;
   final String categoryName;
+  final bool? priority;
 
   Product({
     required this.id,
@@ -19,6 +20,7 @@ class Product {
     required this.stockQuantity,
     required this.available,
     required this.categoryName,
+    this.priority,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Product {
       stockQuantity: json['stockQuantity'],
       available: json['available'],
       categoryName: json['categoryName'],
+      priority: json['priority'],
     );
   }
 
@@ -45,5 +48,6 @@ class Product {
     'stockQuantity': stockQuantity,
     'available': available,
     'categoryName': categoryName,
+    'priority': priority,
   };
 }

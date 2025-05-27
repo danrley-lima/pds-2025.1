@@ -12,7 +12,7 @@ public class ProductResponseDTO {
   public Double unitPrice;
   public boolean available;
   public String categoryName;
-
+  public boolean priority;
   public boolean onPromotion;
   public Double promotionalPrice;
 }

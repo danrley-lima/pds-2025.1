@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:market_app/core/services/api/api_service.dart';
 import '../chat/chat_screen.dart';
 import 'models/quick_recipe.dart';
+import 'widgets/list_screen.dart';
 import 'widgets/pupular_recipes_card.dart';
 import 'widgets/recent_search_card.dart';
 import 'widgets/search_ai_card.dart';
@@ -55,9 +56,27 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           RecentSearchesCard(
             recentSearches: recentSearches,
-            onSearchTap: (search) {
-              service.getAllProducts();
-              debugPrint('Pesquisar novamente: $search');
+            onSearchTap: (index) async {
+              if(index == 0) {
+                final list = await service.getAllProducts();
+                if(context.mounted) {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListScreen(itemList: list, title: "Produtos")));
+                }
+              }
+
+              if(index == 1) {
+                final list = await service.getActivePromotions();
+                if(context.mounted) {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListScreen(itemList: list, title: "Promoções")));
+                }
+              } 
+              
+              if(index == 2) {
+                final list = await service.getAllCategories();
+                if(context.mounted) {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListScreen(itemList: list, title: "Categorias")));
+                }
+              }
             },
           ),
           PopularRecipesCard(

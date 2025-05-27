@@ -10,4 +10,5 @@ public class ProductRequestDTO {
   public Integer stockQuantity;
   public Double unitPrice;
   public Long categoryId;
+  public boolean priority;
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class RecentSearchesCard extends StatelessWidget {
   final List<String> recentSearches;
-  final void Function(String) onSearchTap;
+  final void Function(int) onSearchTap;
 
   const RecentSearchesCard({super.key, required this.recentSearches, required this.onSearchTap});
 
@@ -33,7 +33,7 @@ class RecentSearchesCard extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final search = recentSearches[index];
                   return GestureDetector(
-                    onTap: () => onSearchTap(search),
+                    onTap: () => onSearchTap(index),
                     child: Chip(
                       label: Text(search),
                       backgroundColor: Colors.grey.shade100,

@@ -1,36 +1,44 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import '../../models/category.dart';
+import '../../models/product.dart';
+import '../../models/promotion.dart';
 
 class ApiService {
   Dio diohttp = Dio();
 
-  Future<void> getAllProducts() async {
+  Future<List<Product>> getAllProducts() async {
     try {
-      final response = await diohttp.get('localhost:3000/api/products');
+      final response = await diohttp.get('http://10.0.2.2:3000/api/products');
 
-      debugPrint(response.data);
+      final List<dynamic> data = response.data;
+
+      return data.map((element) => Product.fromJson(element)).toList();
     } on DioException catch(e) {
-      debugPrint(e.message);
+      throw DioException(requestOptions: e.requestOptions);
     }
   }
 
-  Future<void> getActivePromotions() async {
+  Future<List<Promotion>> getActivePromotions() async {
     try {
-      final response = await diohttp.get('localhost:3000/api/promocoes-ativas');
+      final response = await diohttp.get('http://10.0.2.2:3000/api/promocoes-ativas');
 
-      debugPrint(response.data);
+      final List<dynamic> data = response.data;
+
+      return data.map((element) => Promotion.fromJson(element)).toList();
     } on DioException catch(e) {
-      debugPrint(e.message);
+      throw DioException(requestOptions: e.requestOptions);
     }
   }
 
-  Future<void> getAllCategories() async {
+  Future<List<ProductCategory>> getAllCategories() async {
     try {
-      final response = await diohttp.get('localhost:3000/api/categories');
+      final response = await diohttp.get('http://10.0.2.2:3000/api/categories');
 
-      debugPrint(response.data);
+      final List<dynamic> data = response.data;
+
+      return data.map((element) => ProductCategory.fromJson(element)).toList();
     } on DioException catch(e) {
-      debugPrint(e.message);
+      throw DioException(requestOptions: e.requestOptions);
     }
   }
 }
