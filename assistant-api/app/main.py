@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from routes import facade_route
+from app.routes import facade_route
 
 app = FastAPI(title="LLM para recomendações de produtos")
 

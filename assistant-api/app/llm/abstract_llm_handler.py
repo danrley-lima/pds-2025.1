@@ -8,8 +8,8 @@ from langchain.chat_models import init_chat_model
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableSerializable
-from models.response import ProductOut, ProductNotFound
-from models.request import ProductInput
+from app.models.response import ProductOut, ProductNotFound
+from app.models.request import ProductInput
 
 
 class LLMHandler(ABC):

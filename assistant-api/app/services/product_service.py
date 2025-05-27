@@ -1,6 +1,6 @@
-from models.request import RecommendationRequest
-from models.response import RecommendationResponse
-from llm.product_llm import ProductLLMHandler
+from app.models.request import RecommendationRequest
+from app.models.response import RecommendationResponse
+from app.llm.product_llm import ProductLLMHandler
 
 
 def search_product(request: RecommendationRequest) -> RecommendationResponse:

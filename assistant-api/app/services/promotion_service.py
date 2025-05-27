@@ -1,7 +1,6 @@
-import re
-from models.request import RecommendationRequest
-from models.response import RecommendationResponse
-from llm.promotion_llm import PromotionLLMHandler
+from app.models.request import RecommendationRequest
+from app.models.response import RecommendationResponse
+from app.llm.promotion_llm import PromotionLLMHandler
 
 
 def search_promotion(request: RecommendationRequest) -> RecommendationResponse:
