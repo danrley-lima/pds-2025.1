@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Product {
 
   public Product(String name, String brand, Double unitWeight, UnitType unitType, Integer stockQuantity,
-      Double unitPrice, Category category, boolean available) {
+      Double unitPrice, Category category, boolean available, boolean priority) {
     this.name = name;
     this.brand = brand;
     this.unitWeight = unitWeight;
@@ -35,6 +35,7 @@ public class Product {
     this.unitPrice = unitPrice;
     this.category = category;
     this.available = available;
+    this.priority = priority;
   }
 
   @Id
@@ -59,6 +60,8 @@ public class Product {
   private Category category;
 
   private boolean available;
+
+  private boolean priority;
 
   @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
   private Promotion promotion;
@@ -125,6 +128,14 @@ public class Product {
 
   public void setAvailable(boolean available) {
     this.available = available;
+  }
+
+  public boolean isPriority() {
+    return priority;
+  }
+
+  public void setPriority(boolean priority) {
+    this.priority = priority;
   }
 
 }

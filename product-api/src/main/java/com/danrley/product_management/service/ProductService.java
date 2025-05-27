@@ -137,6 +137,10 @@ public class ProductService {
       if (dto.unitPrice == null) {
         validationErrors.put("unitPrice", "Preço do produto é obrigatório");
       }
+
+      if (dto.priority == null) {
+        validationErrors.put("priority", "Prioridade é obrigatória");
+      }
     }
 
     if (dto.unitPrice != null && dto.unitPrice <= 0) {
@@ -169,6 +173,8 @@ public class ProductService {
       product.setStockQuantity(dto.stockQuantity);
     if (dto.unitPrice != null)
       product.setUnitPrice(dto.unitPrice);
+    if (dto.priority != null)
+      product.setPriority(dto.priority);
     if (dto.categoryId != null) {
       Category category = categoryRepository.findById(dto.categoryId)
           .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
@@ -186,6 +192,7 @@ public class ProductService {
     dto.stockQuantity = product.getStockQuantity();
     dto.unitPrice = product.getUnitPrice();
     dto.available = product.isAvailable();
+    dto.priority = product.isPriority();
     dto.categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
 
     if (product.getPromotion() != null) {
