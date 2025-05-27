@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:market_app/core/services/api/api_service.dart';
 import '../chat/chat_screen.dart';
 import 'models/quick_recipe.dart';
 import 'widgets/pupular_recipes_card.dart';
@@ -15,10 +16,12 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _controller = TextEditingController();
 
+  ApiService service = ApiService();
+
   final List<String> recentSearches = [
-    'Lasanha',
-    'Salada de frutas',
-    'Café da manhã low carb',
+    'Produtos',
+    'Promoções',
+    'Categorias',
   ];
 
   final List<QuickRecipe> popularRecipes = [
@@ -53,6 +56,7 @@ class _SearchScreenState extends State<SearchScreen> {
           RecentSearchesCard(
             recentSearches: recentSearches,
             onSearchTap: (search) {
+              service.getAllProducts();
               debugPrint('Pesquisar novamente: $search');
             },
           ),

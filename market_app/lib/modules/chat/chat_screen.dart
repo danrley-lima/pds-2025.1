@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/services/api/api_service.dart';
+import '../../core/services/api/api_product.dart';
 import 'models/chat_message.dart';
 import 'widgets/chat_message_bubble.dart';
 
@@ -12,7 +12,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final ApiService _apiService = ApiService();
+  final ApiProduct _apiService = ApiProduct();
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 

@@ -1,37 +1,49 @@
 class Product {
+  final int id;
   final String name;
+  final String brand;
   final double unitPrice;
-  final double? discountedPrice;
-  final double weight;
-  final String weightUnit;
+  final double unitWeight;
+  final String unitType;
   final int stockQuantity;
+  final bool available;
+  final String categoryName;
 
   Product({
+    required this.id,
     required this.name,
+    required this.brand,
     required this.unitPrice,
-    this.discountedPrice,
-    required this.weight,
-    required this.weightUnit,
+    required this.unitWeight,
+    required this.unitType,
     required this.stockQuantity,
+    required this.available,
+    required this.categoryName,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
+      id: json['id'],
       name: json['name'],
-      unitPrice: json['unitPrice'].toDouble(),
-      discountedPrice: json['discountedPrice']?.toDouble(),
-      weight: json['weight'].toDouble(),
-      weightUnit: json['weightUnit'],
+      brand: json['brand'],
+      unitPrice: (json['unitPrice'] as num).toDouble(),
+      unitWeight: (json['unitWeight'] as num).toDouble(),
+      unitType: json['unitType'],
       stockQuantity: json['stockQuantity'],
+      available: json['available'],
+      categoryName: json['categoryName'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'unitPrice': unitPrice,
-        'discountedPrice': discountedPrice,
-        'weight': weight,
-        'weightUnit': weightUnit,
-        'stockQuantity': stockQuantity,
-      };
+    'id': id,
+    'name': name,
+    'brand': brand,
+    'unitPrice': unitPrice,
+    'unitWeight': unitWeight,
+    'unitType': unitType,
+    'stockQuantity': stockQuantity,
+    'available': available,
+    'categoryName': categoryName,
+  };
 }

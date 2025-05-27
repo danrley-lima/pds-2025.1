@@ -1,20 +1,36 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
   Dio diohttp = Dio();
-  
-  Future<String> getProducts(String prompt) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return "Aqui estão alguns produtos recomendados com base em: $prompt";
+
+  Future<void> getAllProducts() async {
+    try {
+      final response = await diohttp.get('localhost:3000/api/products');
+
+      debugPrint(response.data);
+    } on DioException catch(e) {
+      debugPrint(e.message);
+    }
   }
 
-  Future<String> getRecipes(String prompt) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return "Essas são algumas receitas que combinam com: $prompt";
+  Future<void> getActivePromotions() async {
+    try {
+      final response = await diohttp.get('localhost:3000/api/promocoes-ativas');
+
+      debugPrint(response.data);
+    } on DioException catch(e) {
+      debugPrint(e.message);
+    }
   }
 
-  Future<String> getPromotions(String prompt) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return "Veja promoções para ingredientes de: $prompt";
+  Future<void> getAllCategories() async {
+    try {
+      final response = await diohttp.get('localhost:3000/api/categories');
+
+      debugPrint(response.data);
+    } on DioException catch(e) {
+      debugPrint(e.message);
+    }
   }
 }

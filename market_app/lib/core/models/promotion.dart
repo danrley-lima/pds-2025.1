@@ -1,37 +1,41 @@
 class Promotion {
+  final int id;
+  final String description;
   final String productName;
-  final String promotionName;
   final double originalPrice;
-  final double discountedPrice;
-  final DateTime startDate;
-  final DateTime endDate;
+  final double promotionalPrice;
+  final DateTime initialDate;
+  final DateTime finalDate;
 
   Promotion({
+    required this.id,
+    required this.description,
     required this.productName,
-    required this.promotionName,
     required this.originalPrice,
-    required this.discountedPrice,
-    required this.startDate,
-    required this.endDate,
+    required this.promotionalPrice,
+    required this.initialDate,
+    required this.finalDate,
   });
 
   factory Promotion.fromJson(Map<String, dynamic> json) {
     return Promotion(
+      id: json['id'],
+      description: json['description'],
       productName: json['productName'],
-      promotionName: json['promotionName'],
-      originalPrice: json['originalPrice'].toDouble(),
-      discountedPrice: json['discountedPrice'].toDouble(),
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
+      originalPrice: (json['originalPrice'] as num).toDouble(),
+      promotionalPrice: (json['promotionalPrice'] as num).toDouble(),
+      initialDate: DateTime.parse(json['initialDate']),
+      finalDate: DateTime.parse(json['finalDate']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'productName': productName,
-    'promotionName': promotionName,
-    'originalPrice': originalPrice,
-    'discountedPrice': discountedPrice,
-    'startDate': startDate.toIso8601String(),
-    'endDate': endDate.toIso8601String(),
-  };
+        'id': id,
+        'description': description,
+        'productName': productName,
+        'originalPrice': originalPrice,
+        'promotionalPrice': promotionalPrice,
+        'initialDate': initialDate.toIso8601String(),
+        'finalDate': finalDate.toIso8601String(),
+      };
 }
