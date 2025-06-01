@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/chat_message.dart';
+import 'ai_product_card.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -20,7 +21,7 @@ class ChatMessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
-            message.text ?? '',
+            message.data ?? '',
             style: TextStyle(
               color: isUser ? Colors.white : Colors.black87,
             ),
@@ -29,19 +30,27 @@ class ChatMessageBubble extends StatelessWidget {
         break;
 
       case ChatMessageType.recipeCard:
-        content = Card(
-          elevation: 2,
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          child: SizedBox(
-            width: 200,
-            height: 100,
-            child: Center(
-              child: Text(
-                'Card de Receita aqui!',
-                style: TextStyle(color: Colors.grey.shade700),
+        content = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isUser ? Colors.purple.shade700 : Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(16),
               ),
+              child: Text("Olá, aqui está a resposta para seu resultado:"),
             ),
-          ),
+            ...message.data.products.map((product) => AiProductCard(product: product)).toList(),
+            if (message.data.notFoundProducts.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  'Não encontrados: ${message.data.notFoundProducts.join(', ')}',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+          ],
         );
         break;
     }

@@ -8,11 +8,11 @@ enum ChatMessageType {
 class ChatMessage {
   final ChatSender sender;
   final ChatMessageType type;
-  final String? text;
+  final dynamic data;
 
   ChatMessage({
     required this.sender,
     required this.type,
-    this.text,
+    required this.data,
   });
 }
