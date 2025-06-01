@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:market_app/modules/chat/models/assistant_product_model.dart';
 import '../../core/services/api/api_service.dart';
 import 'models/assistant_recipe_model.dart';
 import 'models/chat_message.dart';
@@ -30,109 +29,11 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     AssistantRecipeModel aiResponse;
-    //aiResponse = await _apiService.getSuggestionRecipe(text);
+    aiResponse = await _apiService.getSuggestionRecipe(text);
 
-    aiResponse = AssistantRecipeModel(
-      products: [
-        AssistantProductModel(
-          id: "2",
-          name: "Carne Moída",
-          brand: "Friboi",
-          unitPrice: 22.0,
-          stockQuantity: 100.0,
-          requiredQuantity: "500g",
-          categoryName: "Carnes",
-          promotionalPrice: 15.99,
-        ),
-        AssistantProductModel(
-          id: "61",
-          name: "Macarrão Espaguete",
-          brand: "Renata",
-          unitPrice: 4.0,
-          stockQuantity: 120.0,
-          requiredQuantity: "250g",
-          categoryName: "Massas",
-          promotionalPrice: null,
-        ),
-        AssistantProductModel(
-          id: "31",
-          name: "Queijo Mussarela",
-          brand: "Vigor",
-          unitPrice: 15.0,
-          stockQuantity: 120.0,
-          requiredQuantity: "200g",
-          categoryName: "Laticínios",
-          promotionalPrice: null,
-        ),
-        AssistantProductModel(
-          id: "24",
-          name: "Extrato de Tomate",
-          brand: "Elefante",
-          unitPrice: 3.8,
-          stockQuantity: 100.0,
-          requiredQuantity: "130g",
-          categoryName: "Enlatados",
-          promotionalPrice: null,
-        ),
-        AssistantProductModel(
-          id: "7",
-          name: "Cebola",
-          brand: "Natural",
-          unitPrice: 3.5,
-          stockQuantity: 200.0,
-          requiredQuantity: "100g",
-          categoryName: "Hortifruti",
-          promotionalPrice: 2.99,
-        ),
-        AssistantProductModel(
-          id: "16",
-          name: "Alho",
-          brand: "Natural",
-          unitPrice: 2.0,
-          stockQuantity: 100.0,
-          requiredQuantity: "10g",
-          categoryName: "Temperos",
-          promotionalPrice: null,
-        ),
-        AssistantProductModel(
-          id: "58",
-          name: "Óleo de Soja",
-          brand: "Soya",
-          unitPrice: 7.0,
-          stockQuantity: 150.0,
-          requiredQuantity: "50ml",
-          categoryName: "Óleos e Gorduras",
-          promotionalPrice: null,
-        ),
-        AssistantProductModel(
-          id: "17",
-          name: "Sal",
-          brand: "Refinado",
-          unitPrice: 1.5,
-          stockQuantity: 500.0,
-          requiredQuantity: "5g",
-          categoryName: "Temperos",
-          promotionalPrice: null,
-        ),
-        AssistantProductModel(
-          id: "18",
-          name: "Pimenta do Reino",
-          brand: "Sadia",
-          unitPrice: 5.0,
-          stockQuantity: 80.0,
-          requiredQuantity: "2g",
-          categoryName: "Temperos",
-          promotionalPrice: null,
-        ),
-      ],
-      notFoundProducts: [],
-    );
-
-    Future.delayed(const Duration(seconds: 7), () {
-      setState(() {
-        _messages.removeLast();
-        _messages.add(ChatMessage(data: aiResponse, type: ChatMessageType.recipeCard, sender: ChatSender.ai));
-      });
+    setState(() {
+      _messages.removeLast();
+      _messages.add(ChatMessage(data: aiResponse, type: ChatMessageType.recipeCard, sender: ChatSender.ai));
     });
 
     Future.delayed(const Duration(milliseconds: 100), () {

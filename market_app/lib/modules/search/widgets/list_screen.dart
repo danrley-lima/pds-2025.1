@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/models/category.dart';
 import '../../../core/models/product.dart';
 import '../../../core/models/promotion.dart';
+import '../../../shared/widgets/category_card.dart';
 import '../../../shared/widgets/product_card.dart';
 import '../../../shared/widgets/promotion_card.dart';
 
@@ -29,6 +31,8 @@ class _ListScreenState extends State<ListScreen> {
             return ProductCard(product: widget.itemList[index]);
           }else if (widget.itemList is List<Promotion>) {
             return PromotionCard(promotion: widget.itemList[index]);
+          }else if(widget.itemList is List<ProductCategory>) {
+            return CategoryCard(category: widget.itemList[index]);
           }
           return Center(child: Text("Nenhum item disponível"));
         },

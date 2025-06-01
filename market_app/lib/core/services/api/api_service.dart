@@ -31,7 +31,7 @@ class ApiService {
 
   Future<List<Promotion>> getActivePromotions() async {
     try {
-      final response = await diohttp.get('http://10.0.2.2:3000/api/promocoes-ativas');
+      final response = await diohttp.get('http://10.0.2.2:3000/api/promotions');
 
       final List<dynamic> data = response.data;
 
