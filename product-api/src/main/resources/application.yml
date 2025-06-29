@@ -10,9 +10,16 @@ spring:
       - dev
 
 ai:
-  recipe:
+  provider:
+    preferred: gemini
+    gemini:
+      api:
+        key: ${GEMINI_API_KEY:${google.gemini.api.key:}}
+
+google:
+  gemini:
     api:
-      url: http://localhost:8000/llm
+      key: ${GEMINI_API_KEY:AIzaSyAb9b6I4J8JUZOo-D3CeHb0tZnT9IL4NnM}
 
 api:
   security:

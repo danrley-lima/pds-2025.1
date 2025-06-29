@@ -23,7 +23,7 @@ import com.danrley.product_management.exception.custom.ProductNotFoundException;
 import com.danrley.product_management.exception.custom.ProductServiceException;
 import com.danrley.product_management.exception.custom.ProductValidationException;
 import com.danrley.product_management.exception.custom.PromotionNotFoundException;
-import com.danrley.product_management.exception.custom.RecipeAIServiceException;
+import com.danrley.product_management.exception.custom.RecommendationException;
 import com.danrley.product_management.exception.custom.TokenGenerationException;
 import com.danrley.product_management.exception.custom.UserNotFoundException;
 
@@ -182,14 +182,14 @@ public class GlobalExceptionHandler {
             "Failed to generate authentication token"));
   }
 
-  @ExceptionHandler(RecipeAIServiceException.class)
-  public ResponseEntity<ErrorResponseDto> handleRecipeAIServiceException(RecipeAIServiceException ex) {
+  @ExceptionHandler(RecommendationException.class)
+  public ResponseEntity<ErrorResponseDto> handleRecommendationException(RecommendationException ex) {
     return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorResponseDto(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            "AI Service Error",
-            "Failed to process recipe request"));
+            "Recommendation Service Error",
+            "Failed to process recommendation request"));
   }
 
   @ExceptionHandler(ProductServiceException.class)

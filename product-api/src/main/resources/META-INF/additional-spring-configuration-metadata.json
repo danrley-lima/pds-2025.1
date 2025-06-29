@@ -24,6 +24,26 @@
       "name": "ai.recipe.api.url",
       "type": "java.lang.String",
       "description": "A description for 'ai.recipe.api.url'"
+    },
+    {
+      "name": "google.gemini.api.key",
+      "type": "java.lang.String",
+      "description": "A description for 'google.gemini.api.key'"
+    },
+    {
+      "name": "ai.provider.preferred",
+      "type": "java.lang.String",
+      "description": "A description for 'ai.provider.preferred'"
+    },
+    {
+      "name": "ai.provider.mock.enabled",
+      "type": "java.lang.String",
+      "description": "A description for 'ai.provider.mock.enabled'"
+    },
+    {
+      "name": "ai.provider.gemini.api.key",
+      "type": "java.lang.String",
+      "description": "A description for 'ai.provider.gemini.api.key'"
     }
   ]
 }

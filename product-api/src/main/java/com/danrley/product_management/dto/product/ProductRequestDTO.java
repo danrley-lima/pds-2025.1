@@ -10,5 +10,5 @@ public class ProductRequestDTO {
   public Integer stockQuantity;
   public Double unitPrice;
   public Long categoryId;
-  public boolean priority;
+  public Boolean priority; // Alterado de boolean para Boolean para permitir null
 }
