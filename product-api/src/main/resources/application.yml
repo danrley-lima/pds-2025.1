@@ -9,12 +9,24 @@ spring:
     active:
       - dev
 
+server:
+  port: 3000
+
 ai:
   provider:
     preferred: gemini
     gemini:
       api:
         key: ${GEMINI_API_KEY:${google.gemini.api.key:}}
+
+# Configuração do Framework Multi-Domínio
+framework:
+  domain:
+    default: grocery
+    enabled:
+      - grocery
+      - furniture
+      - construction
 
 google:
   gemini:

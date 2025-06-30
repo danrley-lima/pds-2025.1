@@ -56,9 +56,22 @@ public class PromotionController {
     return promotionService.getById(id);
   }
 
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Excluir promoção", description = "Remove uma promoção com base no ID fornecido")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Promoção excluída com sucesso"),
+      @ApiResponse(responseCode = "404", description = "Promoção não encontrada"),
+      @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+  })
+  public void delete(
+      @Parameter(description = "ID da promoção a ser excluída") @PathVariable Long id) {
+    promotionService.delete(id);
+  }
+
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Criar nova promoção", description = "Cria uma nova promoção com base nos dados fornecidos")
+  @Operation(summary = "Criar nova promoção", description = "Cria uma nova promoção para um produto de qualquer domínio")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Promoção criada com sucesso", content = @Content(schema = @Schema(implementation = PromotionResponseDTO.class))),
       @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
@@ -66,7 +79,7 @@ public class PromotionController {
       @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
   })
   public PromotionResponseDTO create(
-      @Parameter(description = "Dados da promoção a ser criada") @RequestBody PromotionRequestDTO dto) {
+      @Parameter(description = "Dados da promoção a ser criada (incluir campo 'domain': grocery/furniture/construction)") @RequestBody PromotionRequestDTO dto) {
     return promotionService.create(dto);
   }
 
@@ -84,19 +97,6 @@ public class PromotionController {
     return promotionService.update(id, dto);
   }
 
-  @DeleteMapping("/{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Excluir promoção", description = "Remove uma promoção com base no ID fornecido")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "204", description = "Promoção excluída com sucesso"),
-      @ApiResponse(responseCode = "404", description = "Promoção não encontrada"),
-      @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-  })
-  public void delete(
-      @Parameter(description = "ID da promoção a ser excluída") @PathVariable Long id) {
-    promotionService.delete(id);
-  }
-
   @GetMapping("/active")
   @Operation(summary = "Listar promoções ativas", description = "Retorna todas as promoções que estão ativas na data atual")
   @ApiResponses(value = {
@@ -104,6 +104,6 @@ public class PromotionController {
       @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
   })
   public List<PromotionResponseDTO> getActivePromotions() {
-    return promotionService.promocoesAtivas();
+    return promotionService.getActivePromotions();
   }
 }

@@ -50,29 +50,5 @@ public interface AIProvider {
      */
     String getProviderName();
     
-    /**
-     * Retorna informações sobre limites do provedor
-     * 
-     * @return Informações sobre limites (tokens, requests per minute, etc.)
-     */
-    ProviderLimits getLimits();
-    
-    /**
-     * Classe para informações sobre limites do provedor
-     */
-    class ProviderLimits {
-        private final int maxTokensPerRequest;
-        private final int requestsPerMinute;
-        private final int requestsPerDay;
-        
-        public ProviderLimits(int maxTokensPerRequest, int requestsPerMinute, int requestsPerDay) {
-            this.maxTokensPerRequest = maxTokensPerRequest;
-            this.requestsPerMinute = requestsPerMinute;
-            this.requestsPerDay = requestsPerDay;
-        }
-        
-        public int getMaxTokensPerRequest() { return maxTokensPerRequest; }
-        public int getRequestsPerMinute() { return requestsPerMinute; }
-        public int getRequestsPerDay() { return requestsPerDay; }
-    }
+
 }

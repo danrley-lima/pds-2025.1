@@ -87,16 +87,6 @@ public class OpenAIProvider implements AIProvider {
         return PROVIDER_NAME;
     }
 
-    @Override
-    public ProviderLimits getLimits() {
-        // Limites do OpenAI (variam conforme o plano)
-        return new ProviderLimits(
-            4096,  // maxTokensPerRequest (para gpt-3.5-turbo)
-            3500,  // requestsPerMinute (tier 1)
-            200000 // requestsPerDay (tier 1)
-        );
-    }
-
     private Map<String, Object> buildRequestBody(String prompt, Map<String, Object> parameters) {
         Map<String, Object> requestBody = new HashMap<>();
         

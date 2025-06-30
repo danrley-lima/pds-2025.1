@@ -2,6 +2,9 @@ package com.danrley.product_management.dto.recommendation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
+import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
+import com.danrley.product_management.domain.construction.model.ConstructionProduct;
 
 public class ProductOutDTO {
     @JsonProperty("id")
@@ -46,6 +49,55 @@ public class ProductOutDTO {
         this.promotionalPrice = promotionalPrice;
         this.stockQuantity = stockQuantity;
         this.requiredQuantity = requiredQuantity;
+    }
+
+    /**
+     * Factory method to create ProductOutDTO from GroceryProduct
+     */
+    public static ProductOutDTO fromGroceryProduct(GroceryProduct product) {
+        return new ProductOutDTO(
+            product.getId().toString(),
+            product.getName(),
+            product.getBrand(),
+            product.getCategory() != null ? product.getCategory().getName() : "N/A",
+            product.getUnitPrice() != null ? product.getUnitPrice().toString() : "0.0",
+            product.getPromotion() != null 
+                ? String.valueOf(product.getPromotion().getPromotionalPrice()) : null,
+            product.getStockQuantity() != null ? product.getStockQuantity().toString() : "0",
+            "1" // default required quantity
+        );
+    }
+
+    /**
+     * Factory method to create ProductOutDTO from FurnitureProduct
+     */
+    public static ProductOutDTO fromFurnitureProduct(FurnitureProduct product) {
+        return new ProductOutDTO(
+            product.getId().toString(),
+            product.getName(),
+            product.getBrand(),
+            product.getCategory() != null ? product.getCategory().getName() : "Móvel",
+            product.getUnitPrice() != null ? product.getUnitPrice().toString() : "0.0",
+            null, // Furniture products don't have direct promotion field yet
+            product.getStockQuantity() != null ? product.getStockQuantity().toString() : "0",
+            "1" // default required quantity
+        );
+    }
+
+    /**
+     * Factory method to create ProductOutDTO from ConstructionProduct
+     */
+    public static ProductOutDTO fromConstructionProduct(ConstructionProduct product) {
+        return new ProductOutDTO(
+            product.getId().toString(),
+            product.getName(),
+            product.getBrand(),
+            product.getCategory() != null ? product.getCategory().getName() : "Material",
+            product.getUnitPrice() != null ? product.getUnitPrice().toString() : "0.0",
+            null, // Construction products don't have direct promotion field yet
+            product.getStockQuantity() != null ? product.getStockQuantity().toString() : "0",
+            "1" // default required quantity
+        );
     }
 
     // Getters and Setters

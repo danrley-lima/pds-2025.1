@@ -8,4 +8,5 @@ public class PromotionRequestDTO {
     public LocalDate startDate;
     public LocalDate endDate;
     public Long productId;
+    public String domain; // grocery, furniture, construction
 }

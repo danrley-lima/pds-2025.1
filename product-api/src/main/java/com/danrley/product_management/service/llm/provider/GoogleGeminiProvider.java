@@ -82,16 +82,6 @@ public class GoogleGeminiProvider implements AIProvider {
         return PROVIDER_NAME;
     }
 
-    @Override
-    public ProviderLimits getLimits() {
-        // Limites do Google Gemini (podem variar conforme o plano)
-        return new ProviderLimits(
-            8192,  // maxTokensPerRequest
-            60,    // requestsPerMinute  
-            1500   // requestsPerDay
-        );
-    }
-
     private Map<String, Object> buildRequestBody(String prompt, Map<String, Object> parameters) {
         Map<String, Object> requestBody = new HashMap<>();
         

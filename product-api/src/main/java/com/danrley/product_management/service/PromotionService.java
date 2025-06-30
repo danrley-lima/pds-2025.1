@@ -2,6 +2,7 @@ package com.danrley.product_management.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,100 +10,175 @@ import org.springframework.stereotype.Service;
 
 import com.danrley.product_management.dto.promotion.PromotionRequestDTO;
 import com.danrley.product_management.dto.promotion.PromotionResponseDTO;
-import com.danrley.product_management.exception.custom.ProductNotFoundException;
-import com.danrley.product_management.exception.custom.ProductValidationException;
 import com.danrley.product_management.exception.custom.PromotionNotFoundException;
-import com.danrley.product_management.model.product.Product;
+import com.danrley.product_management.exception.custom.ProductNotFoundException;
 import com.danrley.product_management.model.promotion.Promotion;
-import com.danrley.product_management.repository.ProductRepository;
 import com.danrley.product_management.repository.PromotionRepository;
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
+import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
+import com.danrley.product_management.domain.construction.model.ConstructionProduct;
+import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
+import com.danrley.product_management.domain.furniture.repository.FurnitureProductRepository;
+import com.danrley.product_management.domain.construction.repository.ConstructionProductRepository;
 
+/**
+ * Serviço para gerenciamento de promoções.
+ * Suporta criação, atualização e consulta de promoções para produtos de todos os domínios.
+ */
 @Service
 public class PromotionService {
 
   @Autowired
-  private ProductRepository productRepository;
-
-  @Autowired
   private PromotionRepository promotionRepository;
+  
+  @Autowired
+  private GroceryProductRepository groceryProductRepository;
+  
+  @Autowired
+  private FurnitureProductRepository furnitureProductRepository;
+  
+  @Autowired
+  private ConstructionProductRepository constructionProductRepository;
 
   public List<PromotionResponseDTO> getAll() {
     return promotionRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
   }
 
   public PromotionResponseDTO getById(Long id) {
-    return promotionRepository.findById(id)
-        .map(this::toResponse)
-        .orElseThrow(() -> new PromotionNotFoundException(id));
-  }
+    if (id == null) {
+      throw new IllegalArgumentException("ID da promoção não pode ser nulo");
+    }
 
-  public PromotionResponseDTO create(PromotionRequestDTO dto) {
-    validatePromotionRequest(dto);
-    Promotion promotion = new Promotion();
-    mapRequestToPromotion(dto, promotion);
-    return toResponse(promotionRepository.save(promotion));
-  }
-
-  public PromotionResponseDTO update(Long id, PromotionRequestDTO dto) {
-    validatePromotionRequest(dto);
     Promotion promotion = promotionRepository.findById(id)
-        .orElseThrow(() -> new PromotionNotFoundException(id));
-    mapRequestToPromotion(dto, promotion);
-    return toResponse(promotionRepository.save(promotion));
+        .orElseThrow(() -> new PromotionNotFoundException("Promoção não encontrada com ID: " + id));
+
+    return toResponse(promotion);
   }
 
   public void delete(Long id) {
+    if (id == null) {
+      throw new IllegalArgumentException("ID da promoção não pode ser nulo");
+    }
+
+    if (!promotionRepository.existsById(id)) {
+      throw new PromotionNotFoundException("Promoção não encontrada com ID: " + id);
+    }
+
+    promotionRepository.deleteById(id);
+  }
+
+  public PromotionResponseDTO create(PromotionRequestDTO dto) {
+    if (dto == null) {
+      throw new IllegalArgumentException("Dados da promoção não podem ser nulos");
+    }
+
+    Promotion promotion = new Promotion();
+    promotion.setPromotionalPrice(dto.promotionalPrice);
+    promotion.setDescription(dto.description);
+    promotion.setStartDate(dto.startDate);
+    promotion.setEndDate(dto.endDate);
+
+    // Determinar qual produto está sendo promovido baseado no domínio
+    if ("grocery".equalsIgnoreCase(dto.domain)) {
+      GroceryProduct product = groceryProductRepository.findById(dto.productId)
+          .orElseThrow(() -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
+      promotion.setGroceryProduct(product);
+      promotion.setFurnitureProduct(null);
+      promotion.setConstructionProduct(null);
+    } else if ("furniture".equalsIgnoreCase(dto.domain)) {
+      FurnitureProduct product = furnitureProductRepository.findById(dto.productId)
+          .orElseThrow(() -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + dto.productId));
+      promotion.setFurnitureProduct(product);
+      promotion.setGroceryProduct(null);
+      promotion.setConstructionProduct(null);
+    } else if ("construction".equalsIgnoreCase(dto.domain)) {
+      ConstructionProduct product = constructionProductRepository.findById(dto.productId)
+          .orElseThrow(() -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
+      promotion.setConstructionProduct(product);
+      promotion.setGroceryProduct(null);
+      promotion.setFurnitureProduct(null);
+    } else {
+      throw new IllegalArgumentException("Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
+    }
+
+    Promotion savedPromotion = promotionRepository.save(promotion);
+    return toResponse(savedPromotion);
+  }
+
+  public PromotionResponseDTO update(Long id, PromotionRequestDTO dto) {
+    if (id == null) {
+      throw new IllegalArgumentException("ID da promoção não pode ser nulo");
+    }
+    if (dto == null) {
+      throw new IllegalArgumentException("Dados da promoção não podem ser nulos");
+    }
+
     Promotion promotion = promotionRepository.findById(id)
-        .orElseThrow(() -> new PromotionNotFoundException(id));
+        .orElseThrow(() -> new PromotionNotFoundException("Promoção não encontrada com ID: " + id));
 
-    Product product = promotion.getProduct();
-    if (product != null) {
-      product.setPromotion(null);
-      productRepository.save(product);
+    promotion.setPromotionalPrice(dto.promotionalPrice);
+    promotion.setDescription(dto.description);
+    promotion.setStartDate(dto.startDate);
+    promotion.setEndDate(dto.endDate);
+
+    // Atualizar produto se necessário
+    if (dto.productId != null && dto.domain != null) {
+      // Limpar produtos atuais
+      promotion.setGroceryProduct(null);
+      promotion.setFurnitureProduct(null);
+      promotion.setConstructionProduct(null);
+      
+      // Definir novo produto baseado no domínio
+      if ("grocery".equalsIgnoreCase(dto.domain)) {
+        GroceryProduct product = groceryProductRepository.findById(dto.productId)
+            .orElseThrow(() -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
+        promotion.setGroceryProduct(product);
+      } else if ("furniture".equalsIgnoreCase(dto.domain)) {
+        FurnitureProduct product = furnitureProductRepository.findById(dto.productId)
+            .orElseThrow(() -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + dto.productId));
+        promotion.setFurnitureProduct(product);
+      } else if ("construction".equalsIgnoreCase(dto.domain)) {
+        ConstructionProduct product = constructionProductRepository.findById(dto.productId)
+            .orElseThrow(() -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
+        promotion.setConstructionProduct(product);
+      } else {
+        throw new IllegalArgumentException("Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
+      }
     }
 
-    promotionRepository.delete(promotion);
+    Promotion updatedPromotion = promotionRepository.save(promotion);
+    return toResponse(updatedPromotion);
   }
 
-  public List<PromotionResponseDTO> promocoesAtivas() {
-    LocalDate hoje = LocalDate.now();
-    return promotionRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(hoje, hoje)
-        .stream().map(this::toResponse).collect(Collectors.toList());
-  }
-
-  private void validatePromotionRequest(PromotionRequestDTO dto) {
-    if (dto.promotionalPrice <= 0) {
-      throw new ProductValidationException("O preço promocional deve ser maior que zero");
-    }
-
-    if (dto.startDate != null && dto.endDate != null && dto.startDate.isAfter(dto.endDate)) {
-      throw new ProductValidationException("A data inicial não pode ser posterior à data final");
-    }
-  }
-
-  private void mapRequestToPromotion(PromotionRequestDTO dto, Promotion promocao) {
-    if (dto.promotionalPrice != 0)
-      promocao.setPromotionalPrice(dto.promotionalPrice);
-    if (dto.startDate != null)
-      promocao.setStartDate(dto.startDate);
-    if (dto.endDate != null)
-      promocao.setEndDate(dto.endDate);
-    if (dto.description != null)
-      promocao.setDescription(dto.description);
-    Product produto = productRepository.findById(dto.productId)
-        .orElseThrow(() -> new ProductNotFoundException(dto.productId));
-    promocao.setProduct(produto);
+  public List<PromotionResponseDTO> getActivePromotions() {
+    LocalDate today = LocalDate.now();
+    return promotionRepository.findAll().stream()
+        .filter(promotion -> promotion.getStartDate().isBefore(today.plusDays(1)) && 
+                           promotion.getEndDate().isAfter(today.minusDays(1)))
+        .map(this::toResponse)
+        .collect(Collectors.toList());
   }
 
   private PromotionResponseDTO toResponse(Promotion promotion) {
     PromotionResponseDTO dto = new PromotionResponseDTO();
     dto.id = promotion.getId();
-    dto.originalPrice = promotion.getProduct().getUnitPrice();
-    dto.description = promotion.getDescription();
     dto.promotionalPrice = promotion.getPromotionalPrice();
     dto.initialDate = promotion.getStartDate();
     dto.finalDate = promotion.getEndDate();
-    dto.productName = promotion.getProduct() != null ? promotion.getProduct().getName() : null;
+    dto.description = promotion.getDescription();
+    
+    // Produto vinculado (se houver)
+    if (promotion.getGroceryProduct() != null) {
+      dto.productName = promotion.getGroceryProduct().getName();
+      dto.originalPrice = promotion.getGroceryProduct().getUnitPrice();
+    } else if (promotion.getFurnitureProduct() != null) {
+      dto.productName = promotion.getFurnitureProduct().getName();
+      dto.originalPrice = promotion.getFurnitureProduct().getUnitPrice();
+    } else if (promotion.getConstructionProduct() != null) {
+      dto.productName = promotion.getConstructionProduct().getName();
+      dto.originalPrice = promotion.getConstructionProduct().getUnitPrice();
+    }
+    
     return dto;
   }
 }
