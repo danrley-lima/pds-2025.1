@@ -82,6 +82,12 @@ public class FurnitureProduct implements BaseProduct {
     // Implementação dos métodos da interface BaseProduct
     @Override
     public Domain getDomain() { return Domain.FURNITURE; }
+    
+    @Override
+    public boolean isAvailable() { return available; }
+    
+    @Override
+    public boolean isPriority() { return priority; }
 
     @Override
     public String serializeForPrompt() {
@@ -96,5 +102,9 @@ public class FurnitureProduct implements BaseProduct {
             style != null ? style : ""
         );
     }
+    
+    // Métodos de conveniência para compatibilidade
+    public boolean getAvailable() { return available; }
+    public boolean getPriority() { return priority; }
 
 }

@@ -1,27 +1,31 @@
 package com.danrley.product_management.domain.furniture.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
 import com.danrley.product_management.domain.furniture.repository.FurnitureProductRepository;
 import com.danrley.product_management.dto.product.ProductRequestDTO;
 import com.danrley.product_management.dto.product.ProductResponseDTO;
+import com.danrley.product_management.exception.custom.CategoryNotFoundException;
 import com.danrley.product_management.exception.custom.ProductNotFoundException;
 import com.danrley.product_management.exception.custom.ProductServiceException;
 import com.danrley.product_management.exception.custom.ProductValidationException;
+import com.danrley.product_management.framework.service.BaseProductService;
 import com.danrley.product_management.model.category.Category;
 import com.danrley.product_management.repository.CategoryRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Serviço específico para produtos do domínio furniture.
- * Contém lógicas de negócio específicas para móveis.
+ * Implementa BaseProductService para reaproveitamento de código do framework.
  */
 @Service
-public class FurnitureProductService {
+public class FurnitureProductService implements BaseProductService<FurnitureProduct> {
 
     @Autowired
     private FurnitureProductRepository furnitureProductRepository;
@@ -29,6 +33,9 @@ public class FurnitureProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    // ========== IMPLEMENTAÇÃO DOS MÉTODOS BASE ==========
+
+    @Override
     public List<FurnitureProduct> getAll() {
         try {
             return furnitureProductRepository.findAll();
@@ -37,168 +44,222 @@ public class FurnitureProductService {
         }
     }
 
-    public List<ProductResponseDTO> getAllAsDTO() {
+    @Override
+    public Optional<FurnitureProduct> getById(Long id) {
+        if (id == null) {
+            throw new ProductValidationException("ID do produto não pode ser nulo");
+        }
+
         try {
-            return furnitureProductRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+            return furnitureProductRepository.findById(id);
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos de móveis: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao buscar produto com ID " + id + ": " + e.getMessage(), e);
         }
     }
 
-    public ProductResponseDTO getById(Long id) {
-        FurnitureProduct product = furnitureProductRepository.findById(id)
-            .orElseThrow(() -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + id));
-        return toResponse(product);
-    }
-
-    public List<ProductResponseDTO> getByIds(List<Long> ids) {
+    @Override
+    @Transactional
+    public FurnitureProduct create(ProductRequestDTO dto) {
         try {
-            return furnitureProductRepository.findAllById(ids)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+            validateProductRequest(dto, true);
+
+            FurnitureProduct product = new FurnitureProduct();
+            mapRequestToProduct(dto, product);
+
+            return furnitureProductRepository.save(product);
+        } catch (DataIntegrityViolationException e) {
+            throw new ProductValidationException(
+                    "Produto com dados duplicados. Verifique se já existe um produto com mesmo nome.", e);
+        } catch (ProductValidationException | CategoryNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos de móveis por IDs: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao criar produto: " + e.getMessage(), e);
         }
     }
 
-    public ProductResponseDTO create(ProductRequestDTO request) {
+    @Override
+    @Transactional
+    public FurnitureProduct update(Long id, ProductRequestDTO dto) {
+        if (id == null) {
+            throw new ProductValidationException("ID do produto não pode ser nulo");
+        }
+
         try {
-            validateRequest(request);
-            
-            Category category = null;
-            if (request.categoryId != null) {
-                category = categoryRepository.findById(request.categoryId)
-                    .orElseThrow(() -> new ProductNotFoundException("Categoria não encontrada com ID: " + request.categoryId));
-            }
+            validateProductRequest(dto, false);
 
-            FurnitureProduct product = new FurnitureProduct(
-                request.name,
-                request.brand,
-                request.unitWeight,
-                request.unitType,
-                request.stockQuantity,
-                request.unitPrice,
-                category,
-                request.available != null ? request.available : true,
-                request.priority != null ? request.priority : false,
-                request.dimensions,
-                request.material,
-                request.color,
-                request.style
-            );
+            FurnitureProduct product = furnitureProductRepository.findById(id)
+                    .orElseThrow(() -> new ProductNotFoundException(id));
 
-            FurnitureProduct savedProduct = furnitureProductRepository.save(product);
-            return toResponse(savedProduct);
+            mapRequestToProduct(dto, product);
+            return furnitureProductRepository.save(product);
+        } catch (ProductNotFoundException | ProductValidationException | CategoryNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao criar produto de móveis: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao atualizar produto: " + e.getMessage(), e);
         }
     }
 
-    public ProductResponseDTO update(Long id, ProductRequestDTO request) {
-        try {
-            FurnitureProduct existingProduct = furnitureProductRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + id));
-
-            validateRequest(request);
-
-            Category category = null;
-            if (request.categoryId != null) {
-                category = categoryRepository.findById(request.categoryId)
-                    .orElseThrow(() -> new ProductNotFoundException("Categoria não encontrada com ID: " + request.categoryId));
-            }
-
-            // Atualizar campos
-            existingProduct.setName(request.name);
-            existingProduct.setBrand(request.brand);
-            existingProduct.setUnitWeight(request.unitWeight);
-            existingProduct.setUnitType(request.unitType);
-            existingProduct.setStockQuantity(request.stockQuantity);
-            existingProduct.setUnitPrice(request.unitPrice);
-            existingProduct.setCategory(category);
-            existingProduct.setAvailable(request.available != null ? request.available : true);
-            existingProduct.setPriority(request.priority != null ? request.priority : false);
-            existingProduct.setDimensions(request.dimensions);
-            existingProduct.setMaterial(request.material);
-            existingProduct.setColor(request.color);
-            existingProduct.setStyle(request.style);
-
-            FurnitureProduct updatedProduct = furnitureProductRepository.save(existingProduct);
-            return toResponse(updatedProduct);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao atualizar produto de móveis: " + e.getMessage(), e);
-        }
-    }
-
+    @Override
+    @Transactional
     public void delete(Long id) {
+        if (id == null) {
+            throw new ProductValidationException("ID do produto não pode ser nulo");
+        }
+
         try {
-            if (!furnitureProductRepository.existsById(id)) {
-                throw new ProductNotFoundException("Produto de móveis não encontrado com ID: " + id);
-            }
-            furnitureProductRepository.deleteById(id);
+            FurnitureProduct product = furnitureProductRepository.findById(id)
+                    .orElseThrow(() -> new ProductNotFoundException(id));
+
+            furnitureProductRepository.delete(product);
+        } catch (ProductNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao deletar produto de móveis: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao deletar produto: " + e.getMessage(), e);
         }
     }
 
-    // Métodos específicos do domínio furniture
-    public List<ProductResponseDTO> getByMaterial(String material) {
-        return furnitureProductRepository.findByMaterialContainingIgnoreCase(material)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+    @Override
+    public ProductResponseDTO toResponseDTO(FurnitureProduct entity) {
+        return ProductResponseDTO.fromFurnitureProduct(entity);
     }
 
-    public List<ProductResponseDTO> getByColor(String color) {
-        return furnitureProductRepository.findByColorContainingIgnoreCase(color)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+    @Override
+    public List<FurnitureProduct> getByCategory(String category) {
+        try {
+            // Buscar categoria pelo nome
+            Category categoryEntity = categoryRepository.findByName(category)
+                    .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada: " + category));
+            return furnitureProductRepository.findByCategory(categoryEntity);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
+        }
     }
 
-    public List<ProductResponseDTO> getByStyle(String style) {
-        return furnitureProductRepository.findByStyleContainingIgnoreCase(style)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+    @Override
+    public List<FurnitureProduct> getByBrand(String brand) {
+        try {
+            // Assumindo que existe este método no repository ou implementar uma busca alternativa
+            return furnitureProductRepository.findAll().stream()
+                    .filter(p -> p.getBrand() != null && p.getBrand().toLowerCase().contains(brand.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por marca: " + e.getMessage(), e);
+        }
     }
 
-    private void validateRequest(ProductRequestDTO request) {
-        if (request.name == null || request.name.trim().isEmpty()) {
+    @Override
+    public List<FurnitureProduct> getAvailable() {
+        try {
+            return furnitureProductRepository.findByAvailableTrue();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos disponíveis: " + e.getMessage(), e);
+        }
+    }
+
+    // ========== MÉTODOS ESPECÍFICOS DO DOMÍNIO ==========
+    
+    /**
+     * Busca produtos por material (específico do domínio furniture).
+     */
+    public List<FurnitureProduct> getByMaterial(String material) {
+        try {
+            // Implementar filtro customizado
+            return furnitureProductRepository.findAll().stream()
+                    .filter(p -> p.getMaterial() != null && p.getMaterial().toLowerCase().contains(material.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por material: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca produtos por cor (específico do domínio furniture).
+     */
+    public List<FurnitureProduct> getByColor(String color) {
+        try {
+            return furnitureProductRepository.findAll().stream()
+                    .filter(p -> p.getColor() != null && p.getColor().toLowerCase().contains(color.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por cor: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca produtos por estilo (específico do domínio furniture).
+     */
+    public List<FurnitureProduct> getByStyle(String style) {
+        try {
+            return furnitureProductRepository.findAll().stream()
+                    .filter(p -> p.getStyle() != null && p.getStyle().toLowerCase().contains(style.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por estilo: " + e.getMessage(), e);
+        }
+    }
+
+    // ========== MÉTODOS AUXILIARES ==========
+
+    private void validateProductRequest(ProductRequestDTO dto, boolean isCreate) {
+        if (dto == null) {
+            throw new ProductValidationException("Dados do produto não podem ser nulos");
+        }
+
+        if (dto.name == null || dto.name.trim().isEmpty()) {
             throw new ProductValidationException("Nome do produto é obrigatório");
         }
-        if (request.unitPrice == null || request.unitPrice < 0) {
-            throw new ProductValidationException("Preço unitário deve ser maior ou igual a zero");
+
+        if (dto.unitPrice == null || dto.unitPrice <= 0) {
+            throw new ProductValidationException("Preço unitário deve ser maior que zero");
         }
-        if (request.stockQuantity == null || request.stockQuantity < 0) {
-            throw new ProductValidationException("Quantidade em estoque deve ser maior ou igual a zero");
+
+        if (dto.stockQuantity == null || dto.stockQuantity < 0) {
+            throw new ProductValidationException("Quantidade em estoque não pode ser negativa");
         }
+
+        if (dto.categoryId == null) {
+            throw new ProductValidationException("Categoria é obrigatória");
+        }
+
+        // Verificar se categoria existe
+        categoryRepository.findById(dto.categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
     }
 
-    private ProductResponseDTO toResponse(FurnitureProduct product) {
-        ProductResponseDTO response = new ProductResponseDTO();
-        response.id = product.getId();
-        response.name = product.getName();
-        response.brand = product.getBrand();
-        response.unitWeight = product.getUnitWeight();
-        response.unitType = product.getUnitType();
-        response.stockQuantity = product.getStockQuantity();
-        response.unitPrice = product.getUnitPrice();
-        response.available = product.isAvailable();
-        response.priority = product.isPriority();
-        response.dimensions = product.getDimensions();
-        response.material = product.getMaterial();
-        response.color = product.getColor();
-        response.style = product.getStyle();
+    private void mapRequestToProduct(ProductRequestDTO dto, FurnitureProduct product) {
+        product.setName(dto.name);
+        product.setBrand(dto.brand);
+        product.setUnitWeight(dto.unitWeight);
         
-        if (product.getCategory() != null) {
-            response.categoryId = product.getCategory().getId();
-            response.categoryName = product.getCategory().getName();
+        if (dto.unitType != null) {
+            product.setUnitType(dto.unitType);
         }
         
-        return response;
+        product.setStockQuantity(dto.stockQuantity);
+        product.setUnitPrice(dto.unitPrice);
+        product.setAvailable(true); // Sempre disponível por padrão
+        product.setPriority(dto.priority != null ? dto.priority : false);
+
+        // Buscar e definir categoria
+        Category category = categoryRepository.findById(dto.categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
+        product.setCategory(category);
+
+        // Campos específicos do furniture
+        if (dto.dimensions != null) {
+            product.setDimensions(dto.dimensions);
+        }
+        
+        if (dto.material != null) {
+            product.setMaterial(dto.material);
+        }
+        
+        if (dto.color != null) {
+            product.setColor(dto.color);
+        }
+        
+        if (dto.style != null) {
+            product.setStyle(dto.style);
+        }
     }
 }

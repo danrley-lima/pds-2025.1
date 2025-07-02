@@ -2,6 +2,7 @@ package com.danrley.product_management.domain.grocery.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,18 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 import com.danrley.product_management.dto.product.ProductRequestDTO;
+import com.danrley.product_management.dto.product.ProductResponseDTO;
 import com.danrley.product_management.exception.custom.CategoryNotFoundException;
 import com.danrley.product_management.exception.custom.ProductNotFoundException;
 import com.danrley.product_management.exception.custom.ProductServiceException;
 import com.danrley.product_management.exception.custom.ProductValidationException;
+import com.danrley.product_management.framework.service.BaseProductService;
 import com.danrley.product_management.model.category.Category;
 import com.danrley.product_management.repository.CategoryRepository;
 
 /**
  * Serviço específico para produtos do domínio grocery.
+ * Implementa BaseProductService para reaproveitamento de código do framework.
  */
 @Service
-public class GroceryProductService {
+public class GroceryProductService implements BaseProductService<GroceryProduct> {
 
     @Autowired
     private GroceryProductRepository groceryProductRepository;
@@ -30,6 +34,9 @@ public class GroceryProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    // ========== IMPLEMENTAÇÃO DOS MÉTODOS BASE ==========
+
+    @Override
     public List<GroceryProduct> getAll() {
         try {
             return groceryProductRepository.findAll();
@@ -38,62 +45,20 @@ public class GroceryProductService {
         }
     }
 
-    public List<GroceryProduct> getAvailableProducts() {
-        try {
-            return groceryProductRepository.findAvailableProducts();
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos disponíveis: " + e.getMessage(), e);
-        }
-    }
-
-    public List<GroceryProduct> getPriorityProducts() {
-        try {
-            return groceryProductRepository.findPriorityProducts();
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos prioritários: " + e.getMessage(), e);
-        }
-    }
-
-    public List<GroceryProduct> getProductsWithActivePromotions() {
-        try {
-            LocalDate today = LocalDate.now();
-            return groceryProductRepository.findProductsWithActivePromotions(today);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
-        }
-    }
-
-    public List<GroceryProduct> getByCategory(Category category) {
-        try {
-            return groceryProductRepository.findByCategory(category);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
-        }
-    }
-
-    public List<GroceryProduct> getByBrand(String brand) {
-        try {
-            return groceryProductRepository.findByBrand(brand);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos por marca: " + e.getMessage(), e);
-        }
-    }
-
-    public GroceryProduct getById(Long id) {
+    @Override
+    public Optional<GroceryProduct> getById(Long id) {
         if (id == null) {
             throw new ProductValidationException("ID do produto não pode ser nulo");
         }
 
         try {
-            return groceryProductRepository.findById(id)
-                    .orElseThrow(() -> new ProductNotFoundException(id));
-        } catch (ProductNotFoundException e) {
-            throw e;
+            return groceryProductRepository.findById(id);
         } catch (Exception e) {
             throw new ProductServiceException("Erro ao buscar produto com ID " + id + ": " + e.getMessage(), e);
         }
     }
 
+    @Override
     @Transactional
     public GroceryProduct create(ProductRequestDTO dto) {
         try {
@@ -113,6 +78,7 @@ public class GroceryProductService {
         }
     }
 
+    @Override
     @Transactional
     public GroceryProduct update(Long id, ProductRequestDTO dto) {
         if (id == null) {
@@ -134,6 +100,7 @@ public class GroceryProductService {
         }
     }
 
+    @Override
     @Transactional
     public void delete(Long id) {
         if (id == null) {
@@ -152,7 +119,78 @@ public class GroceryProductService {
         }
     }
 
-    // Métodos auxiliares
+    @Override
+    public ProductResponseDTO toResponseDTO(GroceryProduct entity) {
+        return ProductResponseDTO.fromGroceryProduct(entity);
+    }
+
+    @Override
+    public List<GroceryProduct> getByCategory(String category) {
+        try {
+            // Buscar categoria pelo nome
+            Category categoryEntity = categoryRepository.findByName(category)
+                    .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada: " + category));
+            return groceryProductRepository.findByCategory(categoryEntity);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<GroceryProduct> getByBrand(String brand) {
+        try {
+            return groceryProductRepository.findByBrand(brand);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por marca: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<GroceryProduct> getAvailable() {
+        try {
+            return groceryProductRepository.findAvailableProducts();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos disponíveis: " + e.getMessage(), e);
+        }
+    }
+
+    // ========== MÉTODOS ESPECÍFICOS DO DOMÍNIO ==========
+    
+    /**
+     * Busca produtos prioritários (específico do domínio grocery).
+     */
+    public List<GroceryProduct> getPriorityProducts() {
+        try {
+            return groceryProductRepository.findPriorityProducts();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos prioritários: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca produtos com promoções ativas (específico do domínio grocery).
+     */
+    public List<GroceryProduct> getProductsWithActivePromotions() {
+        try {
+            LocalDate today = LocalDate.now();
+            return groceryProductRepository.findProductsWithActivePromotions(today);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca produtos por categoria usando entidade Category (específico do domínio).
+     */
+    public List<GroceryProduct> getByCategory(Category category) {
+        try {
+            return groceryProductRepository.findByCategory(category);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
+        }
+    }
+
+    // ========== MÉTODOS AUXILIARES ==========
 
     private void validateProductRequest(ProductRequestDTO dto, boolean isCreate) {
         if (dto == null) {
@@ -198,5 +236,18 @@ public class GroceryProductService {
         Category category = categoryRepository.findById(dto.categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
         product.setCategory(category);
+
+        // Campos específicos do grocery
+        if (dto.expirationDate != null) {
+            product.setExpirationDate(dto.expirationDate);
+        }
+        
+        if (dto.nutritionalInfo != null) {
+            product.setNutritionalInfo(dto.nutritionalInfo);
+        }
+        
+        if (dto.organic != null) {
+            product.setOrganic(dto.organic);
+        }
     }
 }

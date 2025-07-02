@@ -1,5 +1,7 @@
 package com.danrley.product_management.dto.product;
 
+import java.time.LocalDate;
+
 import com.danrley.product_management.model.product.UnitType;
 
 public class ProductRequestDTO {
@@ -12,6 +14,11 @@ public class ProductRequestDTO {
   public Long categoryId;
   public Boolean priority; // Alterado de boolean para Boolean para permitir null
   public Boolean available; // Para controlar disponibilidade
+  
+  // Campos específicos do domínio grocery
+  public LocalDate expirationDate;
+  public String nutritionalInfo;
+  public Boolean organic;
   
   // Campos específicos do domínio furniture
   public String dimensions;

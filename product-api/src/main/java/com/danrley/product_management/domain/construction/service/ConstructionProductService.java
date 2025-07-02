@@ -1,27 +1,31 @@
 package com.danrley.product_management.domain.construction.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
 import com.danrley.product_management.domain.construction.repository.ConstructionProductRepository;
 import com.danrley.product_management.dto.product.ProductRequestDTO;
 import com.danrley.product_management.dto.product.ProductResponseDTO;
+import com.danrley.product_management.exception.custom.CategoryNotFoundException;
 import com.danrley.product_management.exception.custom.ProductNotFoundException;
 import com.danrley.product_management.exception.custom.ProductServiceException;
 import com.danrley.product_management.exception.custom.ProductValidationException;
+import com.danrley.product_management.framework.service.BaseProductService;
 import com.danrley.product_management.model.category.Category;
 import com.danrley.product_management.repository.CategoryRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Serviço específico para produtos do domínio construction.
- * Contém lógicas de negócio específicas para materiais de construção.
+ * Implementa BaseProductService para reaproveitamento de código do framework.
  */
 @Service
-public class ConstructionProductService {
+public class ConstructionProductService implements BaseProductService<ConstructionProduct> {
 
     @Autowired
     private ConstructionProductRepository constructionProductRepository;
@@ -29,6 +33,9 @@ public class ConstructionProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    // ========== IMPLEMENTAÇÃO DOS MÉTODOS BASE ==========
+
+    @Override
     public List<ConstructionProduct> getAll() {
         try {
             return constructionProductRepository.findAll();
@@ -37,168 +44,224 @@ public class ConstructionProductService {
         }
     }
 
-    public List<ProductResponseDTO> getAllAsDTO() {
+    @Override
+    public Optional<ConstructionProduct> getById(Long id) {
+        if (id == null) {
+            throw new ProductValidationException("ID do produto não pode ser nulo");
+        }
+
         try {
-            return constructionProductRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+            return constructionProductRepository.findById(id);
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos de construção: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao buscar produto com ID " + id + ": " + e.getMessage(), e);
         }
     }
 
-    public ProductResponseDTO getById(Long id) {
-        ConstructionProduct product = constructionProductRepository.findById(id)
-            .orElseThrow(() -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + id));
-        return toResponse(product);
-    }
-
-    public List<ProductResponseDTO> getByIds(List<Long> ids) {
+    @Override
+    @Transactional
+    public ConstructionProduct create(ProductRequestDTO dto) {
         try {
-            return constructionProductRepository.findAllById(ids)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+            validateProductRequest(dto, true);
+
+            ConstructionProduct product = new ConstructionProduct();
+            mapRequestToProduct(dto, product);
+
+            return constructionProductRepository.save(product);
+        } catch (DataIntegrityViolationException e) {
+            throw new ProductValidationException(
+                    "Produto com dados duplicados. Verifique se já existe um produto com mesmo nome.", e);
+        } catch (ProductValidationException | CategoryNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos de construção por IDs: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao criar produto: " + e.getMessage(), e);
         }
     }
 
-    public ProductResponseDTO create(ProductRequestDTO request) {
+    @Override
+    @Transactional
+    public ConstructionProduct update(Long id, ProductRequestDTO dto) {
+        if (id == null) {
+            throw new ProductValidationException("ID do produto não pode ser nulo");
+        }
+
         try {
-            validateRequest(request);
-            
-            Category category = null;
-            if (request.categoryId != null) {
-                category = categoryRepository.findById(request.categoryId)
-                    .orElseThrow(() -> new ProductNotFoundException("Categoria não encontrada com ID: " + request.categoryId));
-            }
+            validateProductRequest(dto, false);
 
-            ConstructionProduct product = new ConstructionProduct(
-                request.name,
-                request.brand,
-                request.unitWeight,
-                request.unitType,
-                request.stockQuantity,
-                request.unitPrice,
-                category,
-                request.available != null ? request.available : true,
-                request.priority != null ? request.priority : false,
-                request.specifications,
-                request.constructionCategory,
-                request.application,
-                request.grade
-            );
+            ConstructionProduct product = constructionProductRepository.findById(id)
+                    .orElseThrow(() -> new ProductNotFoundException(id));
 
-            ConstructionProduct savedProduct = constructionProductRepository.save(product);
-            return toResponse(savedProduct);
+            mapRequestToProduct(dto, product);
+            return constructionProductRepository.save(product);
+        } catch (ProductNotFoundException | ProductValidationException | CategoryNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao criar produto de construção: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao atualizar produto: " + e.getMessage(), e);
         }
     }
 
-    public ProductResponseDTO update(Long id, ProductRequestDTO request) {
-        try {
-            ConstructionProduct existingProduct = constructionProductRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + id));
-
-            validateRequest(request);
-
-            Category category = null;
-            if (request.categoryId != null) {
-                category = categoryRepository.findById(request.categoryId)
-                    .orElseThrow(() -> new ProductNotFoundException("Categoria não encontrada com ID: " + request.categoryId));
-            }
-
-            // Atualizar campos
-            existingProduct.setName(request.name);
-            existingProduct.setBrand(request.brand);
-            existingProduct.setUnitWeight(request.unitWeight);
-            existingProduct.setUnitType(request.unitType);
-            existingProduct.setStockQuantity(request.stockQuantity);
-            existingProduct.setUnitPrice(request.unitPrice);
-            existingProduct.setCategory(category);
-            existingProduct.setAvailable(request.available != null ? request.available : true);
-            existingProduct.setPriority(request.priority != null ? request.priority : false);
-            existingProduct.setSpecifications(request.specifications);
-            existingProduct.setConstructionCategory(request.constructionCategory);
-            existingProduct.setApplication(request.application);
-            existingProduct.setGrade(request.grade);
-
-            ConstructionProduct updatedProduct = constructionProductRepository.save(existingProduct);
-            return toResponse(updatedProduct);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao atualizar produto de construção: " + e.getMessage(), e);
-        }
-    }
-
+    @Override
+    @Transactional
     public void delete(Long id) {
+        if (id == null) {
+            throw new ProductValidationException("ID do produto não pode ser nulo");
+        }
+
         try {
-            if (!constructionProductRepository.existsById(id)) {
-                throw new ProductNotFoundException("Produto de construção não encontrado com ID: " + id);
-            }
-            constructionProductRepository.deleteById(id);
+            ConstructionProduct product = constructionProductRepository.findById(id)
+                    .orElseThrow(() -> new ProductNotFoundException(id));
+
+            constructionProductRepository.delete(product);
+        } catch (ProductNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ProductServiceException("Erro ao deletar produto de construção: " + e.getMessage(), e);
+            throw new ProductServiceException("Erro ao deletar produto: " + e.getMessage(), e);
         }
     }
 
-    // Métodos específicos do domínio construction
-    public List<ProductResponseDTO> getByApplication(String application) {
-        return constructionProductRepository.findByApplicationContainingIgnoreCase(application)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+    @Override
+    public ProductResponseDTO toResponseDTO(ConstructionProduct entity) {
+        return ProductResponseDTO.fromConstructionProduct(entity);
     }
 
-    public List<ProductResponseDTO> getByGrade(String grade) {
-        return constructionProductRepository.findByGradeContainingIgnoreCase(grade)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+    @Override
+    public List<ConstructionProduct> getByCategory(String category) {
+        try {
+            // Buscar categoria pelo nome
+            Category categoryEntity = categoryRepository.findByName(category)
+                    .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada: " + category));
+            return constructionProductRepository.findByCategory(categoryEntity);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
+        }
     }
 
-    public List<ProductResponseDTO> getBySpecifications(String specifications) {
-        return constructionProductRepository.findBySpecificationsContainingIgnoreCase(specifications)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+    @Override
+    public List<ConstructionProduct> getByBrand(String brand) {
+        try {
+            // Implementar filtro customizado
+            return constructionProductRepository.findAll().stream()
+                    .filter(p -> p.getBrand() != null && p.getBrand().toLowerCase().contains(brand.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por marca: " + e.getMessage(), e);
+        }
     }
 
-    private void validateRequest(ProductRequestDTO request) {
-        if (request.name == null || request.name.trim().isEmpty()) {
+    @Override
+    public List<ConstructionProduct> getAvailable() {
+        try {
+            return constructionProductRepository.findByAvailableTrue();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos disponíveis: " + e.getMessage(), e);
+        }
+    }
+
+    // ========== MÉTODOS ESPECÍFICOS DO DOMÍNIO ==========
+    
+    /**
+     * Busca produtos por especificações (específico do domínio construction).
+     */
+    public List<ConstructionProduct> getBySpecifications(String specifications) {
+        try {
+            return constructionProductRepository.findAll().stream()
+                    .filter(p -> p.getSpecifications() != null && 
+                            p.getSpecifications().toLowerCase().contains(specifications.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por especificações: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca produtos por aplicação (específico do domínio construction).
+     */
+    public List<ConstructionProduct> getByApplication(String application) {
+        try {
+            return constructionProductRepository.findAll().stream()
+                    .filter(p -> p.getApplication() != null && 
+                            p.getApplication().toLowerCase().contains(application.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por aplicação: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca produtos por grau (específico do domínio construction).
+     */
+    public List<ConstructionProduct> getByGrade(String grade) {
+        try {
+            return constructionProductRepository.findAll().stream()
+                    .filter(p -> p.getGrade() != null && 
+                            p.getGrade().toLowerCase().contains(grade.toLowerCase()))
+                    .toList();
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao buscar produtos por grau: " + e.getMessage(), e);
+        }
+    }
+
+    // ========== MÉTODOS AUXILIARES ==========
+
+    private void validateProductRequest(ProductRequestDTO dto, boolean isCreate) {
+        if (dto == null) {
+            throw new ProductValidationException("Dados do produto não podem ser nulos");
+        }
+
+        if (dto.name == null || dto.name.trim().isEmpty()) {
             throw new ProductValidationException("Nome do produto é obrigatório");
         }
-        if (request.unitPrice == null || request.unitPrice < 0) {
-            throw new ProductValidationException("Preço unitário deve ser maior ou igual a zero");
+
+        if (dto.unitPrice == null || dto.unitPrice <= 0) {
+            throw new ProductValidationException("Preço unitário deve ser maior que zero");
         }
-        if (request.stockQuantity == null || request.stockQuantity < 0) {
-            throw new ProductValidationException("Quantidade em estoque deve ser maior ou igual a zero");
+
+        if (dto.stockQuantity == null || dto.stockQuantity < 0) {
+            throw new ProductValidationException("Quantidade em estoque não pode ser negativa");
         }
+
+        if (dto.categoryId == null) {
+            throw new ProductValidationException("Categoria é obrigatória");
+        }
+
+        // Verificar se categoria existe
+        categoryRepository.findById(dto.categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
     }
 
-    private ProductResponseDTO toResponse(ConstructionProduct product) {
-        ProductResponseDTO response = new ProductResponseDTO();
-        response.id = product.getId();
-        response.name = product.getName();
-        response.brand = product.getBrand();
-        response.unitWeight = product.getUnitWeight();
-        response.unitType = product.getUnitType();
-        response.stockQuantity = product.getStockQuantity();
-        response.unitPrice = product.getUnitPrice();
-        response.available = product.isAvailable();
-        response.priority = product.isPriority();
-        response.specifications = product.getSpecifications();
-        response.constructionCategory = product.getConstructionCategory();
-        response.application = product.getApplication();
-        response.grade = product.getGrade();
+    private void mapRequestToProduct(ProductRequestDTO dto, ConstructionProduct product) {
+        product.setName(dto.name);
+        product.setBrand(dto.brand);
+        product.setUnitWeight(dto.unitWeight);
         
-        if (product.getCategory() != null) {
-            response.categoryId = product.getCategory().getId();
-            response.categoryName = product.getCategory().getName();
+        if (dto.unitType != null) {
+            product.setUnitType(dto.unitType);
         }
         
-        return response;
+        product.setStockQuantity(dto.stockQuantity);
+        product.setUnitPrice(dto.unitPrice);
+        product.setAvailable(true); // Sempre disponível por padrão
+        product.setPriority(dto.priority != null ? dto.priority : false);
+
+        // Buscar e definir categoria
+        Category category = categoryRepository.findById(dto.categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
+        product.setCategory(category);
+
+        // Campos específicos do construction
+        if (dto.specifications != null) {
+            product.setSpecifications(dto.specifications);
+        }
+        
+        if (dto.constructionCategory != null) {
+            product.setConstructionCategory(dto.constructionCategory);
+        }
+        
+        if (dto.application != null) {
+            product.setApplication(dto.application);
+        }
+        
+        if (dto.grade != null) {
+            product.setGrade(dto.grade);
+        }
     }
 }

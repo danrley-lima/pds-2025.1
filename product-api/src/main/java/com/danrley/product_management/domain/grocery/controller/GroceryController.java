@@ -2,6 +2,7 @@ package com.danrley.product_management.domain.grocery.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,37 +10,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
+import com.danrley.product_management.domain.grocery.service.GroceryProductService;
+import com.danrley.product_management.domain.grocery.service.GroceryRecommendationService;
+import com.danrley.product_management.dto.product.ProductResponseDTO;
 import com.danrley.product_management.dto.recommendation.RecommendationRequestDTO;
 import com.danrley.product_management.dto.recommendation.RecommendationResponseDTO;
+import com.danrley.product_management.framework.controller.BaseProductController;
 import com.danrley.product_management.model.category.Category;
-import com.danrley.product_management.domain.grocery.model.GroceryProduct;
-import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 import com.danrley.product_management.repository.CategoryRepository;
-import com.danrley.product_management.domain.grocery.service.GroceryRecommendationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controller específico para o domínio de supermercado.
- * Independente dos outros domínios.
+ * Estende BaseProductController para herdar operações CRUD comuns 
+ * e adiciona endpoints específicos do domínio grocery.
  */
 @RestController
 @RequestMapping("/api/grocery")
-@Tag(name = "Grocery Domain", description = "API específica para supermercado")
-public class GroceryController {
+@Tag(name = "Grocery Domain", description = "API para produtos e funcionalidades do supermercado")
+public class GroceryController extends BaseProductController<GroceryProduct, GroceryProductService> {
 
-    private final GroceryRecommendationService recommendationService;
-    private final GroceryProductRepository groceryProductRepository;
-    private final CategoryRepository categoryRepository;
+    @Autowired
+    private GroceryRecommendationService recommendationService;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    public GroceryController(GroceryRecommendationService recommendationService,
-                           GroceryProductRepository groceryProductRepository,
-                           CategoryRepository categoryRepository) {
-        this.recommendationService = recommendationService;
-        this.groceryProductRepository = groceryProductRepository;
-        this.categoryRepository = categoryRepository;
+    public GroceryController(GroceryProductService productService) {
+        super(productService);
     }
+    
+    @Override
+    protected String getDomainName() {
+        return "grocery";
+    }
+
+    // ========== ENDPOINTS ESPECÍFICOS DO DOMÍNIO ==========
 
     @PostMapping("/recommendations")
     @Operation(summary = "Recomendações de produtos do supermercado", 
@@ -71,12 +80,26 @@ public class GroceryController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/products")
-    @Operation(summary = "Lista produtos do supermercado", 
-               description = "Retorna todos os produtos disponíveis no supermercado")
-    public ResponseEntity<List<GroceryProduct>> getProducts() {
-        List<GroceryProduct> products = groceryProductRepository.findAll();
-        return ResponseEntity.ok(products);
+    @GetMapping("/priority")
+    @Operation(summary = "Produtos prioritários", 
+               description = "Retorna produtos marcados como prioritários no supermercado")
+    public ResponseEntity<List<ProductResponseDTO>> getPriorityProducts() {
+        List<GroceryProduct> products = productService.getPriorityProducts();
+        List<ProductResponseDTO> responseProducts = products.stream()
+                .map(productService::toResponseDTO)
+                .toList();
+        return ResponseEntity.ok(responseProducts);
+    }
+
+    @GetMapping("/with-promotions")
+    @Operation(summary = "Produtos em promoção", 
+               description = "Retorna produtos com promoções ativas")
+    public ResponseEntity<List<ProductResponseDTO>> getProductsWithPromotions() {
+        List<GroceryProduct> products = productService.getProductsWithActivePromotions();
+        List<ProductResponseDTO> responseProducts = products.stream()
+                .map(productService::toResponseDTO)
+                .toList();
+        return ResponseEntity.ok(responseProducts);
     }
 
     @GetMapping("/categories")

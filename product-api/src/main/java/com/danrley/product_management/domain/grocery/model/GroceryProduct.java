@@ -1,5 +1,7 @@
 package com.danrley.product_management.domain.grocery.model;
 
+import java.time.LocalDate;
+
 import com.danrley.product_management.framework.domain.Domain;
 import com.danrley.product_management.framework.model.BaseCategory;
 import com.danrley.product_management.framework.model.BaseProduct;
@@ -54,6 +56,11 @@ public class GroceryProduct implements BaseProduct {
 
     private boolean available;
     private boolean priority;
+
+    // Campos específicos do domínio grocery
+    private LocalDate expirationDate;
+    private String nutritionalInfo;
+    private Boolean organic;
 
     @OneToOne(mappedBy = "groceryProduct", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -141,4 +148,18 @@ public class GroceryProduct implements BaseProduct {
     public void setAvailable(boolean available) { this.available = available; }
     public void setPriority(boolean priority) { this.priority = priority; }
     public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+    
+    // Getters e Setters específicos do grocery
+    public LocalDate getExpirationDate() { return expirationDate; }
+    public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }
+    
+    public String getNutritionalInfo() { return nutritionalInfo; }
+    public void setNutritionalInfo(String nutritionalInfo) { this.nutritionalInfo = nutritionalInfo; }
+    
+    public Boolean getOrganic() { return organic; }
+    public void setOrganic(Boolean organic) { this.organic = organic; }
+    
+    // Métodos de conveniência para compatibilidade
+    public boolean getAvailable() { return available; }
+    public boolean getPriority() { return priority; }
 }
