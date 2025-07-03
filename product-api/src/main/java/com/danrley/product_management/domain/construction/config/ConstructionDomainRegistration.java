@@ -4,8 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.danrley.product_management.core.domain.DomainRegistry;
 import com.danrley.product_management.domain.construction.ConstructionDomainConfiguration;
-import com.danrley.product_management.framework.domain.DomainRegistry;
 
 /**
  * Configuração que registra automaticamente o domínio de construção na inicialização.

@@ -6,18 +6,18 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.danrley.product_management.dto.recommendation.RecommendationRequestDTO;
-import com.danrley.product_management.dto.recommendation.RecommendationResponseDTO;
-import com.danrley.product_management.dto.recommendation.ProductOutDTO;
-import com.danrley.product_management.dto.recommendation.ProductNotFoundDTO;
-import com.danrley.product_management.enums.RequestCategory;
-import com.danrley.product_management.framework.domain.Domain;
-import com.danrley.product_management.framework.llm.BaseLLMHandler;
-import com.danrley.product_management.framework.service.BaseRecommendationService;
-import com.danrley.product_management.framework.model.BaseProduct;
-import com.danrley.product_management.service.llm.LLMClassifierService;
+import com.danrley.product_management.common.dto.recommendation.RecommendationRequestDTO;
+import com.danrley.product_management.common.dto.recommendation.RecommendationResponseDTO;
+import com.danrley.product_management.common.dto.recommendation.ProductOutDTO;
+import com.danrley.product_management.common.dto.recommendation.ProductNotFoundDTO;
+import com.danrley.product_management.common.enums.RequestCategory;
+import com.danrley.product_management.common.service.llm.LLMClassifierService;
 import com.danrley.product_management.domain.furniture.service.FurnitureProductService;
 import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
+import com.danrley.product_management.core.domain.Domain;
+import com.danrley.product_management.core.llm.BaseLLMHandler;
+import com.danrley.product_management.core.model.BaseProduct;
+import com.danrley.product_management.core.service.BaseRecommendationService;
 import com.danrley.product_management.domain.furniture.llm.FurnitureProductLLMHandler;
 import com.danrley.product_management.domain.furniture.llm.FurnitureProjectLLMHandler;
 import com.danrley.product_management.domain.furniture.llm.FurniturePromotionLLMHandler;

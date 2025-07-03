@@ -1,9 +1,9 @@
 package com.danrley.product_management.domain.construction.model;
 
-import com.danrley.product_management.framework.domain.Domain;
-import com.danrley.product_management.framework.model.BaseProduct;
-import com.danrley.product_management.model.category.Category;
-import com.danrley.product_management.model.product.UnitType;
+import com.danrley.product_management.core.domain.Domain;
+import com.danrley.product_management.core.model.BaseProduct;
+import com.danrley.product_management.common.model.category.Category;
+import com.danrley.product_management.common.model.product.UnitType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;

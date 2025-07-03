@@ -2,11 +2,11 @@ package com.danrley.product_management.domain.furniture.llm;
 
 import org.springframework.stereotype.Service;
 
-import com.danrley.product_management.framework.domain.Domain;
-import com.danrley.product_management.framework.domain.DomainConfiguration;
-import com.danrley.product_management.framework.domain.DomainRegistry;
-import com.danrley.product_management.framework.llm.BaseLLMHandler;
-import com.danrley.product_management.service.llm.provider.AIProviderFactory;
+import com.danrley.product_management.core.domain.Domain;
+import com.danrley.product_management.core.domain.DomainConfiguration;
+import com.danrley.product_management.core.domain.DomainRegistry;
+import com.danrley.product_management.core.llm.BaseLLMHandler;
+import com.danrley.product_management.common.service.llm.provider.AIProviderFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**

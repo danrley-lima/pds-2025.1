@@ -17,7 +17,7 @@ ai:
     preferred: gemini
     gemini:
       api:
-        key: ${GEMINI_API_KEY:${google.gemini.api.key:}}
+        key: AIzaSyByavnpMs6eZt7wCYkGJyXt_v_0v4MclxY
 
 # Configuração do Framework Multi-Domínio
 framework:

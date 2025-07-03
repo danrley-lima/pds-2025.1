@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.danrley.product_management.core.controller.BaseProductController;
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
 import com.danrley.product_management.domain.construction.service.ConstructionProductService;
 import com.danrley.product_management.domain.construction.service.ConstructionRecommendationService;
-import com.danrley.product_management.dto.product.ProductResponseDTO;
-import com.danrley.product_management.dto.recommendation.RecommendationRequestDTO;
-import com.danrley.product_management.dto.recommendation.RecommendationResponseDTO;
-import com.danrley.product_management.framework.controller.BaseProductController;
-import com.danrley.product_management.model.category.Category;
-import com.danrley.product_management.repository.CategoryRepository;
+import com.danrley.product_management.common.dto.product.ProductResponseDTO;
+import com.danrley.product_management.common.dto.recommendation.RecommendationRequestDTO;
+import com.danrley.product_management.common.dto.recommendation.RecommendationResponseDTO;
+import com.danrley.product_management.common.model.category.Category;
+import com.danrley.product_management.common.repository.CategoryRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

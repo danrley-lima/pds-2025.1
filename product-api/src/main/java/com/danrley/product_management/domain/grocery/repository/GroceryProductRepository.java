@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.danrley.product_management.domain.grocery.model.GroceryProduct;
-import com.danrley.product_management.model.category.Category;
+import com.danrley.product_management.common.model.category.Category;
 
 /**
  * Repositório específico para produtos do domínio grocery.

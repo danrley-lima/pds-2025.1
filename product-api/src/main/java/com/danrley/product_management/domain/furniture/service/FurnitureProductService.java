@@ -8,17 +8,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.danrley.product_management.core.service.BaseProductService;
 import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
 import com.danrley.product_management.domain.furniture.repository.FurnitureProductRepository;
-import com.danrley.product_management.dto.product.ProductRequestDTO;
-import com.danrley.product_management.dto.product.ProductResponseDTO;
-import com.danrley.product_management.exception.custom.CategoryNotFoundException;
-import com.danrley.product_management.exception.custom.ProductNotFoundException;
-import com.danrley.product_management.exception.custom.ProductServiceException;
-import com.danrley.product_management.exception.custom.ProductValidationException;
-import com.danrley.product_management.framework.service.BaseProductService;
-import com.danrley.product_management.model.category.Category;
-import com.danrley.product_management.repository.CategoryRepository;
+import com.danrley.product_management.common.dto.product.ProductRequestDTO;
+import com.danrley.product_management.common.dto.product.ProductResponseDTO;
+import com.danrley.product_management.common.exception.custom.CategoryNotFoundException;
+import com.danrley.product_management.common.exception.custom.ProductNotFoundException;
+import com.danrley.product_management.common.exception.custom.ProductServiceException;
+import com.danrley.product_management.common.exception.custom.ProductValidationException;
+import com.danrley.product_management.common.model.category.Category;
+import com.danrley.product_management.common.repository.CategoryRepository;
 
 /**
  * Serviço específico para produtos do domínio furniture.

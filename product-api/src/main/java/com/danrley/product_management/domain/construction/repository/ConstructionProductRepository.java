@@ -1,7 +1,7 @@
 package com.danrley.product_management.domain.construction.repository;
 
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
-import com.danrley.product_management.model.category.Category;
+import com.danrley.product_management.common.model.category.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

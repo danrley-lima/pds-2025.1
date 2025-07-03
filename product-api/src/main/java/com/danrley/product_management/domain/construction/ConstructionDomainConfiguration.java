@@ -2,10 +2,10 @@ package com.danrley.product_management.domain.construction;
 
 import org.springframework.stereotype.Component;
 
-import com.danrley.product_management.framework.domain.Domain;
-import com.danrley.product_management.framework.domain.DomainConfiguration;
-import com.danrley.product_management.framework.model.BaseCategory;
-import com.danrley.product_management.framework.model.BaseProduct;
+import com.danrley.product_management.core.domain.Domain;
+import com.danrley.product_management.core.domain.DomainConfiguration;
+import com.danrley.product_management.core.model.BaseCategory;
+import com.danrley.product_management.core.model.BaseProduct;
 
 /**
  * Configuração específica para o domínio de material de construção.
