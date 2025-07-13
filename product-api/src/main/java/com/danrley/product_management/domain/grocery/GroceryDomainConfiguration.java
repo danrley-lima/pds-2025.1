@@ -55,14 +55,25 @@ public class GroceryDomainConfiguration implements DomainConfiguration {
 
     @Override
     public String getRecipePromptTemplate() {
-        return "Você é um chef especialista que vai sugerir receitas com base nos produtos solicitados pelo cliente.\n\n" +
+        return "Você é um chef especialista que vai sugerir uma receita com base nos produtos solicitados pelo cliente.\n\n" +
                "Produtos disponíveis:\n{products}\n\n" +
-               "Baseado na solicitação do cliente e nos produtos disponíveis, sugira receitas que utilizem esses ingredientes.\n\n" +
-               "IMPORTANTE: Retorne APENAS o nome da receita e a lista de ingredientes necessários. " +
-               "NÃO inclua instruções de preparo nem tempo de preparo.\n\n" +
-               "Para cada ingrediente, inclua a quantidade necessária entre parênteses quando relevante.\n" +
-               "Exemplo: [\"Carne Moída (500g)\", \"Tomate (2 unidades)\", \"Cebola (1 unidade)\"]\n\n" +
-               "Formato da resposta deve ser um JSON válido com as receitas sugeridas.\n\n" +
+               "Baseado na solicitação do cliente e nos produtos disponíveis, sugira receitas que utilizem os ingredientes da lista acima.\n\n" +
+               "REGRAS IMPORTANTES:\n" +
+               "- Retorne APENAS um JSON válido, sem explicações e sem markdown\n" +
+               "- Use APENAS os IDs dos produtos disponíveis (primeiro número de cada linha)\n" +
+               "- Faça substituições inteligentes e culinárias corretas\n" +
+               "- NÃO use ingredientes redundantes (ex: tomate fresco + extrato de tomate)\n" +
+               "- NÃO substitua tipos de massa incorretamente (ex: espaguete por lasanha)\n" +
+               "- Se um ingrediente essencial não puder ser substituído adequadamente, coloque em 'missing_ingredients'\n\n" +
+               "Substituições CORRETAS:\n" +
+               "- Manteiga → Óleo de soja\n" +
+               "- Açúcar refinado → Açúcar cristal\n" +
+               "- Molho de tomate → Extrato de tomate + temperos\n" +
+               "- Queijo parmesão → Queijo ralado\n\n" +
+               "Substituições INCORRETAS (NÃO FAZER):\n" +
+               "- Massa de lasanha → Macarrão espaguete\n" +
+               "- Fermento → Qualquer outro ingrediente\n" +
+               "- Tomate fresco + Extrato de tomate (escolha um)\n\n" +
                "{json_format}\n\n" +
                "Solicitação do cliente: {customer_message}";
     }
@@ -100,7 +111,16 @@ public class GroceryDomainConfiguration implements DomainConfiguration {
         return "Formato esperado:\n" +
                "{\n" +
                "  \"recipes\": [\n" +
-               "    {\"name\": \"string\", \"ingredients\": [\"string\"]}\n" +
+               "    {\n" +
+               "      \"name\": \"string\",\n" +
+               "      \"ingredients\": [\n" +
+               "        {\"product_id\": 123, \"quantity\": \"500g\"},\n" +
+               "        {\"product_id\": 456, \"quantity\": \"2 unidades\"}\n" +
+               "      ],\n" +
+               "      \"missing_ingredients\": [\n" +
+               "        {\"name\": \"Fermento em pó\", \"quantity\": \"1 colher de sopa\"}\n" +
+               "      ]\n" +
+               "    }\n" +
                "  ]\n" +
                "}";
     }

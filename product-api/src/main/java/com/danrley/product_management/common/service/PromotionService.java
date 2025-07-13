@@ -2,7 +2,6 @@ package com.danrley.product_management.common.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,33 +9,34 @@ import org.springframework.stereotype.Service;
 
 import com.danrley.product_management.common.dto.promotion.PromotionRequestDTO;
 import com.danrley.product_management.common.dto.promotion.PromotionResponseDTO;
-import com.danrley.product_management.common.exception.custom.PromotionNotFoundException;
 import com.danrley.product_management.common.exception.custom.ProductNotFoundException;
+import com.danrley.product_management.common.exception.custom.PromotionNotFoundException;
 import com.danrley.product_management.common.model.promotion.Promotion;
 import com.danrley.product_management.common.repository.PromotionRepository;
-import com.danrley.product_management.domain.grocery.model.GroceryProduct;
-import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
-import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
-import com.danrley.product_management.domain.furniture.repository.FurnitureProductRepository;
 import com.danrley.product_management.domain.construction.repository.ConstructionProductRepository;
+import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
+import com.danrley.product_management.domain.furniture.repository.FurnitureProductRepository;
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
+import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 
 /**
  * Serviço para gerenciamento de promoções.
- * Suporta criação, atualização e consulta de promoções para produtos de todos os domínios.
+ * Suporta criação, atualização e consulta de promoções para produtos de todos
+ * os domínios.
  */
 @Service
 public class PromotionService {
 
   @Autowired
   private PromotionRepository promotionRepository;
-  
+
   @Autowired
   private GroceryProductRepository groceryProductRepository;
-  
+
   @Autowired
   private FurnitureProductRepository furnitureProductRepository;
-  
+
   @Autowired
   private ConstructionProductRepository constructionProductRepository;
 
@@ -81,7 +81,8 @@ public class PromotionService {
     // Determinar qual produto está sendo promovido baseado no domínio
     if ("grocery".equalsIgnoreCase(dto.domain)) {
       GroceryProduct product = groceryProductRepository.findById(dto.productId)
-          .orElseThrow(() -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
+          .orElseThrow(
+              () -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
       promotion.setGroceryProduct(product);
       promotion.setFurnitureProduct(null);
       promotion.setConstructionProduct(null);
@@ -93,12 +94,14 @@ public class PromotionService {
       promotion.setConstructionProduct(null);
     } else if ("construction".equalsIgnoreCase(dto.domain)) {
       ConstructionProduct product = constructionProductRepository.findById(dto.productId)
-          .orElseThrow(() -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
+          .orElseThrow(
+              () -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
       promotion.setConstructionProduct(product);
       promotion.setGroceryProduct(null);
       promotion.setFurnitureProduct(null);
     } else {
-      throw new IllegalArgumentException("Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
+      throw new IllegalArgumentException(
+          "Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
     }
 
     Promotion savedPromotion = promotionRepository.save(promotion);
@@ -127,22 +130,26 @@ public class PromotionService {
       promotion.setGroceryProduct(null);
       promotion.setFurnitureProduct(null);
       promotion.setConstructionProduct(null);
-      
+
       // Definir novo produto baseado no domínio
       if ("grocery".equalsIgnoreCase(dto.domain)) {
         GroceryProduct product = groceryProductRepository.findById(dto.productId)
-            .orElseThrow(() -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
+            .orElseThrow(
+                () -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
         promotion.setGroceryProduct(product);
       } else if ("furniture".equalsIgnoreCase(dto.domain)) {
         FurnitureProduct product = furnitureProductRepository.findById(dto.productId)
-            .orElseThrow(() -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + dto.productId));
+            .orElseThrow(
+                () -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + dto.productId));
         promotion.setFurnitureProduct(product);
       } else if ("construction".equalsIgnoreCase(dto.domain)) {
         ConstructionProduct product = constructionProductRepository.findById(dto.productId)
-            .orElseThrow(() -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
+            .orElseThrow(
+                () -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
         promotion.setConstructionProduct(product);
       } else {
-        throw new IllegalArgumentException("Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
+        throw new IllegalArgumentException(
+            "Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
       }
     }
 
@@ -153,8 +160,8 @@ public class PromotionService {
   public List<PromotionResponseDTO> getActivePromotions() {
     LocalDate today = LocalDate.now();
     return promotionRepository.findAll().stream()
-        .filter(promotion -> promotion.getStartDate().isBefore(today.plusDays(1)) && 
-                           promotion.getEndDate().isAfter(today.minusDays(1)))
+        .filter(promotion -> promotion.getStartDate().isBefore(today.plusDays(1)) &&
+            promotion.getEndDate().isAfter(today.minusDays(1)))
         .map(this::toResponse)
         .collect(Collectors.toList());
   }
@@ -166,7 +173,7 @@ public class PromotionService {
     dto.initialDate = promotion.getStartDate();
     dto.finalDate = promotion.getEndDate();
     dto.description = promotion.getDescription();
-    
+
     // Produto vinculado (se houver)
     if (promotion.getGroceryProduct() != null) {
       dto.productName = promotion.getGroceryProduct().getName();
@@ -178,7 +185,7 @@ public class PromotionService {
       dto.productName = promotion.getConstructionProduct().getName();
       dto.originalPrice = promotion.getConstructionProduct().getUnitPrice();
     }
-    
+
     return dto;
   }
 }
