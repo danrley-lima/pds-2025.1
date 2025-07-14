@@ -19,13 +19,13 @@ public class SwaggerConfig {
         .info(new Info()
             .title("Gestão de Produtos API")
             .version("1.0.0")
-            .description("API para gerenciamento de produtos"))
+            .description("API para produtos"))
         .components(new Components()
             .addSecuritySchemes(securitySchemeName, new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT")));
     // .addSecurityItem(new SecurityRequirement().addList(securitySchemeName));
-    // Define globalmente a necessidade de autenticação
+    // Autenticação global
   }
 }

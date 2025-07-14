@@ -26,10 +26,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
- * Controller base abstrato para operações CRUD de produtos.
- * Implementa operações comuns que podem ser reutilizadas por todos os domínios.
+ * Controller base para operações CRUD de produtos.
+ * Fornece operações comuns reutilizáveis por todos os domínios.
  * 
- * Template Method Pattern: Define endpoints comuns, subclasses fornecem
+ * Template Method Pattern: Endpoints comuns, subclasses fornecem
  * serviços específicos.
  * 
  * @param <T> Tipo da entidade específica do domínio
@@ -132,8 +132,8 @@ public abstract class BaseProductController<T extends BaseProduct, S extends Bas
   }
 
   /**
-   * Método abstrato para permitir endpoints específicos do domínio.
-   * Subclasses podem implementar endpoints adicionais específicos.
+   * Método abstrato para endpoints específicos do domínio.
+   * Subclasses podem adicionar endpoints adicionais.
    */
   protected abstract String getDomainName();
 }

@@ -28,7 +28,7 @@ public interface BasePromotionService<T extends BaseProduct> {
   List<PromotionResponseDTO> getActivePromotions();
 
   /**
-   * Lista promoções ativas para um produto específico.
+   * Lista promoções ativas para um produto.
    */
   List<PromotionResponseDTO> getActivePromotionsForProduct(Long productId);
 

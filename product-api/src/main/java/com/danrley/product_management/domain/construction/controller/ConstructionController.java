@@ -26,13 +26,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * Controller específico para o domínio de material de construção.
- * Estende BaseProductController para herdar operações CRUD comuns
- * e adiciona endpoints específicos do domínio construction.
+ * Controller para produtos de construção.
+ * Herda operações CRUD básicas e adiciona funcionalidades de materiais de construção.
  */
 @RestController
 @RequestMapping("/api/construction")
-@Tag(name = "Construction Domain", description = "API para produtos e funcionalidades de material de construção")
+@Tag(name = "Construction Domain", description = "API para produtos de material de construção")
 public class ConstructionController extends BaseProductController<ConstructionProduct, ConstructionProductService> {
 
   @Autowired
@@ -50,7 +49,7 @@ public class ConstructionController extends BaseProductController<ConstructionPr
     return "construction";
   }
 
-  // ========== ENDPOINTS ESPECÍFICOS DO DOMÍNIO ==========
+  // ========== ENDPOINTS DO DOMÍNIO ==========
 
   @PostMapping("/recommendations")
   @Operation(summary = "Recomendações de materiais de construção", description = "Gera recomendações de materiais baseadas em projeto de construção")

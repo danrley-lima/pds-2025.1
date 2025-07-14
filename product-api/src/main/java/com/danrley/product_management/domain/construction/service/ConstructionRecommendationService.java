@@ -23,16 +23,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serviço específico para recomendações do domínio de construção.
- * Herda funcionalidades comuns e implementa comportamentos específicos.
+ * Serviço de recomendações para materiais de construção.
+ * Herda funcionalidades comuns e adiciona comportamentos de construção.
  */
 @Service
 public class ConstructionRecommendationService extends BaseRecommendationService {
 
-  // Serviço específico para construção
+  // Serviço de construção
   private final ConstructionProductService constructionProductService;
 
-  // Handlers específicos para construção
+  // Handlers para construção
   private final ConstructionProjectLLMHandler projectHandler;
   private final ConstructionProductLLMHandler productHandler;
   private final ConstructionPromotionLLMHandler promotionHandler;
@@ -53,20 +53,20 @@ public class ConstructionRecommendationService extends BaseRecommendationService
   }
 
   /**
-   * Projetos de construção - método específico do domínio
+   * Projetos de construção
    */
   public RecommendationResponseDTO getProjects(RecommendationRequestDTO request) {
     return getSpecialRecommendations(request, RequestCategory.RECIPE);
   }
 
   /**
-   * Promoções de materiais de construção - método específico do domínio
+   * Promoções de materiais de construção
    */
   public RecommendationResponseDTO getPromotions(RecommendationRequestDTO request) {
     return getSpecialRecommendations(request, RequestCategory.SEARCH_PROMOTION);
   }
 
-  // ========== IMPLEMENTAÇÕES DOS MÉTODOS ABSTRATOS ==========
+  // ========== MÉTODOS ABSTRATOS ==========
 
   @Override
   protected BaseLLMHandler selectHandler(RequestCategory category) {
@@ -108,7 +108,7 @@ public class ConstructionRecommendationService extends BaseRecommendationService
         .collect(Collectors.toList());
   }
 
-  // ========== PARSERS ESPECÍFICOS DO DOMÍNIO ==========
+  // ========== PARSERS DO DOMÍNIO ==========
 
   private void parseProjects(JsonNode projects, List<ProductOutDTO> foundProducts,
       List<ProductNotFoundDTO> notFoundProducts, Map<Long, BaseProduct> productMap) {

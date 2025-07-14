@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Exceção lançada quando ocorrem erros de validação nos dados de um produto.
- * Permite armazenar múltiplos erros de validação em um mapa.
+ * Exceção para erros de validação nos dados de um produto.
+ * Armazena múltiplos erros de validação em um mapa.
  */
 public class ProductValidationException extends RuntimeException {
 
@@ -35,7 +35,7 @@ public class ProductValidationException extends RuntimeException {
   }
 
   /**
-   * Retorna os erros de validação específicos por campo.
+   * Retorna os erros de validação por campo.
    *
    * @return Mapa imutável com os erros de validação
    */
@@ -44,9 +44,9 @@ public class ProductValidationException extends RuntimeException {
   }
 
   /**
-   * Verifica se existem erros de validação específicos.
+   * Verifica se existem erros de validação.
    *
-   * @return true se houver erros de validação específicos
+   * @return true se houver erros de validação
    */
   public boolean hasValidationErrors() {
     return !validationErrors.isEmpty();

@@ -32,7 +32,7 @@ public class ConstructionProductService implements BaseProductService<Constructi
   @Autowired
   private CategoryRepository categoryRepository;
 
-  // Implementação dos métodos base
+  // Métodos base
 
   @Override
   public List<ConstructionProduct> getAll() {
@@ -137,7 +137,7 @@ public class ConstructionProductService implements BaseProductService<Constructi
   @Override
   public List<ConstructionProduct> getByBrand(String brand) {
     try {
-      // Implementar filtro customizado
+      // Busca por marca usando filtro de stream
       return constructionProductRepository.findAll().stream()
           .filter(p -> p.getBrand() != null && p.getBrand().toLowerCase().contains(brand.toLowerCase()))
           .toList();

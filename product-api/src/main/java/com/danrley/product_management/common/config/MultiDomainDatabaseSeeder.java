@@ -24,8 +24,8 @@ import com.danrley.product_management.domain.grocery.repository.GroceryProductRe
 import lombok.RequiredArgsConstructor;
 
 /**
- * Seeder multi-domínio simplificado para fins acadêmicos.
- * Popula o banco com dados essenciais para todos os domínios.
+ * Seeder para popular o banco de dados.
+ * Cria produtos de exemplo para todos os domínios.
  */
 @Component
 @Profile({ "dev", "test" })
@@ -48,17 +48,17 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
       return;
     }
 
-    System.out.println("🚀 Iniciando seed multi-domínio simplificado...");
+    System.out.println("🚀 Iniciando seed do banco de dados...");
 
     seedGroceryDomain();
     seedFurnitureDomain();
     seedConstructionDomain();
 
-    System.out.println("✅ Seed multi-domínio concluído!");
+    System.out.println("✅ Seed concluído!");
   }
 
   /**
-   * Seed do domínio SUPERMERCADO (simplificado)
+   * Seed do domínio SUPERMERCADO
    */
   private void seedGroceryDomain() {
     System.out.println("🛒 Seeding domínio SUPERMERCADO...");
@@ -106,12 +106,24 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
           new GroceryProduct("Suco de Laranja", "Del Valle", 1000.0, UnitType.ML, 80, 8.9, bebidas, true, false),
           new GroceryProduct("Cerveja Skol", "Ambev", 350.0, UnitType.ML, 200, 3.8, bebidas, true, false),
 
-          // ESSENCIAIS (5 produtos)
+          // PRODUTOS BÁSICOS (5 produtos)
           new GroceryProduct("Arroz Branco", "Camil", 1000.0, UnitType.G, 300, 6.0, graos, true, false),
           new GroceryProduct("Feijão Carioca", "Camil", 1000.0, UnitType.G, 200, 8.5, graos, true, false),
           new GroceryProduct("Açúcar Cristal", "União", 1000.0, UnitType.G, 150, 4.2, graos, true, false),
           new GroceryProduct("Leite Integral", "Italac", 1000.0, UnitType.ML, 200, 4.5, laticinios, true, false),
-          new GroceryProduct("Detergente", "Ypê", 500.0, UnitType.ML, 150, 2.8, limpeza, true, false));
+          new GroceryProduct("Detergente", "Ypê", 500.0, UnitType.ML, 150, 2.8, limpeza, true, false),
+
+          // PRODUTOS ADICIONAIS (10 produtos)
+          new GroceryProduct("Pão de Forma", "Plus Vita", 500.0, UnitType.G, 80, 4.9, graos, true, false),
+          new GroceryProduct("Margarina", "Qualy", 500.0, UnitType.G, 100, 5.8, laticinios, true, false),
+          new GroceryProduct("Iogurte Natural", "Danone", 170.0, UnitType.G, 120, 3.2, laticinios, true, false),
+          new GroceryProduct("Azeite Extra Virgem", "Andorinha", 500.0, UnitType.ML, 60, 18.9, bebidas, true, false),
+          new GroceryProduct("Macarrão Espaguete", "Barilla", 500.0, UnitType.G, 200, 4.5, graos, true, false),
+          new GroceryProduct("Sabão em Pó", "OMO", 1000.0, UnitType.G, 80, 12.9, limpeza, true, false),
+          new GroceryProduct("Queijo Mussarela", "Tirolez", 200.0, UnitType.G, 90, 8.9, laticinios, true, false),
+          new GroceryProduct("Papel Higiênico", "Neve", 4.0, UnitType.UN, 150, 9.8, limpeza, true, false),
+          new GroceryProduct("Biscoito Cream Cracker", "Adria", 200.0, UnitType.G, 100, 3.4, graos, true, false),
+          new GroceryProduct("Refrigerante Guaraná", "Antarctica", 2000.0, UnitType.ML, 80, 5.9, bebidas, true, false));
 
       // Definir data de validade para alguns produtos
       groceryProducts.get(0).setExpirationDate(LocalDate.now().plusDays(15)); // Frango
@@ -119,12 +131,12 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
       groceryProducts.get(18).setExpirationDate(LocalDate.now().plusDays(30)); // Leite
 
       groceryProductRepository.saveAll(groceryProducts);
-      System.out.println("✅ Produtos de supermercado inseridos! (20 itens)");
+      System.out.println("✅ Produtos de supermercado inseridos! (30 itens)");
     }
   }
 
   /**
-   * Seed do domínio MÓVEIS (simplificado)
+   * Seed do domínio MÓVEIS
    */
   private void seedFurnitureDomain() {
     System.out.println("🪑 Seeding domínio MÓVEIS...");
@@ -181,14 +193,36 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
           new FurnitureProduct("Cadeira de Escritório", "DT3 Office", 1.0, UnitType.UN, 15, 379.99, escritorio, true,
               false, "Tecido", "Preto"),
           new FurnitureProduct("Estante para Livros", "Madesa", 1.0, UnitType.UN, 12, 189.99, escritorio, true, false,
-              "MDF", "Amadeirado")));
+              "MDF", "Amadeirado"),
 
-      System.out.println("✅ Produtos de móveis inseridos! (14 itens)");
+          // PRODUTOS ADICIONAIS (10 produtos)
+          new FurnitureProduct("Rack para TV 55'", "Móveis Bechara", 1.0, UnitType.UN, 15, 349.99, salaEstar, true, false,
+              "MDF", "Preto"),
+          new FurnitureProduct("Puff Redondo", "Divaloto", 1.0, UnitType.UN, 30, 89.99, salaEstar, true, false,
+              "Tecido", "Verde"),
+          new FurnitureProduct("Penteadeira com Espelho", "JB Bechara", 1.0, UnitType.UN, 8, 299.99, quarto, true, false,
+              "MDF", "Branco"),
+          new FurnitureProduct("Beliche Solteiro", "Santos Andirá", 1.0, UnitType.UN, 5, 699.99, quarto, true, false,
+              "Madeira", "Pinus"),
+          new FurnitureProduct("Aparador de Sala", "Móveis Carraro", 1.0, UnitType.UN, 12, 259.99, cozinha, true, false,
+              "Madeira", "Carvalho"),
+          new FurnitureProduct("Banquetas Altas (2x)", "Tok&Stok", 2.0, UnitType.UN, 20, 179.99, cozinha, true, false,
+              "Metal", "Preto"),
+          new FurnitureProduct("Gaveteiro 3 Gavetas", "Politorno", 1.0, UnitType.UN, 18, 149.99, escritorio, true, false,
+              "MDF", "Carvalho"),
+          new FurnitureProduct("Poltrona para Escritório", "Flexform", 1.0, UnitType.UN, 10, 459.99, escritorio, true, false,
+              "Couro", "Preto"),
+          new FurnitureProduct("Mesa Lateral", "MadeiraMadeira", 1.0, UnitType.UN, 25, 119.99, salaEstar, true, false,
+              "Vidro", "Fumê"),
+          new FurnitureProduct("Armário Aéreo Cozinha", "Itatiaia", 1.0, UnitType.UN, 14, 229.99, cozinha, true, false,
+              "Aço", "Branco")));
+
+      System.out.println("✅ Produtos de móveis inseridos! (24 itens)");
     }
   }
 
   /**
-   * Seed do domínio CONSTRUÇÃO (simplificado)
+   * Seed do domínio CONSTRUÇÃO
    */
   private void seedConstructionDomain() {
     System.out.println("🔨 Seeding domínio CONSTRUÇÃO...");
@@ -245,9 +279,31 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
           new ConstructionProduct("Disjuntor 20A", "Siemens", 0.1, UnitType.UN, 100, 12.99, eletrica, true, false,
               "Disjuntor monopolar para quadro elétrico"),
           new ConstructionProduct("Tomada 2P+T 10A", "Tramontina", 0.05, UnitType.UN, 150, 8.99, eletrica, true, false,
-              "Tomada padrão brasileiro")));
+              "Tomada padrão brasileiro"),
 
-      System.out.println("✅ Produtos de construção inseridos! (14 itens)");
+          // PRODUTOS ADICIONAIS (10 produtos)
+          new ConstructionProduct("Telha Cerâmica", "Ceramica City", 1.0, UnitType.UN, 500, 1.89, acabamento, true, false,
+              "Telha colonial para telhados"),
+          new ConstructionProduct("Porta de Madeira 80cm", "Madecol", 1.0, UnitType.UN, 20, 189.99, acabamento, true, false,
+              "Porta semi-oca com fechadura"),
+          new ConstructionProduct("Janela de Alumínio 100x80", "Sasazaki", 1.0, UnitType.UN, 15, 259.99, acabamento, true, false,
+              "Janela de correr com vidro"),
+          new ConstructionProduct("Brita 1", "Pedreira Central", 1000.0, UnitType.KG, 30, 35.00, estrutural, true, false,
+              "Brita graduada para concreto"),
+          new ConstructionProduct("Cal Hidratada 20kg", "Votorantim", 20.0, UnitType.KG, 80, 8.99, estrutural, true, false,
+              "Cal para argamassa e pintura"),
+          new ConstructionProduct("Chuveiro Elétrico", "Corona", 1.0, UnitType.UN, 25, 79.99, hidraulica, true, false,
+              "Chuveiro 4400W com regulagem"),
+          new ConstructionProduct("Registro de Gaveta 3/4", "Tigre", 1.0, UnitType.UN, 40, 15.99, hidraulica, true, false,
+              "Registro para controle de água"),
+          new ConstructionProduct("Interruptor Simples", "Tramontina", 0.02, UnitType.UN, 200, 4.99, eletrica, true, false,
+              "Interruptor uma tecla 10A"),
+          new ConstructionProduct("Lâmpada LED 12W", "Philips", 0.05, UnitType.UN, 100, 15.99, eletrica, true, false,
+              "Lâmpada LED branca fria"),
+          new ConstructionProduct("Caixa d'água 500L", "Fortlev", 500.0, UnitType.L, 10, 189.99, hidraulica, true, false,
+              "Caixa d'água de polietileno")));
+
+      System.out.println("✅ Produtos de construção inseridos! (24 itens)");
     }
   }
 }

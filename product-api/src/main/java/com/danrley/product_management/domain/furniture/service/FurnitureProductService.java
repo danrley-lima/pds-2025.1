@@ -32,7 +32,7 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Implementação dos métodos base
+    // Métodos base
 
     @Override
     public List<FurnitureProduct> getAll() {
@@ -137,7 +137,7 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
     @Override
     public List<FurnitureProduct> getByBrand(String brand) {
         try {
-            // Assumindo que existe este método no repository ou implementar uma busca alternativa
+            // Busca por marca usando filtro de stream
             return furnitureProductRepository.findAll().stream()
                     .filter(p -> p.getBrand() != null && p.getBrand().toLowerCase().contains(brand.toLowerCase()))
                     .toList();
@@ -162,7 +162,7 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
      */
     public List<FurnitureProduct> getByMaterial(String material) {
         try {
-            // Implementar filtro customizado
+            // Busca por material usando filtro de stream
             return furnitureProductRepository.findAll().stream()
                     .filter(p -> p.getMaterial() != null && p.getMaterial().toLowerCase().contains(material.toLowerCase()))
                     .toList();

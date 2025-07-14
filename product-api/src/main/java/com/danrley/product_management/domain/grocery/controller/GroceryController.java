@@ -24,13 +24,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * Controller específico para o domínio de supermercado.
- * Estende BaseProductController para herdar operações CRUD comuns
- * e adiciona endpoints específicos do domínio grocery.
+ * Controller para produtos de supermercado.
+ * Herda operações CRUD básicas e adiciona funcionalidades específicas do supermercado.
  */
 @RestController
 @RequestMapping("/api/grocery")
-@Tag(name = "Grocery Domain", description = "API para produtos e funcionalidades do supermercado")
+@Tag(name = "Grocery Domain", description = "API para produtos do supermercado")
 public class GroceryController extends BaseProductController<GroceryProduct, GroceryProductService> {
 
   @Autowired

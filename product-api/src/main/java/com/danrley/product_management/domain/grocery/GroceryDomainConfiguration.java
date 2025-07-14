@@ -44,7 +44,7 @@ public class GroceryDomainConfiguration implements DomainConfiguration {
                "Com base apenas nesses produtos disponíveis, identifique os produtos que correspondem " +
                "ao que o cliente está buscando.\n\n" +
                "Se o cliente buscar por categoria, retorne todos os produtos dessa categoria disponíveis. " +
-               "Se buscar por produto específico, retorne os produtos que correspondem mais proximamente.\n\n" +
+               "Se buscar por produto individual, retorne os produtos que correspondem mais proximamente.\n\n" +
                "Priorize produtos disponíveis (available=true), depois produtos em promoção, " +
                "depois produtos com priority=true.\n\n" +
                "Se algum produto solicitado não estiver disponível no banco de dados, " +
@@ -57,8 +57,8 @@ public class GroceryDomainConfiguration implements DomainConfiguration {
     public String getRecipePromptTemplate() {
         return "Você é um chef especialista que vai sugerir uma receita com base nos produtos solicitados pelo cliente.\n\n" +
                "Produtos disponíveis:\n{products}\n\n" +
-               "Baseado na solicitação do cliente e nos produtos disponíveis, sugira receitas que utilizem os ingredientes da lista acima.\n\n" +
-               "REGRAS IMPORTANTES:\n" +
+               "Conforme a solicitação do cliente e os produtos disponíveis, sugira receitas que utilizem os ingredientes da lista acima.\n\n" +
+               "REGRAS PRINCIPAIS:\n" +
                "- Retorne APENAS um JSON válido, sem explicações e sem markdown\n" +
                "- Use APENAS os IDs dos produtos disponíveis (primeiro número de cada linha)\n" +
                "- Faça substituições inteligentes e culinárias corretas\n" +

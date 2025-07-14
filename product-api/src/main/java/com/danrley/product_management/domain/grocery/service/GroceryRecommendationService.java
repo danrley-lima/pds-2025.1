@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serviço específico para recomendações do domínio de supermercado.
- * Herda funcionalidades comuns e implementa comportamentos específicos.
+ * Serviço de recomendações para supermercado.
+ * Herda funcionalidades comuns e adiciona comportamentos de supermercado.
  */
 @Service
 public class GroceryRecommendationService extends BaseRecommendationService {
@@ -33,7 +33,7 @@ public class GroceryRecommendationService extends BaseRecommendationService {
     // Core services
     private final GroceryProductService groceryProductService;
 
-    // Handlers específicos para supermercado
+    // Handlers para supermercado
     private final GroceryRecipeLLMHandler recipeHandler;
     private final GroceryProductLLMHandler productHandler;
     private final GroceryPromotionLLMHandler promotionHandler;
@@ -54,20 +54,20 @@ public class GroceryRecommendationService extends BaseRecommendationService {
     }
 
     /**
-     * Receitas e ingredientes - método específico do domínio
+     * Receitas e ingredientes
      */
     public RecommendationResponseDTO getRecipes(RecommendationRequestDTO request) {
         return getSpecialRecommendations(request, RequestCategory.RECIPE);
     }
 
     /**
-     * Promoções do supermercado - método específico do domínio
+     * Promoções do supermercado
      */
     public RecommendationResponseDTO getPromotions(RecommendationRequestDTO request) {
         return getSpecialRecommendations(request, RequestCategory.SEARCH_PROMOTION);
     }
 
-    // ========== IMPLEMENTAÇÕES DOS MÉTODOS ABSTRATOS ==========
+    // ========== MÉTODOS ABSTRATOS ==========
 
     @Override
     protected List<BaseProduct> getDomainProducts() {
@@ -119,7 +119,7 @@ public class GroceryRecommendationService extends BaseRecommendationService {
         return "Supermercado";
     }
 
-    // ========== PARSERS ESPECÍFICOS DO DOMÍNIO ==========
+    // ========== PARSERS DO DOMÍNIO ==========
 
     private void parseRecipes(JsonNode recipes, List<ProductOutDTO> foundProducts, 
                              List<ProductNotFoundDTO> notFoundProducts, Map<Long, BaseProduct> productMap) {

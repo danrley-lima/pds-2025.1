@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/promotions")
-@Tag(name = "Promoções", description = "API para gerenciamento de promoções de produtos")
+@Tag(name = "Promoções", description = "API para controle de promoções de produtos")
 public class PromotionController {
   @Autowired
   private PromotionService promotionService;

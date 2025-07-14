@@ -4,8 +4,8 @@ import com.danrley.product_management.core.model.BaseProduct;
 import com.danrley.product_management.core.model.BaseCategory;
 
 /**
- * Interface que define a configuração específica de um domínio.
- * Cada domínio implementa esta interface para definir suas regras e comportamentos específicos.
+ * Interface que define a configuração de um domínio.
+ * Cada domínio implementa esta interface para definir suas regras e comportamentos.
  */
 public interface DomainConfiguration {
 

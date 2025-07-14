@@ -27,15 +27,6 @@ public interface ConstructionProductRepository extends JpaRepository<Constructio
     // Buscar por faixa de preço
     List<ConstructionProduct> findByUnitPriceBetween(Double minPrice, Double maxPrice);
 
-    // Buscar por categoria de construção específica
-    List<ConstructionProduct> findByConstructionCategoryContainingIgnoreCase(String constructionCategory);
-
-    // Buscar por aplicação
-    List<ConstructionProduct> findByApplicationContainingIgnoreCase(String application);
-
-    // Buscar por grau/qualidade
-    List<ConstructionProduct> findByGradeContainingIgnoreCase(String grade);
-
     // Buscar por especificações
     List<ConstructionProduct> findBySpecificationsContainingIgnoreCase(String specifications);
 
@@ -54,15 +45,11 @@ public interface ConstructionProductRepository extends JpaRepository<Constructio
     // Buscar por múltiplos critérios
     @Query("SELECT cp FROM ConstructionProduct cp WHERE " +
            "cp.available = true AND " +
-           "(:constructionCategory IS NULL OR LOWER(cp.constructionCategory) LIKE LOWER(CONCAT('%', :constructionCategory, '%'))) AND " +
-           "(:application IS NULL OR LOWER(cp.application) LIKE LOWER(CONCAT('%', :application, '%'))) AND " +
-           "(:grade IS NULL OR LOWER(cp.grade) LIKE LOWER(CONCAT('%', :grade, '%'))) AND " +
+           "(:specifications IS NULL OR LOWER(cp.specifications) LIKE LOWER(CONCAT('%', :specifications, '%'))) AND " +
            "(:minPrice IS NULL OR cp.unitPrice >= :minPrice) AND " +
            "(:maxPrice IS NULL OR cp.unitPrice <= :maxPrice)")
     List<ConstructionProduct> findByMultipleCriteria(
-        @Param("constructionCategory") String constructionCategory,
-        @Param("application") String application, 
-        @Param("grade") String grade,
+        @Param("specifications") String specifications,
         @Param("minPrice") Double minPrice,
         @Param("maxPrice") Double maxPrice
     );

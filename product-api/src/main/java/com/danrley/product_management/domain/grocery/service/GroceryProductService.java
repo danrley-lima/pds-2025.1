@@ -33,7 +33,7 @@ public class GroceryProductService implements BaseProductService<GroceryProduct>
   @Autowired
   private CategoryRepository categoryRepository;
 
-  // Implementação dos métodos base
+  // Métodos base
 
   @Override
   public List<GroceryProduct> getAll() {

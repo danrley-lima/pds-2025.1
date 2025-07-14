@@ -26,13 +26,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * Controller específico para o domínio de móveis e decoração.
- * Estende BaseProductController para herdar operações CRUD comuns
- * e adiciona endpoints específicos do domínio furniture.
+ * Controller para produtos de móveis.
+ * Herda operações CRUD básicas e adiciona funcionalidades de móveis e decoração.
  */
 @RestController
 @RequestMapping("/api/furniture")
-@Tag(name = "Furniture Domain", description = "API para produtos e funcionalidades de móveis e decoração")
+@Tag(name = "Furniture Domain", description = "API para produtos de móveis e decoração")
 public class FurnitureController extends BaseProductController<FurnitureProduct, FurnitureProductService> {
 
   @Autowired
@@ -50,7 +49,7 @@ public class FurnitureController extends BaseProductController<FurnitureProduct,
     return "furniture";
   }
 
-  // ========== ENDPOINTS ESPECÍFICOS DO DOMÍNIO ==========
+  // ========== ENDPOINTS DO DOMÍNIO ==========
 
   @PostMapping("/recommendations")
   @Operation(summary = "Recomendações de móveis", description = "Gera recomendações de móveis baseadas em necessidades específicas")

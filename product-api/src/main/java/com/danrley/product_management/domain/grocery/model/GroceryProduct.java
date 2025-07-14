@@ -25,7 +25,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Produto específico para o domínio de supermercado.
+ * Produto para o domínio de supermercado.
  * Entidade JPA para produtos do domínio grocery.
  */
 @Entity
@@ -61,7 +61,7 @@ public class GroceryProduct implements BaseProduct {
   @OneToOne(mappedBy = "groceryProduct", cascade = CascadeType.ALL, orphanRemoval = true)
   private Promotion promotion;
 
-  // Construtor específico
+  // Construtor do domínio
   public GroceryProduct(String name, String brand, Double unitWeight,
       UnitType unitType, Integer stockQuantity, Double unitPrice,
       Category category, boolean available, boolean priority) {

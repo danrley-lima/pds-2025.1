@@ -4,12 +4,12 @@ import java.util.Map;
 
 /**
  * Interface para provedores de IA/LLM
- * Permite abstrair diferentes provedores como Gemini, OpenAI, Claude, etc.
+ * Abstrai vários provedores como Gemini, OpenAI, Claude, etc.
  */
 public interface AIProvider {
 
   /**
-   * Gera conteúdo baseado no prompt fornecido.
+   * Gera conteúdo a partir do prompt fornecido.
    */
   String generateContent(String prompt, Map<String, Object> parameters);
 
@@ -25,7 +25,7 @@ public interface AIProvider {
   }
 
   /**
-   * Retorna os parâmetros padrão para este provedor
+   * Retorna os parâmetros padrão para o provedor
    *
    * @return Map com parâmetros padrão
    */

@@ -33,9 +33,6 @@ public interface FurnitureProductRepository extends JpaRepository<FurnitureProdu
     // Buscar por cor
     List<FurnitureProduct> findByColorContainingIgnoreCase(String color);
 
-    // Buscar por estilo
-    List<FurnitureProduct> findByStyleContainingIgnoreCase(String style);
-
     // Buscar por nome ou marca
     @Query("SELECT fp FROM FurnitureProduct fp WHERE " +
            "LOWER(fp.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -53,13 +50,11 @@ public interface FurnitureProductRepository extends JpaRepository<FurnitureProdu
            "fp.available = true AND " +
            "(:material IS NULL OR LOWER(fp.material) LIKE LOWER(CONCAT('%', :material, '%'))) AND " +
            "(:color IS NULL OR LOWER(fp.color) LIKE LOWER(CONCAT('%', :color, '%'))) AND " +
-           "(:style IS NULL OR LOWER(fp.style) LIKE LOWER(CONCAT('%', :style, '%'))) AND " +
            "(:minPrice IS NULL OR fp.unitPrice >= :minPrice) AND " +
            "(:maxPrice IS NULL OR fp.unitPrice <= :maxPrice)")
     List<FurnitureProduct> findByMultipleCriteria(
         @Param("material") String material,
         @Param("color") String color, 
-        @Param("style") String style,
         @Param("minPrice") Double minPrice,
         @Param("maxPrice") Double maxPrice
     );

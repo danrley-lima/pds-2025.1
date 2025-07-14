@@ -22,23 +22,23 @@ public class ProductResponseDTO {
   public Double promotionalPrice;
   public Long categoryId;
 
-  // Campos específicos do domínio grocery
+  // Campos do domínio grocery
   public LocalDate expirationDate;
 
-  // Campos específicos do domínio furniture
+  // Campos do domínio furniture
   public String material;
   public String color;
 
-  // Campos específicos do domínio construction
+  // Campos do domínio construction
   public String specifications;
 
-  // ========== FACTORY METHODS ==========
+  // ========== FACTORY ==========
 
   public static ProductResponseDTO fromGroceryProduct(GroceryProduct product) {
     ProductResponseDTO dto = new ProductResponseDTO();
     mapBaseFields(product, dto);
 
-    // Campos específicos do grocery
+    // Campos do grocery
     dto.expirationDate = product.getExpirationDate();
 
     return dto;
@@ -48,7 +48,7 @@ public class ProductResponseDTO {
     ProductResponseDTO dto = new ProductResponseDTO();
     mapBaseFields(product, dto);
 
-    // Campos específicos do furniture
+    // Campos do furniture
     dto.material = product.getMaterial();
     dto.color = product.getColor();
 
@@ -59,15 +59,14 @@ public class ProductResponseDTO {
     ProductResponseDTO dto = new ProductResponseDTO();
     mapBaseFields(product, dto);
 
-    // Campos específicos do construction
+    // Campos do construction
     dto.specifications = product.getSpecifications();
 
     return dto;
   }
 
   private static void mapBaseFields(Object product, ProductResponseDTO dto) {
-    // Este método será implementado usando reflection ou cast para BaseProduct
-    // Por enquanto, vamos usar cast genérico
+    // Mapeamento de campos base usando cast para BaseProduct
     if (product instanceof GroceryProduct) {
       GroceryProduct p = (GroceryProduct) product;
       dto.id = p.getId();

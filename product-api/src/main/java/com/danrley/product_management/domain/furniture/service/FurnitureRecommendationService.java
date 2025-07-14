@@ -24,16 +24,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Serviço específico para recomendações do domínio de móveis.
- * Herda funcionalidades comuns e implementa comportamentos específicos.
+ * Serviço de recomendações para móveis.
+ * Herda funcionalidades comuns e adiciona comportamentos de móveis.
  */
 @Service
 public class FurnitureRecommendationService extends BaseRecommendationService {
 
-  // Serviço específico para móveis
+  // Serviço de móveis
   private final FurnitureProductService furnitureProductService;
 
-  // Handlers específicos para móveis
+  // Handlers para móveis
   private final FurnitureProjectLLMHandler projectHandler;
   private final FurnitureProductLLMHandler productHandler;
   private final FurniturePromotionLLMHandler promotionHandler;
@@ -54,20 +54,20 @@ public class FurnitureRecommendationService extends BaseRecommendationService {
   }
 
   /**
-   * Projetos de decoração - método específico do domínio
+   * Projetos de decoração
    */
   public RecommendationResponseDTO getProjects(RecommendationRequestDTO request) {
     return getSpecialRecommendations(request, RequestCategory.RECIPE);
   }
 
   /**
-   * Promoções de móveis - método específico do domínio
+   * Promoções de móveis
    */
   public RecommendationResponseDTO getPromotions(RecommendationRequestDTO request) {
     return getSpecialRecommendations(request, RequestCategory.SEARCH_PROMOTION);
   }
 
-  // ========== IMPLEMENTAÇÕES DOS MÉTODOS ABSTRATOS ==========
+  // ========== MÉTODOS ABSTRATOS ==========
 
   @Override
   protected List<BaseProduct> getDomainProducts() {
@@ -119,7 +119,7 @@ public class FurnitureRecommendationService extends BaseRecommendationService {
     return "Móveis";
   }
 
-  // ========== PARSERS ESPECÍFICOS DO DOMÍNIO ==========
+  // ========== PARSERS DO DOMÍNIO ==========
 
   private void parseProjects(JsonNode projects, List<ProductOutDTO> foundProducts,
       List<ProductNotFoundDTO> notFoundProducts, Map<Long, BaseProduct> productMap) {
