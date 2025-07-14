@@ -4,7 +4,6 @@ import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.model.product.UnitType;
 import com.danrley.product_management.core.domain.Domain;
 import com.danrley.product_management.core.model.BaseProduct;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,22 +54,18 @@ public class FurnitureProduct implements BaseProduct {
 
   @ManyToOne
   @JoinColumn(name = "category_id")
-  @JsonManagedReference
   private Category category;
 
   private boolean available = true;
 
   private boolean priority = false;
 
-  private String dimensions;
   private String material;
   private String color;
-  private String style;
 
   public FurnitureProduct(String name, String brand, Double unitWeight, UnitType unitType,
       Integer stockQuantity, Double unitPrice, Category category,
-      boolean available, boolean priority, String dimensions,
-      String material, String color, String style) {
+      boolean available, boolean priority, String material, String color) {
     this.name = name;
     this.brand = brand;
     this.unitWeight = unitWeight;
@@ -80,10 +75,8 @@ public class FurnitureProduct implements BaseProduct {
     this.category = category;
     this.available = available;
     this.priority = priority;
-    this.dimensions = dimensions;
     this.material = material;
     this.color = color;
-    this.style = style;
   }
 
   @Override
@@ -103,14 +96,12 @@ public class FurnitureProduct implements BaseProduct {
 
   @Override
   public String serializeForPrompt() {
-    return String.format("%d,%s,%s,%s,%.2f,%b,%b,%d,%b,dimensoes=%s,material=%s,cor=%s,estilo=%s",
+    return String.format("%d,%s,%s,%s,%.2f,%b,%b,%d,%b,material=%s,cor=%s",
         id, name, brand != null ? brand : "",
         category != null ? category.getName() : "",
         unitPrice, available, false, // promotion placeholder
         stockQuantity, priority,
-        dimensions != null ? dimensions : "",
         material != null ? material : "",
-        color != null ? color : "",
-        style != null ? style : "");
+        color != null ? color : "");
   }
 }

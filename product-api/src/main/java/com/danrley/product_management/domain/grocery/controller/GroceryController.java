@@ -48,7 +48,7 @@ public class GroceryController extends BaseProductController<GroceryProduct, Gro
     return "grocery";
   }
 
-  // ========== ENDPOINTS ESPECÍFICOS DO DOMÍNIO ==========
+  // Endpoints do domínio
 
   @PostMapping("/recommendations")
   @Operation(summary = "Recomendações de produtos do supermercado", description = "Gera recomendações de produtos específicas para o domínio de supermercado")

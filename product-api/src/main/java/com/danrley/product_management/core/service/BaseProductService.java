@@ -9,14 +9,12 @@ import com.danrley.product_management.core.model.BaseProduct;
 
 /**
  * Interface base para serviços de produtos.
- * Define operações CRUD comuns que todos os domínios devem implementar.
- * 
- * @param <T> Tipo da entidade específica do domínio que implementa BaseProduct
+ * @param <T> Tipo da entidade que implementa BaseProduct
  */
 public interface BaseProductService<T extends BaseProduct> {
     
     /**
-     * Busca todos os produtos do domínio.
+     * Busca todos os produtos.
      */
     List<T> getAll();
     

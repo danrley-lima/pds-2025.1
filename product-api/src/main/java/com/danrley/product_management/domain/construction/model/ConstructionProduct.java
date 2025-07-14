@@ -4,7 +4,6 @@ import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.model.product.UnitType;
 import com.danrley.product_management.core.domain.Domain;
 import com.danrley.product_management.core.model.BaseProduct;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,7 +54,6 @@ public class ConstructionProduct implements BaseProduct {
 
   @ManyToOne
   @JoinColumn(name = "category_id")
-  @JsonManagedReference
   private Category category;
 
   private boolean available = true;
@@ -63,15 +61,10 @@ public class ConstructionProduct implements BaseProduct {
   private boolean priority = false;
 
   private String specifications;
-  @Column(name = "construction_category")
-  private String constructionCategory;
-  private String application;
-  private String grade;
 
   public ConstructionProduct(String name, String brand, Double unitWeight, UnitType unitType,
       Integer stockQuantity, Double unitPrice, Category category,
-      boolean available, boolean priority, String specifications,
-      String constructionCategory, String application, String grade) {
+      boolean available, boolean priority, String specifications) {
     this.name = name;
     this.brand = brand;
     this.unitWeight = unitWeight;
@@ -82,9 +75,6 @@ public class ConstructionProduct implements BaseProduct {
     this.available = available;
     this.priority = priority;
     this.specifications = specifications;
-    this.constructionCategory = constructionCategory;
-    this.application = application;
-    this.grade = grade;
   }
 
   @Override
@@ -104,14 +94,11 @@ public class ConstructionProduct implements BaseProduct {
 
   @Override
   public String serializeForPrompt() {
-    return String.format("%d,%s,%s,%s,%.2f,%b,%b,%d,%b,especificacoes=%s,categoria=%s,aplicacao=%s,grau=%s",
+    return String.format("%d,%s,%s,%s,%.2f,%b,%b,%d,%b,especificacoes=%s",
         id, name, brand != null ? brand : "",
         category != null ? category.getName() : "",
         unitPrice, available, false, // promotion placeholder
         stockQuantity, priority,
-        specifications != null ? specifications : "",
-        constructionCategory != null ? constructionCategory : "",
-        application != null ? application : "",
-        grade != null ? grade : "");
+        specifications != null ? specifications : "");
   }
 }

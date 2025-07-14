@@ -3,9 +3,8 @@ package com.danrley.product_management.core.model;
 import com.danrley.product_management.core.domain.Domain;
 
 /**
- * Interface base para todas as entidades de produtos no framework.
- * Define os campos comuns que todos os produtos devem ter, independente do
- * domínio.
+ * Interface base para entidades de produtos.
+ * Define os campos comuns que todos os produtos devem ter.
  */
 public interface BaseProduct {
 
@@ -40,7 +39,7 @@ public interface BaseProduct {
   boolean isAvailable();
 
   /**
-   * Indica se o produto tem prioridade (ex: em destaque).
+   * Indica se o produto tem prioridade.
    */
   boolean isPriority();
 
@@ -55,8 +54,7 @@ public interface BaseProduct {
   Domain getDomain();
 
   /**
-   * Serializa o produto para uma string usada em prompts de IA.
-   * Cada domínio pode ter seu próprio formato.
+   * Serializa o produto para prompt de IA.
    */
   String serializeForPrompt();
 }

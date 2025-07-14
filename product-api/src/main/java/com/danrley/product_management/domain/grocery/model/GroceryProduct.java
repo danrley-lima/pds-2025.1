@@ -8,7 +8,6 @@ import com.danrley.product_management.common.model.promotion.Promotion;
 import com.danrley.product_management.core.domain.Domain;
 import com.danrley.product_management.core.model.BaseCategory;
 import com.danrley.product_management.core.model.BaseProduct;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -58,11 +57,8 @@ public class GroceryProduct implements BaseProduct {
   private boolean priority;
 
   private LocalDate expirationDate;
-  private String nutritionalInfo;
-  private Boolean organic;
 
   @OneToOne(mappedBy = "groceryProduct", cascade = CascadeType.ALL, orphanRemoval = true)
-  @JsonManagedReference
   private Promotion promotion;
 
   // Construtor específico
@@ -212,22 +208,6 @@ public class GroceryProduct implements BaseProduct {
 
   public void setExpirationDate(LocalDate expirationDate) {
     this.expirationDate = expirationDate;
-  }
-
-  public String getNutritionalInfo() {
-    return nutritionalInfo;
-  }
-
-  public void setNutritionalInfo(String nutritionalInfo) {
-    this.nutritionalInfo = nutritionalInfo;
-  }
-
-  public Boolean getOrganic() {
-    return organic;
-  }
-
-  public void setOrganic(Boolean organic) {
-    this.organic = organic;
   }
 
 }

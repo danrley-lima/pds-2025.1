@@ -10,8 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Repositório específico para produtos do domínio construction.
- * Contém queries otimizadas para materiais de construção.
+ * Repositório para produtos de construção.
  */
 @Repository
 public interface ConstructionProductRepository extends JpaRepository<ConstructionProduct, Long> {

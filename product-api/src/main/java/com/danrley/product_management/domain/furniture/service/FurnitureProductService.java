@@ -21,8 +21,7 @@ import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.repository.CategoryRepository;
 
 /**
- * Serviço específico para produtos do domínio furniture.
- * Implementa BaseProductService para reaproveitamento de código do framework.
+ * Serviço para produtos de móveis.
  */
 @Service
 public class FurnitureProductService implements BaseProductService<FurnitureProduct> {
@@ -33,7 +32,7 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // ========== IMPLEMENTAÇÃO DOS MÉTODOS BASE ==========
+    // Implementação dos métodos base
 
     @Override
     public List<FurnitureProduct> getAll() {
@@ -156,10 +155,10 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
         }
     }
 
-    // ========== MÉTODOS ESPECÍFICOS DO DOMÍNIO ==========
+    // Métodos do domínio
     
     /**
-     * Busca produtos por material (específico do domínio furniture).
+     * Busca produtos por material.
      */
     public List<FurnitureProduct> getByMaterial(String material) {
         try {
@@ -173,7 +172,7 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
     }
 
     /**
-     * Busca produtos por cor (específico do domínio furniture).
+     * Busca produtos por cor.
      */
     public List<FurnitureProduct> getByColor(String color) {
         try {
@@ -185,20 +184,7 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
         }
     }
 
-    /**
-     * Busca produtos por estilo (específico do domínio furniture).
-     */
-    public List<FurnitureProduct> getByStyle(String style) {
-        try {
-            return furnitureProductRepository.findAll().stream()
-                    .filter(p -> p.getStyle() != null && p.getStyle().toLowerCase().contains(style.toLowerCase()))
-                    .toList();
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos por estilo: " + e.getMessage(), e);
-        }
-    }
-
-    // ========== MÉTODOS AUXILIARES ==========
+    // Métodos auxiliares
 
     private void validateProductRequest(ProductRequestDTO dto, boolean isCreate) {
         if (dto == null) {
@@ -245,21 +231,13 @@ public class FurnitureProductService implements BaseProductService<FurnitureProd
                 .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
         product.setCategory(category);
 
-        // Campos específicos do furniture
-        if (dto.dimensions != null) {
-            product.setDimensions(dto.dimensions);
-        }
-        
+        // Campos de móveis
         if (dto.material != null) {
             product.setMaterial(dto.material);
         }
         
         if (dto.color != null) {
             product.setColor(dto.color);
-        }
-        
-        if (dto.style != null) {
-            product.setStyle(dto.style);
         }
     }
 }

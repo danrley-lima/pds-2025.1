@@ -10,8 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Repositório específico para produtos do domínio furniture.
- * Contém queries otimizadas para móveis.
+ * Repositório para produtos de móveis.
  */
 @Repository
 public interface FurnitureProductRepository extends JpaRepository<FurnitureProduct, Long> {
@@ -28,7 +27,7 @@ public interface FurnitureProductRepository extends JpaRepository<FurnitureProdu
     // Buscar por faixa de preço
     List<FurnitureProduct> findByUnitPriceBetween(Double minPrice, Double maxPrice);
 
-    // Buscar por material específico
+    // Buscar por material
     List<FurnitureProduct> findByMaterialContainingIgnoreCase(String material);
 
     // Buscar por cor

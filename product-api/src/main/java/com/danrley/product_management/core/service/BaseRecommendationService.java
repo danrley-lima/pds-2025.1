@@ -193,10 +193,10 @@ public abstract class BaseRecommendationService {
     products.add(fallback);
   }
 
-  // ========== MÉTODOS ABSTRATOS - IMPLEMENTADOS PELAS SUBCLASSES ==========
+  // Métodos abstratos - implementados pelas subclasses
 
   /**
-   * Cada domínio busca seus próprios produtos
+   * Cada domínio busca seus próprios produtos.
    */
   protected abstract List<BaseProduct> getDomainProducts();
 

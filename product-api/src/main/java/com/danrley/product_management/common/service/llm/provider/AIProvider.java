@@ -9,13 +9,7 @@ import java.util.Map;
 public interface AIProvider {
 
   /**
-   * Gera conteúdo baseado no prompt fornecido
-   * 
-   * @param prompt     O prompt/texto para o modelo de IA
-   * @param parameters Parâmetros específicos do modelo (temperatura, max tokens,
-   *                   etc.)
-   * @return Resposta gerada pela IA
-   * @throws AIProviderException Em caso de erro na chamada
+   * Gera conteúdo baseado no prompt fornecido.
    */
   String generateContent(String prompt, Map<String, Object> parameters);
 
