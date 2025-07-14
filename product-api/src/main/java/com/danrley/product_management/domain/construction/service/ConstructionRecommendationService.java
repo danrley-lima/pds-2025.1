@@ -113,23 +113,28 @@ public class ConstructionRecommendationService extends BaseRecommendationService
   private void parseProjects(JsonNode projects, List<ProductOutDTO> foundProducts,
       List<ProductNotFoundDTO> notFoundProducts, Map<Long, BaseProduct> productMap) {
     for (JsonNode project : projects) {
-      if (!project.has("materials"))
-        continue;
+      if (project.has("materials")) {
+        for (JsonNode material : project.get("materials")) {
+          if (material.has("product_id")) {
+            Long productId = material.get("product_id").asLong();
+            String quantity = material.has("quantity") ? material.get("quantity").asText() : "1";
 
-      for (JsonNode material : project.get("materials")) {
-        if (material.has("product_id")) {
-          // Material com ID de produto
-          Long productId = material.get("product_id").asLong();
-          String quantity = material.has("quantity") ? material.get("quantity").asText() : "1";
-
-          BaseProduct product = productMap.get(productId);
-          if (product != null) {
-            foundProducts.add(createFromProduct(product, quantity));
+            BaseProduct product = productMap.get(productId);
+            if (product != null) {
+              foundProducts.add(createFromProduct(product, quantity));
+            }
+          } else {
+            String name = material.has("name") ? material.get("name").asText() : material.asText();
+            String quantity = material.has("quantity") ? material.get("quantity").asText() : "1";
+            notFoundProducts.add(new ProductNotFoundDTO(name, quantity));
           }
-        } else {
-          // Material não encontrado
-          String name = material.has("name") ? material.get("name").asText() : material.asText();
-          String quantity = material.has("quantity") ? material.get("quantity").asText() : "1";
+        }
+      }
+
+      if (project.has("missing_materials")) {
+        for (JsonNode missing : project.get("missing_materials")) {
+          String name = missing.get("name").asText();
+          String quantity = missing.has("quantity") ? missing.get("quantity").asText() : "1";
           notFoundProducts.add(new ProductNotFoundDTO(name, quantity));
         }
       }

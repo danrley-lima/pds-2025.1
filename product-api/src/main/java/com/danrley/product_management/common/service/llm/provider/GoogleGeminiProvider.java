@@ -17,7 +17,8 @@ public class GoogleGeminiProvider implements AIProvider {
   private final String apiKey;
   private final WebClient webClient;
   private final ObjectMapper objectMapper;
-  private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
+  private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
+  // private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
   private static final String PROVIDER_NAME = "Google Gemini";
 
   public GoogleGeminiProvider(@Value("${ai.provider.gemini.api.key:${google.gemini.api.key:}}") String apiKey,

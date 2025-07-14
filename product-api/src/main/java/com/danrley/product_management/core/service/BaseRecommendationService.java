@@ -162,8 +162,16 @@ public abstract class BaseRecommendationService {
       }
     }
 
-    if (jsonNode.has("notFoundProducts")) {
-      for (JsonNode notFound : jsonNode.get("notFoundProducts")) {
+    // Verifica ambos os formatos: snake_case e camelCase
+    JsonNode notFoundNode = null;
+    if (jsonNode.has("not_found_products")) {
+      notFoundNode = jsonNode.get("not_found_products");
+    } else if (jsonNode.has("notFoundProducts")) {
+      notFoundNode = jsonNode.get("notFoundProducts");
+    }
+    
+    if (notFoundNode != null) {
+      for (JsonNode notFound : notFoundNode) {
         String name = notFound.get("name").asText();
         String quantity = notFound.has("quantity") ? notFound.get("quantity").asText() : "1";
         notFoundProducts.add(new ProductNotFoundDTO(name, quantity));

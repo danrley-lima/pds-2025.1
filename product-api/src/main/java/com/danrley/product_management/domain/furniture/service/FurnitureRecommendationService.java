@@ -124,23 +124,28 @@ public class FurnitureRecommendationService extends BaseRecommendationService {
   private void parseProjects(JsonNode projects, List<ProductOutDTO> foundProducts,
       List<ProductNotFoundDTO> notFoundProducts, Map<Long, BaseProduct> productMap) {
     for (JsonNode project : projects) {
-      if (!project.has("items"))
-        continue;
+      if (project.has("items")) {
+        for (JsonNode item : project.get("items")) {
+          if (item.has("product_id")) {
+            Long productId = item.get("product_id").asLong();
+            String quantity = item.has("quantity") ? item.get("quantity").asText() : "1";
 
-      for (JsonNode item : project.get("items")) {
-        if (item.has("product_id")) {
-          // Item com ID de produto
-          Long productId = item.get("product_id").asLong();
-          String quantity = item.has("quantity") ? item.get("quantity").asText() : "1";
-
-          BaseProduct product = productMap.get(productId);
-          if (product != null) {
-            foundProducts.add(createFromProduct(product, quantity));
+            BaseProduct product = productMap.get(productId);
+            if (product != null) {
+              foundProducts.add(createFromProduct(product, quantity));
+            }
+          } else {
+            String name = item.has("name") ? item.get("name").asText() : item.asText();
+            String quantity = item.has("quantity") ? item.get("quantity").asText() : "1";
+            notFoundProducts.add(new ProductNotFoundDTO(name, quantity));
           }
-        } else {
-          // Item não encontrado
-          String name = item.has("name") ? item.get("name").asText() : item.asText();
-          String quantity = item.has("quantity") ? item.get("quantity").asText() : "1";
+        }
+      }
+
+      if (project.has("missing_items")) {
+        for (JsonNode missing : project.get("missing_items")) {
+          String name = missing.get("name").asText();
+          String quantity = missing.has("quantity") ? missing.get("quantity").asText() : "1";
           notFoundProducts.add(new ProductNotFoundDTO(name, quantity));
         }
       }
