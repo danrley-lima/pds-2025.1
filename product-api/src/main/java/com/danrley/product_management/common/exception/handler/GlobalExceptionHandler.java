@@ -9,10 +9,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.danrley.product_management.common.dto.ErrorResponseDto;
 import com.danrley.product_management.common.exception.custom.CategoryNotFoundException;
@@ -202,12 +205,47 @@ public class GlobalExceptionHandler {
             ex.getMessage()));
   }
 
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<ErrorResponseDto> handleNoResourceFound(NoResourceFoundException ex) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponseDto(
+            HttpStatus.NOT_FOUND.value(),
+            "Resource Not Found",
+            "The requested resource could not be found. Please check the URL and try again."));
+  }
+
+  @ExceptionHandler(NoHandlerFoundException.class)
+  public ResponseEntity<ErrorResponseDto> handleNoHandlerFound(NoHandlerFoundException ex) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponseDto(
+            HttpStatus.NOT_FOUND.value(),
+            "Endpoint Not Found",
+            String.format("No endpoint found for %s %s", ex.getHttpMethod(), ex.getRequestURL())));
+  }
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public ResponseEntity<ErrorResponseDto> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+    return ResponseEntity
+        .status(HttpStatus.METHOD_NOT_ALLOWED)
+        .body(new ErrorResponseDto(
+            HttpStatus.METHOD_NOT_ALLOWED.value(),
+            "Method Not Allowed",
+            String.format("HTTP method %s is not supported for this endpoint. Supported methods: %s",
+                ex.getMethod(), String.join(", ", ex.getSupportedMethods()))));
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponseDto> handleAllExceptions(Exception ex) {
     boolean isDev = Arrays.asList(environment.getActiveProfiles()).contains("dev");
 
-    String details = isDev ? ex.getMessage() + "\n" + ExceptionUtils.getStackTrace(ex)
-        : "An unexpected error occurred. Please try again later.";
+    String details;
+    if (isDev) {
+      details = ex.getMessage() + "\n" + ExceptionUtils.getStackTrace(ex);
+    } else {
+      details = "An unexpected error occurred. Please try again later.";
+    }
 
     return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)

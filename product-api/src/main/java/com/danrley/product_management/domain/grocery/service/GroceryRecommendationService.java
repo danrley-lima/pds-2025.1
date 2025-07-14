@@ -128,7 +128,6 @@ public class GroceryRecommendationService extends BaseRecommendationService {
             
             for (JsonNode ingredient : recipe.get("ingredients")) {
                 if (ingredient.has("product_id")) {
-                    // Ingrediente com ID de produto
                     Long productId = ingredient.get("product_id").asLong();
                     String quantity = ingredient.has("quantity") ? ingredient.get("quantity").asText() : "1";
                     
@@ -136,10 +135,13 @@ public class GroceryRecommendationService extends BaseRecommendationService {
                     if (product != null) {
                         foundProducts.add(createFromProduct(product, quantity));
                     }
-                } else {
-                    // Ingrediente não encontrado
-                    String name = ingredient.has("name") ? ingredient.get("name").asText() : ingredient.asText();
-                    String quantity = ingredient.has("quantity") ? ingredient.get("quantity").asText() : "1";
+                }
+            }
+            
+            if (recipe.has("missing_ingredients")) {
+                for (JsonNode missing : recipe.get("missing_ingredients")) {
+                    String name = missing.get("name").asText();
+                    String quantity = missing.has("quantity") ? missing.get("quantity").asText() : "1";
                     notFoundProducts.add(new ProductNotFoundDTO(name, quantity));
                 }
             }

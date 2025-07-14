@@ -58,6 +58,9 @@ public class ConstructionDomainConfiguration implements DomainConfiguration {
                "Materiais disponíveis:\n{products}\n\n" +
                "Baseado na solicitação do cliente e nos materiais disponíveis, sugira etapas de construção " +
                "ou projetos que utilizem esses materiais, incluindo dicas técnicas e ordem de execução.\n\n" +
+               "Para cada material necessário, use o product_id do catálogo. " +
+               "Se algum material necessário não estiver disponível no catálogo, " +
+               "inclua-o na lista 'missing_materials' com nome e quantidade.\n\n" +
                "Formato da resposta deve ser um JSON válido com os projetos/etapas sugeridos.\n\n" +
                "{json_format}\n\n" +
                "Solicitação do cliente: {customer_message}";
@@ -97,8 +100,20 @@ public class ConstructionDomainConfiguration implements DomainConfiguration {
         return "Formato esperado:\n" +
                "{\n" +
                "  \"construction_steps\": [\n" +
-               "    {\"name\": \"string\", \"materials\": [\"string\"], \"instructions\": \"string\", " +
-               "\"estimated_time\": \"string\", \"difficulty\": \"string\", \"tips\": [\"string\"]}\n" +
+               "    {\n" +
+               "      \"name\": \"string\",\n" +
+               "      \"materials\": [\n" +
+               "        {\"product_id\": 123, \"quantity\": \"10 unidades\"},\n" +
+               "        {\"product_id\": 456, \"quantity\": \"50kg\"}\n" +
+               "      ],\n" +
+               "      \"instructions\": \"string\",\n" +
+               "      \"estimated_time\": \"string\",\n" +
+               "      \"difficulty\": \"string\",\n" +
+               "      \"tips\": [\"string\"],\n" +
+               "      \"missing_materials\": [\n" +
+               "        {\"name\": \"Cimento especial\", \"quantity\": \"5 sacos\"}\n" +
+               "      ]\n" +
+               "    }\n" +
                "  ]\n" +
                "}";
     }

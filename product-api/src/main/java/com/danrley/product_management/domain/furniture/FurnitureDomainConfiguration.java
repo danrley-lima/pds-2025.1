@@ -57,6 +57,9 @@ public class FurnitureDomainConfiguration implements DomainConfiguration {
                "Móveis disponíveis:\n{products}\n\n" +
                "Baseado na solicitação do cliente e nos móveis disponíveis, sugira projetos de decoração " +
                "que utilizem esses itens, incluindo dicas de combinação, cores e layout.\n\n" +
+               "Para cada item necessário, use o product_id do catálogo. " +
+               "Se algum móvel necessário não estiver disponível no catálogo, " +
+               "inclua-o na lista 'missing_items' com nome e quantidade.\n\n" +
                "Formato da resposta deve ser um JSON válido com os projetos sugeridos.\n\n" +
                "{json_format}\n\n" +
                "Solicitação do cliente: {customer_message}";
@@ -96,8 +99,20 @@ public class FurnitureDomainConfiguration implements DomainConfiguration {
         return "Formato esperado:\n" +
                "{\n" +
                "  \"projects\": [\n" +
-               "    {\"name\": \"string\", \"items\": [\"string\"], \"description\": \"string\", " +
-               "\"style\": \"string\", \"color_palette\": [\"string\"], \"tips\": [\"string\"]}\n" +
+               "    {\n" +
+               "      \"name\": \"string\",\n" +
+               "      \"items\": [\n" +
+               "        {\"product_id\": 123, \"quantity\": \"2 unidades\"},\n" +
+               "        {\"product_id\": 456, \"quantity\": \"1 conjunto\"}\n" +
+               "      ],\n" +
+               "      \"description\": \"string\",\n" +
+               "      \"style\": \"string\",\n" +
+               "      \"color_palette\": [\"string\"],\n" +
+               "      \"tips\": [\"string\"],\n" +
+               "      \"missing_items\": [\n" +
+               "        {\"name\": \"Mesa de vidro especial\", \"quantity\": \"1 unidade\"}\n" +
+               "      ]\n" +
+               "    }\n" +
                "  ]\n" +
                "}";
     }
