@@ -1,12 +1,21 @@
 package com.danrley.product_management.domain.furniture.model;
 
-import com.danrley.product_management.core.domain.Domain;
-import com.danrley.product_management.core.model.BaseProduct;
 import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.model.product.UnitType;
+import com.danrley.product_management.core.domain.Domain;
+import com.danrley.product_management.core.model.BaseProduct;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,89 +31,86 @@ import lombok.NoArgsConstructor;
 @Table(name = "furniture_products")
 public class FurnitureProduct implements BaseProduct {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    private String brand;
+  private String brand;
 
-    @Column(name = "unit_weight")
-    private Double unitWeight;
+  @Column(name = "unit_weight")
+  private Double unitWeight;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "unit_type")
-    private UnitType unitType;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "unit_type")
+  private UnitType unitType;
 
-    @Column(name = "stock_quantity")
-    private Integer stockQuantity;
+  @Column(name = "stock_quantity")
+  private Integer stockQuantity;
 
-    @Column(name = "unit_price")
-    private Double unitPrice;
+  @Column(name = "unit_price")
+  private Double unitPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    @JsonManagedReference
-    private Category category;
+  @ManyToOne
+  @JoinColumn(name = "category_id")
+  @JsonManagedReference
+  private Category category;
 
-    private boolean available = true;
+  private boolean available = true;
 
-    private boolean priority = false;
+  private boolean priority = false;
 
-    // Campos específicos do domínio furniture
-    private String dimensions;
-    private String material;
-    private String color;
-    private String style;
+  private String dimensions;
+  private String material;
+  private String color;
+  private String style;
 
-    // Construtores específicos para furniture
-    public FurnitureProduct(String name, String brand, Double unitWeight, UnitType unitType, 
-                           Integer stockQuantity, Double unitPrice, Category category, 
-                           boolean available, boolean priority, String dimensions, 
-                           String material, String color, String style) {
-        this.name = name;
-        this.brand = brand;
-        this.unitWeight = unitWeight;
-        this.unitType = unitType;
-        this.stockQuantity = stockQuantity;
-        this.unitPrice = unitPrice;
-        this.category = category;
-        this.available = available;
-        this.priority = priority;
-        this.dimensions = dimensions;
-        this.material = material;
-        this.color = color;
-        this.style = style;
-    }
+  public FurnitureProduct(String name, String brand, Double unitWeight, UnitType unitType,
+      Integer stockQuantity, Double unitPrice, Category category,
+      boolean available, boolean priority, String dimensions,
+      String material, String color, String style) {
+    this.name = name;
+    this.brand = brand;
+    this.unitWeight = unitWeight;
+    this.unitType = unitType;
+    this.stockQuantity = stockQuantity;
+    this.unitPrice = unitPrice;
+    this.category = category;
+    this.available = available;
+    this.priority = priority;
+    this.dimensions = dimensions;
+    this.material = material;
+    this.color = color;
+    this.style = style;
+  }
 
-    // Implementação dos métodos da interface BaseProduct
-    @Override
-    public Domain getDomain() { return Domain.FURNITURE; }
-    
-    @Override
-    public boolean isAvailable() { return available; }
-    
-    @Override
-    public boolean isPriority() { return priority; }
+  @Override
+  public Domain getDomain() {
+    return Domain.FURNITURE;
+  }
 
-    @Override
-    public String serializeForPrompt() {
-        return String.format("%d,%s,%s,%s,%.2f,%b,%b,%d,%b,dimensoes=%s,material=%s,cor=%s,estilo=%s",
-            id, name, brand != null ? brand : "", 
-            category != null ? category.getName() : "",
-            unitPrice, available, false, // promotion placeholder
-            stockQuantity, priority,
-            dimensions != null ? dimensions : "",
-            material != null ? material : "",
-            color != null ? color : "",
-            style != null ? style : ""
-        );
-    }
-    
-    // Métodos de conveniência para compatibilidade
-    public boolean getAvailable() { return available; }
-    public boolean getPriority() { return priority; }
+  @Override
+  public boolean isAvailable() {
+    return available;
+  }
 
+  @Override
+  public boolean isPriority() {
+    return priority;
+  }
+
+  @Override
+  public String serializeForPrompt() {
+    return String.format("%d,%s,%s,%s,%.2f,%b,%b,%d,%b,dimensoes=%s,material=%s,cor=%s,estilo=%s",
+        id, name, brand != null ? brand : "",
+        category != null ? category.getName() : "",
+        unitPrice, available, false, // promotion placeholder
+        stockQuantity, priority,
+        dimensions != null ? dimensions : "",
+        material != null ? material : "",
+        color != null ? color : "",
+        style != null ? style : "");
+  }
 }
