@@ -7,7 +7,6 @@ import com.danrley.product_management.core.domain.DomainConfiguration;
 import com.danrley.product_management.core.domain.DomainRegistry;
 import com.danrley.product_management.core.llm.BaseLLMHandler;
 import com.danrley.product_management.common.service.llm.provider.AIProviderFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Handler específico para promoções no domínio de construção.
@@ -17,10 +16,8 @@ public class ConstructionPromotionLLMHandler extends BaseLLMHandler {
 
     private final DomainRegistry domainRegistry;
 
-    public ConstructionPromotionLLMHandler(AIProviderFactory aiProviderFactory, 
-                                          ObjectMapper objectMapper,
-                                          DomainRegistry domainRegistry) {
-        super(aiProviderFactory, objectMapper);
+    public ConstructionPromotionLLMHandler(AIProviderFactory aiProviderFactory, DomainRegistry domainRegistry) {
+        super(aiProviderFactory);
         this.domainRegistry = domainRegistry;
     }
 

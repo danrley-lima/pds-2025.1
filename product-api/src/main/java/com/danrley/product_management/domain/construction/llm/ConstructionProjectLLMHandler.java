@@ -7,7 +7,6 @@ import com.danrley.product_management.core.domain.DomainConfiguration;
 import com.danrley.product_management.core.domain.DomainRegistry;
 import com.danrley.product_management.core.llm.BaseLLMHandler;
 import com.danrley.product_management.common.service.llm.provider.AIProviderFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Handler específico para etapas de construção e projetos.
@@ -17,10 +16,8 @@ public class ConstructionProjectLLMHandler extends BaseLLMHandler {
 
     private final DomainRegistry domainRegistry;
 
-    public ConstructionProjectLLMHandler(AIProviderFactory aiProviderFactory, 
-                                        ObjectMapper objectMapper,
-                                        DomainRegistry domainRegistry) {
-        super(aiProviderFactory, objectMapper);
+    public ConstructionProjectLLMHandler(AIProviderFactory aiProviderFactory, DomainRegistry domainRegistry) {
+        super(aiProviderFactory);
         this.domainRegistry = domainRegistry;
     }
 

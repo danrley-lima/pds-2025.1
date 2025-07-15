@@ -146,7 +146,7 @@ public class FurnitureDomainConfiguration implements DomainConfiguration {
     /**
      * Categoria específica para móveis.
      */
-    private static class FurnitureCategory implements BaseCategory {
+    private static class FurnitureCategory extends BaseCategory {
         private final Long id;
         private final String name;
 

@@ -3,58 +3,58 @@ package com.danrley.product_management.core.model;
 import com.danrley.product_management.core.domain.Domain;
 
 /**
- * Interface base para entidades de produtos.
+ * Classe abstrata base para entidades de produtos.
  * Define os campos comuns que todos os produtos devem ter.
  */
-public interface BaseProduct {
+public abstract class BaseProduct {
 
   /**
    * Identificador único do produto.
    */
-  Long getId();
+  public abstract Long getId();
 
   /**
    * Nome do produto.
    */
-  String getName();
+  public abstract String getName();
 
   /**
    * Marca/fabricante do produto.
    */
-  String getBrand();
+  public abstract String getBrand();
 
   /**
    * Preço unitário do produto.
    */
-  Double getUnitPrice();
+  public abstract Double getUnitPrice();
 
   /**
    * Categoria do produto.
    */
-  BaseCategory getCategory();
+  public abstract BaseCategory getCategory();
 
   /**
    * Indica se o produto está disponível.
    */
-  boolean isAvailable();
+  public abstract boolean isAvailable();
 
   /**
    * Indica se o produto tem prioridade.
    */
-  boolean isPriority();
+  public abstract boolean isPriority();
 
   /**
    * Quantidade em estoque.
    */
-  Integer getStockQuantity();
+  public abstract Integer getStockQuantity();
 
   /**
    * Domínio ao qual este produto pertence.
    */
-  Domain getDomain();
+  public abstract Domain getDomain();
 
   /**
    * Serializa o produto para prompt de IA.
    */
-  String serializeForPrompt();
+  public abstract String serializeForPrompt();
 }

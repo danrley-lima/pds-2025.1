@@ -22,6 +22,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -30,10 +31,11 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "grocery_products")
-public class GroceryProduct implements BaseProduct {
+ public class GroceryProduct extends BaseProduct {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -154,7 +154,7 @@ public class GroceryDomainConfiguration implements DomainConfiguration {
     /**
      * Categoria específica para supermercado.
      */
-    private static class GroceryCategory implements BaseCategory {
+    private static class GroceryCategory extends BaseCategory {
         private final Long id;
         private final String name;
 
