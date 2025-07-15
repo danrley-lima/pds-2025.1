@@ -12,7 +12,7 @@ import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 import com.danrley.product_management.common.model.category.Category;
 
 /**
- * Repositório específico para produtos do domínio grocery.
+ * Repositório para produtos do supermercado.
  */
 public interface GroceryProductRepository extends JpaRepository<GroceryProduct, Long> {
     

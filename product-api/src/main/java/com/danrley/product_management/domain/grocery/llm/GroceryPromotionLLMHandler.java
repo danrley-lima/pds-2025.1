@@ -10,7 +10,7 @@ import com.danrley.product_management.common.service.llm.provider.AIProviderFact
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Handler específico para promoções no domínio de supermercado.
+ * Handler para promoções no domínio de supermercado.
  */
 @Service
 public class GroceryPromotionLLMHandler extends BaseLLMHandler {

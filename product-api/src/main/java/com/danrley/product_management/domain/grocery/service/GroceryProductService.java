@@ -9,9 +9,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.danrley.product_management.core.service.BaseProductService;
-import com.danrley.product_management.domain.grocery.model.GroceryProduct;
-import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 import com.danrley.product_management.common.dto.product.ProductRequestDTO;
 import com.danrley.product_management.common.dto.product.ProductResponseDTO;
 import com.danrley.product_management.common.exception.custom.CategoryNotFoundException;
@@ -20,234 +17,227 @@ import com.danrley.product_management.common.exception.custom.ProductServiceExce
 import com.danrley.product_management.common.exception.custom.ProductValidationException;
 import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.repository.CategoryRepository;
+import com.danrley.product_management.core.service.BaseProductService;
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
+import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 
 /**
- * Serviço específico para produtos do domínio grocery.
- * Implementa BaseProductService para reaproveitamento de código do framework.
+ * Serviço para produtos do supermercado.
  */
 @Service
 public class GroceryProductService implements BaseProductService<GroceryProduct> {
 
-    @Autowired
-    private GroceryProductRepository groceryProductRepository;
+  @Autowired
+  private GroceryProductRepository groceryProductRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+  @Autowired
+  private CategoryRepository categoryRepository;
 
-    // ========== IMPLEMENTAÇÃO DOS MÉTODOS BASE ==========
+  // Métodos base
 
-    @Override
-    public List<GroceryProduct> getAll() {
-        try {
-            return groceryProductRepository.findAll();
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos do supermercado: " + e.getMessage(), e);
-        }
+  @Override
+  public List<GroceryProduct> getAll() {
+    try {
+      return groceryProductRepository.findAll();
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos do supermercado: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public Optional<GroceryProduct> getById(Long id) {
+    if (id == null) {
+      throw new ProductValidationException("ID do produto não pode ser nulo");
     }
 
-    @Override
-    public Optional<GroceryProduct> getById(Long id) {
-        if (id == null) {
-            throw new ProductValidationException("ID do produto não pode ser nulo");
-        }
+    try {
+      return groceryProductRepository.findById(id);
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produto com ID " + id + ": " + e.getMessage(), e);
+    }
+  }
 
-        try {
-            return groceryProductRepository.findById(id);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produto com ID " + id + ": " + e.getMessage(), e);
-        }
+  @Override
+  @Transactional
+  public GroceryProduct create(ProductRequestDTO dto) {
+    try {
+      validateProductRequest(dto, true);
+
+      GroceryProduct product = new GroceryProduct();
+      mapRequestToProduct(dto, product);
+
+      return groceryProductRepository.save(product);
+    } catch (DataIntegrityViolationException e) {
+      throw new ProductValidationException(
+          "Produto com dados duplicados. Verifique se já existe um produto com mesmo nome.", e);
+    } catch (ProductValidationException | CategoryNotFoundException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao criar produto: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  @Transactional
+  public GroceryProduct update(Long id, ProductRequestDTO dto) {
+    if (id == null) {
+      throw new ProductValidationException("ID do produto não pode ser nulo");
     }
 
-    @Override
-    @Transactional
-    public GroceryProduct create(ProductRequestDTO dto) {
-        try {
-            validateProductRequest(dto, true);
+    try {
+      validateProductRequest(dto, false);
 
-            GroceryProduct product = new GroceryProduct();
-            mapRequestToProduct(dto, product);
+      GroceryProduct product = groceryProductRepository.findById(id)
+          .orElseThrow(() -> new ProductNotFoundException(id));
 
-            return groceryProductRepository.save(product);
-        } catch (DataIntegrityViolationException e) {
-            throw new ProductValidationException(
-                    "Produto com dados duplicados. Verifique se já existe um produto com mesmo nome.", e);
-        } catch (ProductValidationException | CategoryNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao criar produto: " + e.getMessage(), e);
-        }
+      mapRequestToProduct(dto, product);
+      return groceryProductRepository.save(product);
+    } catch (ProductNotFoundException | ProductValidationException | CategoryNotFoundException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao atualizar produto: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  @Transactional
+  public void delete(Long id) {
+    if (id == null) {
+      throw new ProductValidationException("ID do produto não pode ser nulo");
     }
 
-    @Override
-    @Transactional
-    public GroceryProduct update(Long id, ProductRequestDTO dto) {
-        if (id == null) {
-            throw new ProductValidationException("ID do produto não pode ser nulo");
-        }
+    try {
+      GroceryProduct product = groceryProductRepository.findById(id)
+          .orElseThrow(() -> new ProductNotFoundException(id));
 
-        try {
-            validateProductRequest(dto, false);
+      groceryProductRepository.delete(product);
+    } catch (ProductNotFoundException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao deletar produto: " + e.getMessage(), e);
+    }
+  }
 
-            GroceryProduct product = groceryProductRepository.findById(id)
-                    .orElseThrow(() -> new ProductNotFoundException(id));
+  @Override
+  public ProductResponseDTO toResponseDTO(GroceryProduct entity) {
+    return ProductResponseDTO.fromGroceryProduct(entity);
+  }
 
-            mapRequestToProduct(dto, product);
-            return groceryProductRepository.save(product);
-        } catch (ProductNotFoundException | ProductValidationException | CategoryNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao atualizar produto: " + e.getMessage(), e);
-        }
+  @Override
+  public List<GroceryProduct> getByCategory(String category) {
+    try {
+      // Buscar categoria pelo nome
+      Category categoryEntity = categoryRepository.findByName(category)
+          .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada: " + category));
+      return groceryProductRepository.findByCategory(categoryEntity);
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public List<GroceryProduct> getByBrand(String brand) {
+    try {
+      return groceryProductRepository.findByBrand(brand);
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos por marca: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public List<GroceryProduct> getAvailable() {
+    try {
+      return groceryProductRepository.findAvailableProducts();
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos disponíveis: " + e.getMessage(), e);
+    }
+  }
+
+  // Métodos do domínio
+
+  /**
+   * Busca produtos prioritários.
+   */
+  public List<GroceryProduct> getPriorityProducts() {
+    try {
+      return groceryProductRepository.findPriorityProducts();
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos prioritários: " + e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Busca produtos com promoções ativas.
+   */
+  public List<GroceryProduct> getProductsWithActivePromotions() {
+    try {
+      LocalDate today = LocalDate.now();
+      return groceryProductRepository.findProductsWithActivePromotions(today);
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Busca produtos por categoria.
+   */
+  public List<GroceryProduct> getByCategory(Category category) {
+    try {
+      return groceryProductRepository.findByCategory(category);
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
+    }
+  }
+
+  // Métodos auxiliares
+
+  private void validateProductRequest(ProductRequestDTO dto, boolean isCreate) {
+    if (dto == null) {
+      throw new ProductValidationException("Dados do produto não podem ser nulos");
     }
 
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        if (id == null) {
-            throw new ProductValidationException("ID do produto não pode ser nulo");
-        }
-
-        try {
-            GroceryProduct product = groceryProductRepository.findById(id)
-                    .orElseThrow(() -> new ProductNotFoundException(id));
-
-            groceryProductRepository.delete(product);
-        } catch (ProductNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao deletar produto: " + e.getMessage(), e);
-        }
+    if (dto.name == null || dto.name.trim().isEmpty()) {
+      throw new ProductValidationException("Nome do produto é obrigatório");
     }
 
-    @Override
-    public ProductResponseDTO toResponseDTO(GroceryProduct entity) {
-        return ProductResponseDTO.fromGroceryProduct(entity);
+    if (dto.unitPrice == null || dto.unitPrice <= 0) {
+      throw new ProductValidationException("Preço unitário deve ser maior que zero");
     }
 
-    @Override
-    public List<GroceryProduct> getByCategory(String category) {
-        try {
-            // Buscar categoria pelo nome
-            Category categoryEntity = categoryRepository.findByName(category)
-                    .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada: " + category));
-            return groceryProductRepository.findByCategory(categoryEntity);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
-        }
+    if (dto.stockQuantity == null || dto.stockQuantity < 0) {
+      throw new ProductValidationException("Quantidade em estoque não pode ser negativa");
     }
 
-    @Override
-    public List<GroceryProduct> getByBrand(String brand) {
-        try {
-            return groceryProductRepository.findByBrand(brand);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos por marca: " + e.getMessage(), e);
-        }
+    if (dto.categoryId == null) {
+      throw new ProductValidationException("Categoria é obrigatória");
     }
 
-    @Override
-    public List<GroceryProduct> getAvailable() {
-        try {
-            return groceryProductRepository.findAvailableProducts();
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos disponíveis: " + e.getMessage(), e);
-        }
+    // Verificar se categoria existe
+    categoryRepository.findById(dto.categoryId)
+        .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
+  }
+
+  private void mapRequestToProduct(ProductRequestDTO dto, GroceryProduct product) {
+    product.setName(dto.name);
+    product.setBrand(dto.brand);
+    product.setUnitWeight(dto.unitWeight);
+
+    if (dto.unitType != null) {
+      product.setUnitType(dto.unitType);
     }
 
-    // ========== MÉTODOS ESPECÍFICOS DO DOMÍNIO ==========
-    
-    /**
-     * Busca produtos prioritários (específico do domínio grocery).
-     */
-    public List<GroceryProduct> getPriorityProducts() {
-        try {
-            return groceryProductRepository.findPriorityProducts();
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos prioritários: " + e.getMessage(), e);
-        }
+    product.setStockQuantity(dto.stockQuantity);
+    product.setUnitPrice(dto.unitPrice);
+    product.setAvailable(true); // Sempre disponível por padrão
+    product.setPriority(dto.priority != null ? dto.priority : false);
+
+    Category category = categoryRepository.findById(dto.categoryId)
+        .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
+    product.setCategory(category);
+
+    if (dto.expirationDate != null) {
+      product.setExpirationDate(dto.expirationDate);
     }
 
-    /**
-     * Busca produtos com promoções ativas (específico do domínio grocery).
-     */
-    public List<GroceryProduct> getProductsWithActivePromotions() {
-        try {
-            LocalDate today = LocalDate.now();
-            return groceryProductRepository.findProductsWithActivePromotions(today);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Busca produtos por categoria usando entidade Category (específico do domínio).
-     */
-    public List<GroceryProduct> getByCategory(Category category) {
-        try {
-            return groceryProductRepository.findByCategory(category);
-        } catch (Exception e) {
-            throw new ProductServiceException("Erro ao buscar produtos por categoria: " + e.getMessage(), e);
-        }
-    }
-
-    // ========== MÉTODOS AUXILIARES ==========
-
-    private void validateProductRequest(ProductRequestDTO dto, boolean isCreate) {
-        if (dto == null) {
-            throw new ProductValidationException("Dados do produto não podem ser nulos");
-        }
-
-        if (dto.name == null || dto.name.trim().isEmpty()) {
-            throw new ProductValidationException("Nome do produto é obrigatório");
-        }
-
-        if (dto.unitPrice == null || dto.unitPrice <= 0) {
-            throw new ProductValidationException("Preço unitário deve ser maior que zero");
-        }
-
-        if (dto.stockQuantity == null || dto.stockQuantity < 0) {
-            throw new ProductValidationException("Quantidade em estoque não pode ser negativa");
-        }
-
-        if (dto.categoryId == null) {
-            throw new ProductValidationException("Categoria é obrigatória");
-        }
-
-        // Verificar se categoria existe
-        categoryRepository.findById(dto.categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
-    }
-
-    private void mapRequestToProduct(ProductRequestDTO dto, GroceryProduct product) {
-        product.setName(dto.name);
-        product.setBrand(dto.brand);
-        product.setUnitWeight(dto.unitWeight);
-        
-        if (dto.unitType != null) {
-            product.setUnitType(dto.unitType);
-        }
-        
-        product.setStockQuantity(dto.stockQuantity);
-        product.setUnitPrice(dto.unitPrice);
-        product.setAvailable(true); // Sempre disponível por padrão
-        product.setPriority(dto.priority != null ? dto.priority : false);
-
-        // Buscar e definir categoria
-        Category category = categoryRepository.findById(dto.categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId));
-        product.setCategory(category);
-
-        // Campos específicos do grocery
-        if (dto.expirationDate != null) {
-            product.setExpirationDate(dto.expirationDate);
-        }
-        
-        if (dto.nutritionalInfo != null) {
-            product.setNutritionalInfo(dto.nutritionalInfo);
-        }
-        
-        if (dto.organic != null) {
-            product.setOrganic(dto.organic);
-        }
-    }
+  }
 }

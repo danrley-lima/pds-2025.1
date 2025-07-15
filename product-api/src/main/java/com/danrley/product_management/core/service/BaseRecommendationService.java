@@ -19,11 +19,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Classe base abstrata para serviços de recomendação.
- * Contém toda a lógica comum que pode ser reutilizada pelos domínios.
+ * Classe base para serviços de recomendação.
+ * Contém lógica comum reutilizada pelos domínios.
  * 
- * Template Method Pattern: Define o esqueleto do algoritmo,
- * permitindo que subclasses implementem comportamentos específicos.
+ * Template Method Pattern: Esqueleto do algoritmo,
+ * subclasses implementam comportamentos personalizados.
  */
 public abstract class BaseRecommendationService {
 
@@ -41,8 +41,8 @@ public abstract class BaseRecommendationService {
   }
 
   /**
-   * Template method: Define o fluxo geral de processamento.
-   * Subclasses implementam comportamentos específicos através de métodos
+   * Template method: Fluxo geral de processamento.
+   * Subclasses implementam comportamentos personalizados através de métodos
    * abstratos.
    */
   public RecommendationResponseDTO getRecommendations(RecommendationRequestDTO request) {
@@ -55,7 +55,7 @@ public abstract class BaseRecommendationService {
   }
 
   /**
-   * Método específico para cada tipo de recomendação
+   * Método personalizado para cada tipo de recomendação
    */
   public RecommendationResponseDTO getSpecialRecommendations(RecommendationRequestDTO request,
       RequestCategory forcedCategory) {
@@ -193,20 +193,20 @@ public abstract class BaseRecommendationService {
     products.add(fallback);
   }
 
-  // ========== MÉTODOS ABSTRATOS - IMPLEMENTADOS PELAS SUBCLASSES ==========
+  // Métodos abstratos - implementados pelas subclasses
 
   /**
-   * Cada domínio busca seus próprios produtos
+   * Cada domínio busca seus próprios produtos.
    */
   protected abstract List<BaseProduct> getDomainProducts();
 
   /**
-   * Cada domínio implementa sua lógica de seleção de handler
+   * Cada domínio define sua lógica de seleção de handler
    */
   protected abstract BaseLLMHandler selectHandler(RequestCategory category);
 
   /**
-   * Cada domínio implementa seu parser específico
+   * Cada domínio define seu parser
    */
   protected abstract void parseSpecificResponse(JsonNode jsonNode,
       List<ProductOutDTO> foundProducts,

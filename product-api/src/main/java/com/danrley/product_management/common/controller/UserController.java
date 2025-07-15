@@ -40,7 +40,7 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Buscar usuário por ID", description = "Retorna os detalhes completos de um usuário específico")
+  @Operation(summary = "Buscar usuário por ID", description = "Retorna os detalhes completos de um usuário pelo ID")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
       @ApiResponse(responseCode = "401", description = "Não autorizado"),

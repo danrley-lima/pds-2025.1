@@ -29,7 +29,7 @@ public class LLMClassifierService {
             
             return parseClassificationResponse(response);
         } catch (Exception e) {
-            // Em caso de erro, retorna categoria padrão
+            // Em caso de erro, categoria padrão
             return RequestCategory.SEARCH_PRODUCT;
         }
     }
@@ -58,7 +58,7 @@ public class LLMClassifierService {
 
     private Map<String, Object> getClassificationParameters() {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("temperature", 0.0);  // Zero temperatura para respostas consistentes
+        parameters.put("temperature", 0.0); 
         parameters.put("maxOutputTokens", 50);  // Resposta curta
         return parameters;
     }
@@ -85,7 +85,7 @@ public class LLMClassifierService {
                 return RequestCategory.UNKNOWN;
             }
             
-            // Fallback baseado em palavras-chave do conteúdo
+            // Fallback por palavras-chave do conteúdo
             String originalMessage = response.toLowerCase();
             if (originalMessage.contains("receita") || originalMessage.contains("cozinhar") || 
                 originalMessage.contains("ingredientes") || originalMessage.contains("preparo")) {

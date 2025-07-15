@@ -11,109 +11,70 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.danrley.product_management.core.controller.BaseProductController;
-import com.danrley.product_management.domain.construction.model.ConstructionProduct;
-import com.danrley.product_management.domain.construction.service.ConstructionProductService;
-import com.danrley.product_management.domain.construction.service.ConstructionRecommendationService;
 import com.danrley.product_management.common.dto.product.ProductResponseDTO;
 import com.danrley.product_management.common.dto.recommendation.RecommendationRequestDTO;
 import com.danrley.product_management.common.dto.recommendation.RecommendationResponseDTO;
 import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.repository.CategoryRepository;
+import com.danrley.product_management.core.controller.BaseProductController;
+import com.danrley.product_management.domain.construction.model.ConstructionProduct;
+import com.danrley.product_management.domain.construction.service.ConstructionProductService;
+import com.danrley.product_management.domain.construction.service.ConstructionRecommendationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * Controller específico para o domínio de material de construção.
- * Estende BaseProductController para herdar operações CRUD comuns 
- * e adiciona endpoints específicos do domínio construction.
+ * Controller para produtos de construção.
+ * Herda operações CRUD básicas e adiciona funcionalidades de materiais de construção.
  */
 @RestController
 @RequestMapping("/api/construction")
-@Tag(name = "Construction Domain", description = "API para produtos e funcionalidades de material de construção")
+@Tag(name = "Construction Domain", description = "API para produtos de material de construção")
 public class ConstructionController extends BaseProductController<ConstructionProduct, ConstructionProductService> {
 
-    @Autowired
-    private ConstructionRecommendationService recommendationService;
-    
-    @Autowired
-    private CategoryRepository categoryRepository;
+  @Autowired
+  private ConstructionRecommendationService recommendationService;
 
-    public ConstructionController(ConstructionProductService productService) {
-        super(productService);
-    }
-    
-    @Override
-    protected String getDomainName() {
-        return "construction";
-    }
+  @Autowired
+  private CategoryRepository categoryRepository;
 
-    // ========== ENDPOINTS ESPECÍFICOS DO DOMÍNIO ==========
+  public ConstructionController(ConstructionProductService productService) {
+    super(productService);
+  }
 
-    @PostMapping("/recommendations")
-    @Operation(summary = "Recomendações de materiais de construção", 
-               description = "Gera recomendações de materiais baseadas em projeto de construção")
-    public ResponseEntity<RecommendationResponseDTO> getRecommendations(
-            @RequestBody RecommendationRequestDTO request) {
-        
-        RecommendationResponseDTO response = recommendationService.getRecommendations(request);
-        return ResponseEntity.ok(response);
-    }
+  @Override
+  protected String getDomainName() {
+    return "construction";
+  }
 
-    @PostMapping("/projects")
-    @Operation(summary = "Projetos de construção", 
-               description = "Gera sugestões de projetos de construção com materiais")
-    public ResponseEntity<RecommendationResponseDTO> getProjects(
-            @RequestBody RecommendationRequestDTO request) {
-        
-        // Usar o método padrão de recomendações por enquanto
-        RecommendationResponseDTO response = recommendationService.getRecommendations(request);
-        return ResponseEntity.ok(response);
-    }
+  // ========== ENDPOINTS DO DOMÍNIO ==========
 
-    @GetMapping("/specifications/{specifications}")
-    @Operation(summary = "Buscar por especificações", 
-               description = "Retorna produtos com especificações específicas")
-    public ResponseEntity<List<ProductResponseDTO>> getBySpecifications(
-            @Parameter(description = "Especificações do material") @PathVariable String specifications) {
-        List<ConstructionProduct> products = productService.getBySpecifications(specifications);
-        List<ProductResponseDTO> responseProducts = products.stream()
-                .map(productService::toResponseDTO)
-                .toList();
-        return ResponseEntity.ok(responseProducts);
-    }
+  @PostMapping("/recommendations")
+  @Operation(summary = "Recomendações de materiais de construção", description = "Gera recomendações de materiais baseadas em projeto de construção")
+  public ResponseEntity<RecommendationResponseDTO> getRecommendations(
+      @RequestBody RecommendationRequestDTO request) {
 
-    @GetMapping("/application/{application}")
-    @Operation(summary = "Buscar por aplicação", 
-               description = "Retorna produtos para uma aplicação específica")
-    public ResponseEntity<List<ProductResponseDTO>> getByApplication(
-            @Parameter(description = "Aplicação do material") @PathVariable String application) {
-        List<ConstructionProduct> products = productService.getByApplication(application);
-        List<ProductResponseDTO> responseProducts = products.stream()
-                .map(productService::toResponseDTO)
-                .toList();
-        return ResponseEntity.ok(responseProducts);
-    }
+    RecommendationResponseDTO response = recommendationService.getRecommendations(request);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/grade/{grade}")
-    @Operation(summary = "Buscar por grau", 
-               description = "Retorna produtos de um grau específico")
-    public ResponseEntity<List<ProductResponseDTO>> getByGrade(
-            @Parameter(description = "Grau do material") @PathVariable String grade) {
-        List<ConstructionProduct> products = productService.getByGrade(grade);
-        List<ProductResponseDTO> responseProducts = products.stream()
-                .map(productService::toResponseDTO)
-                .toList();
-        return ResponseEntity.ok(responseProducts);
-    }
+  @GetMapping("/specifications/{specifications}")
+  @Operation(summary = "Buscar por especificações", description = "Retorna produtos com especificações específicas")
+  public ResponseEntity<List<ProductResponseDTO>> getBySpecifications(
+      @Parameter(description = "Especificações do material") @PathVariable String specifications) {
+    List<ConstructionProduct> products = productService.getBySpecifications(specifications);
+    List<ProductResponseDTO> responseProducts = products.stream()
+        .map(productService::toResponseDTO)
+        .toList();
+    return ResponseEntity.ok(responseProducts);
+  }
 
-    @GetMapping("/categories")
-    @Operation(summary = "Lista categorias de construção", 
-               description = "Retorna todas as categorias de materiais de construção")
-    public ResponseEntity<List<Category>> getCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        return ResponseEntity.ok(categories);
-    }
+  @GetMapping("/categories")
+  @Operation(summary = "Lista categorias de construção", description = "Retorna todas as categorias de materiais de construção")
+  public ResponseEntity<List<Category>> getCategories() {
+    List<Category> categories = categoryRepository.findAll();
+    return ResponseEntity.ok(categories);
+  }
 }

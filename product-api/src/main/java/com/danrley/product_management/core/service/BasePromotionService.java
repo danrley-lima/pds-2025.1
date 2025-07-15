@@ -7,15 +7,13 @@ import com.danrley.product_management.common.dto.promotion.PromotionResponseDTO;
 import com.danrley.product_management.core.model.BaseProduct;
 
 /**
- * Interface base para serviços de promoção por domínio.
- * Permite que cada domínio gerencie suas próprias promoções.
- * 
- * @param <T> Tipo da entidade específica do domínio que implementa BaseProduct
+ * Interface base para serviços de promoção.
+ * @param <T> Tipo da entidade que implementa BaseProduct
  */
 public interface BasePromotionService<T extends BaseProduct> {
 
   /**
-   * Cria uma nova promoção para um produto do domínio.
+   * Cria uma nova promoção para um produto.
    */
   PromotionResponseDTO createPromotion(Long productId, PromotionRequestDTO dto);
 
@@ -30,7 +28,7 @@ public interface BasePromotionService<T extends BaseProduct> {
   List<PromotionResponseDTO> getActivePromotions();
 
   /**
-   * Lista promoções ativas para um produto específico.
+   * Lista promoções ativas para um produto.
    */
   List<PromotionResponseDTO> getActivePromotionsForProduct(Long productId);
 

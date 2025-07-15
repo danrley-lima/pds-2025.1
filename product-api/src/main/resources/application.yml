@@ -17,7 +17,7 @@ ai:
     preferred: gemini
     gemini:
       api:
-        key: ${GEMINI_API_KEY:${google.gemini.api.key:AIzaSyAb9b6I4J8JUZOo-D3CeHb0tZnT9IL4NnM}}
+        key: ${GEMINI_API_KEY:${google.gemini.api.key:sua_key}}
 
 # Configuração do Framework Multi-Domínio
 framework:
@@ -27,11 +27,6 @@ framework:
       - grocery
       - furniture
       - construction
-
-google:
-  gemini:
-    api:
-      key: ${GEMINI_API_KEY:AIzaSyAb9b6I4J8JUZOo-D3CeHb0tZnT9IL4NnM}
 
 api:
   security:

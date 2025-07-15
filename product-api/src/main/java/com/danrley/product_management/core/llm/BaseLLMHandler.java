@@ -9,9 +9,9 @@ import com.danrley.product_management.core.model.BaseProduct;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Handler abstrato para processamento de produtos usando IA, com suporte a
+ * Handler base para processamento de produtos usando IA, com suporte a
  * múltiplos domínios.
- * Subclasses devem implementar a lógica específica de cada domínio.
+ * Subclasses devem implementar a lógica de cada domínio.
  */
 public abstract class BaseLLMHandler {
 

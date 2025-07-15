@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 
 /**
- * Registry responsável por gerenciar todas as configurações de domínios disponíveis.
- * Permite registrar novos domínios e obter configurações específicas por domínio.
+ * Registry para gerenciar configurações de domínios disponíveis.
+ * Permite registrar novos domínios e obter configurações por domínio.
  */
 @Component
 public class DomainRegistry {
@@ -26,7 +26,7 @@ public class DomainRegistry {
     }
 
     /**
-     * Obtém a configuração para um domínio específico.
+     * Obtém a configuração para um domínio.
      */
     public DomainConfiguration getConfiguration(Domain domain) {
         DomainConfiguration config = configurations.get(domain);

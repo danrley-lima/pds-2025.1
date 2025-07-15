@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/categories")
-@Tag(name = "Categorias", description = "API para gerenciamento de categorias de produtos")
+@Tag(name = "Categorias", description = "API para categorias de produtos")
 public class CategoryController {
 
   private final CategoryService categoryService;
@@ -39,7 +39,7 @@ public class CategoryController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Criar nova categoria", description = "Cria uma nova categoria com base no nome fornecido")
+  @Operation(summary = "Criar nova categoria", description = "Cria uma nova categoria com o nome fornecido")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Categoria criada com sucesso", content = @Content(schema = @Schema(implementation = CategoryResponseDTO.class))),
       @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),

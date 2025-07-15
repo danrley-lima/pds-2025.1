@@ -21,8 +21,8 @@ import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 
 /**
- * Serviço para gerenciamento de promoções.
- * Suporta criação, atualização e consulta de promoções para produtos de todos
+ * Serviço para promoções.
+ * Criação, atualização e consulta de promoções para produtos de todos
  * os domínios.
  */
 @Service
@@ -78,7 +78,7 @@ public class PromotionService {
     promotion.setStartDate(dto.startDate);
     promotion.setEndDate(dto.endDate);
 
-    // Determinar qual produto está sendo promovido baseado no domínio
+    // Determinar qual produto está sendo promovido pelo domínio
     if ("grocery".equalsIgnoreCase(dto.domain)) {
       GroceryProduct product = groceryProductRepository.findById(dto.productId)
           .orElseThrow(
@@ -131,7 +131,7 @@ public class PromotionService {
       promotion.setFurnitureProduct(null);
       promotion.setConstructionProduct(null);
 
-      // Definir novo produto baseado no domínio
+      // Definir novo produto pelo domínio
       if ("grocery".equalsIgnoreCase(dto.domain)) {
         GroceryProduct product = groceryProductRepository.findById(dto.productId)
             .orElseThrow(
