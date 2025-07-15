@@ -13,12 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @Table(name = "categories")
-public class Category implements BaseCategory {
+public class Category extends BaseCategory {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

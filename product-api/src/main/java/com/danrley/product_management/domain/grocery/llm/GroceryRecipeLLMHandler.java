@@ -7,7 +7,6 @@ import com.danrley.product_management.core.domain.DomainConfiguration;
 import com.danrley.product_management.core.domain.DomainRegistry;
 import com.danrley.product_management.core.llm.BaseLLMHandler;
 import com.danrley.product_management.common.service.llm.provider.AIProviderFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Handler para recomendações de receitas no domínio de supermercado.
@@ -17,10 +16,8 @@ public class GroceryRecipeLLMHandler extends BaseLLMHandler {
 
     private final DomainRegistry domainRegistry;
 
-    public GroceryRecipeLLMHandler(AIProviderFactory aiProviderFactory, 
-                                  ObjectMapper objectMapper,
-                                  DomainRegistry domainRegistry) {
-        super(aiProviderFactory, objectMapper);
+    public GroceryRecipeLLMHandler(AIProviderFactory aiProviderFactory, DomainRegistry domainRegistry) {
+        super(aiProviderFactory);
         this.domainRegistry = domainRegistry;
     }
 

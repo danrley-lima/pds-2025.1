@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -25,10 +26,11 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "construction_products")
-public class ConstructionProduct implements BaseProduct {
+ public class ConstructionProduct extends BaseProduct {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

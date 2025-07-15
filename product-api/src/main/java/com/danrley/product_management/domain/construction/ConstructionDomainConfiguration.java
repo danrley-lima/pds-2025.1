@@ -147,7 +147,7 @@ public class ConstructionDomainConfiguration implements DomainConfiguration {
     /**
      * Categoria específica para material de construção.
      */
-    private static class ConstructionCategory implements BaseCategory {
+    private static class ConstructionCategory extends BaseCategory {
         private final Long id;
         private final String name;
 

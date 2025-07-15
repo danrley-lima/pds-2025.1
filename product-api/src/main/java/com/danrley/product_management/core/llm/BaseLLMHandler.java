@@ -6,7 +6,6 @@ import com.danrley.product_management.common.service.llm.provider.AIProviderFact
 import com.danrley.product_management.core.domain.Domain;
 import com.danrley.product_management.core.domain.DomainConfiguration;
 import com.danrley.product_management.core.model.BaseProduct;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Handler base para processamento de produtos usando IA, com suporte a
@@ -16,11 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class BaseLLMHandler {
 
   protected final AIProviderFactory aiProviderFactory;
-  protected final ObjectMapper objectMapper;
 
-  public BaseLLMHandler(AIProviderFactory aiProviderFactory, ObjectMapper objectMapper) {
+  public BaseLLMHandler(AIProviderFactory aiProviderFactory) {
     this.aiProviderFactory = aiProviderFactory;
-    this.objectMapper = objectMapper;
   }
 
   /**
@@ -74,20 +71,4 @@ public abstract class BaseLLMHandler {
     }
   }
 
-  /**
-   * Valida se a resposta da IA está no formato esperado.
-   */
-  protected boolean isValidResponse(String response) {
-    if (response == null || response.trim().isEmpty()) {
-      return false;
-    }
-
-    // Verifica se é um JSON válido
-    try {
-      objectMapper.readTree(response);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
-  }
 }
