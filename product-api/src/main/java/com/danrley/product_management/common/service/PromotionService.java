@@ -78,32 +78,6 @@ public class PromotionService {
     promotion.setStartDate(dto.startDate);
     promotion.setEndDate(dto.endDate);
 
-    // Determinar qual produto está sendo promovido pelo domínio
-    if ("grocery".equalsIgnoreCase(dto.domain)) {
-      GroceryProduct product = groceryProductRepository.findById(dto.productId)
-          .orElseThrow(
-              () -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
-      promotion.setGroceryProduct(product);
-      promotion.setFurnitureProduct(null);
-      promotion.setConstructionProduct(null);
-    } else if ("furniture".equalsIgnoreCase(dto.domain)) {
-      FurnitureProduct product = furnitureProductRepository.findById(dto.productId)
-          .orElseThrow(() -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + dto.productId));
-      promotion.setFurnitureProduct(product);
-      promotion.setGroceryProduct(null);
-      promotion.setConstructionProduct(null);
-    } else if ("construction".equalsIgnoreCase(dto.domain)) {
-      ConstructionProduct product = constructionProductRepository.findById(dto.productId)
-          .orElseThrow(
-              () -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
-      promotion.setConstructionProduct(product);
-      promotion.setGroceryProduct(null);
-      promotion.setFurnitureProduct(null);
-    } else {
-      throw new IllegalArgumentException(
-          "Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
-    }
-
     Promotion savedPromotion = promotionRepository.save(promotion);
     return toResponse(savedPromotion);
   }
@@ -124,34 +98,7 @@ public class PromotionService {
     promotion.setStartDate(dto.startDate);
     promotion.setEndDate(dto.endDate);
 
-    // Atualizar produto se necessário
-    if (dto.productId != null && dto.domain != null) {
-      // Limpar produtos atuais
-      promotion.setGroceryProduct(null);
-      promotion.setFurnitureProduct(null);
-      promotion.setConstructionProduct(null);
 
-      // Definir novo produto pelo domínio
-      if ("grocery".equalsIgnoreCase(dto.domain)) {
-        GroceryProduct product = groceryProductRepository.findById(dto.productId)
-            .orElseThrow(
-                () -> new ProductNotFoundException("Produto de supermercado não encontrado com ID: " + dto.productId));
-        promotion.setGroceryProduct(product);
-      } else if ("furniture".equalsIgnoreCase(dto.domain)) {
-        FurnitureProduct product = furnitureProductRepository.findById(dto.productId)
-            .orElseThrow(
-                () -> new ProductNotFoundException("Produto de móveis não encontrado com ID: " + dto.productId));
-        promotion.setFurnitureProduct(product);
-      } else if ("construction".equalsIgnoreCase(dto.domain)) {
-        ConstructionProduct product = constructionProductRepository.findById(dto.productId)
-            .orElseThrow(
-                () -> new ProductNotFoundException("Produto de construção não encontrado com ID: " + dto.productId));
-        promotion.setConstructionProduct(product);
-      } else {
-        throw new IllegalArgumentException(
-            "Domínio inválido: " + dto.domain + ". Use: grocery, furniture ou construction");
-      }
-    }
 
     Promotion updatedPromotion = promotionRepository.save(promotion);
     return toResponse(updatedPromotion);
@@ -173,18 +120,8 @@ public class PromotionService {
     dto.initialDate = promotion.getStartDate();
     dto.finalDate = promotion.getEndDate();
     dto.description = promotion.getDescription();
-
-    // Produto vinculado (se houver)
-    if (promotion.getGroceryProduct() != null) {
-      dto.productName = promotion.getGroceryProduct().getName();
-      dto.originalPrice = promotion.getGroceryProduct().getUnitPrice();
-    } else if (promotion.getFurnitureProduct() != null) {
-      dto.productName = promotion.getFurnitureProduct().getName();
-      dto.originalPrice = promotion.getFurnitureProduct().getUnitPrice();
-    } else if (promotion.getConstructionProduct() != null) {
-      dto.productName = promotion.getConstructionProduct().getName();
-      dto.originalPrice = promotion.getConstructionProduct().getUnitPrice();
-    }
+    dto.productName = promotion.getBaseProduct() != null ? promotion.getBaseProduct().getName() : null;
+    dto.originalPrice = promotion.getBaseProduct() != null ? promotion.getBaseProduct().getUnitPrice() : 0.0;
 
     return dto;
   }

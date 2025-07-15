@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.danrley.product_management.core.model.BaseProduct;
 import com.danrley.product_management.core.service.BaseProductService;
-import com.danrley.product_management.core.service.BasePromotionService;
+import com.danrley.product_management.core.service.BasePromotionConditionService;
 import com.danrley.product_management.core.service.BaseRecommendationService;
 
 /**
@@ -19,20 +19,20 @@ public class CompleteDomainConfiguration {
     private final Domain domain;
     private final Class<? extends BaseProduct> productClass;
     private final Class<? extends BaseProductService<?>> productServiceClass;
-    private final Class<? extends BasePromotionService<?>> promotionServiceClass;
+    private final Class<? extends BasePromotionConditionService<?>> promotionServiceConditionClass;
     private final Class<? extends BaseRecommendationService> recommendationServiceClass;
 
     public CompleteDomainConfiguration(
             Domain domain,
             Class<? extends BaseProduct> productClass,
             Class<? extends BaseProductService<?>> productServiceClass,
-            Class<? extends BasePromotionService<?>> promotionServiceClass,
+            Class<? extends BasePromotionConditionService<?>> promotionServiceConditionClass,
             Class<? extends BaseRecommendationService> recommendationServiceClass) {
 
         this.domain = domain;
         this.productClass = productClass;
         this.productServiceClass = productServiceClass;
-        this.promotionServiceClass = promotionServiceClass;
+        this.promotionServiceConditionClass = promotionServiceConditionClass;
         this.recommendationServiceClass = recommendationServiceClass;
     }
 
@@ -49,8 +49,8 @@ public class CompleteDomainConfiguration {
         return productServiceClass;
     }
 
-    public Class<? extends BasePromotionService<?>> getPromotionServiceClass() {
-        return promotionServiceClass;
+    public Class<? extends BasePromotionConditionService<?>> getPromotionServiceClass() {
+        return promotionServiceConditionClass;
     }
 
     public Class<? extends BaseRecommendationService> getRecommendationServiceClass() {
@@ -61,8 +61,8 @@ public class CompleteDomainConfiguration {
         return (BaseProductService<T>) context.getBean(productServiceClass);
     }
 
-    public <T extends BaseProduct> BasePromotionService<T> getPromotionService(ApplicationContext context) {
-        return (BasePromotionService<T>) context.getBean(promotionServiceClass);
+    public <T extends BaseProduct> BasePromotionConditionService<T> getPromotionService(ApplicationContext context) {
+        return (BasePromotionConditionService<T>) context.getBean(promotionServiceConditionClass);
     }
 
     /**
@@ -79,7 +79,7 @@ public class CompleteDomainConfiguration {
         private Domain domain;
         private Class<? extends BaseProduct> productClass;
         private Class<? extends BaseProductService<?>> productServiceClass;
-        private Class<? extends BasePromotionService<?>> promotionServiceClass;
+        private Class<? extends BasePromotionConditionService<?>> promotionServiceClass;
         private Class<? extends BaseRecommendationService> recommendationServiceClass;
 
         public Builder domain(Domain domain) {
@@ -97,7 +97,7 @@ public class CompleteDomainConfiguration {
             return this;
         }
 
-        public Builder promotionService(Class<? extends BasePromotionService<?>> serviceClass) {
+        public Builder promotionService(Class<? extends BasePromotionConditionService<?>> serviceClass) {
             this.promotionServiceClass = serviceClass;
             return this;
         }
