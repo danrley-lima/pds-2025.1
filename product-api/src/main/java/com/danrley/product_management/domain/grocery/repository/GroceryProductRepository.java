@@ -32,8 +32,8 @@ public interface GroceryProductRepository extends JpaRepository<GroceryProduct, 
     @Query("SELECT gp FROM GroceryProduct gp WHERE gp.priority = true")
     List<GroceryProduct> findPriorityProducts();
     
-    @Query("SELECT gp FROM GroceryProduct gp JOIN gp.promotion pr WHERE pr.startDate <= :today AND pr.endDate >= :today")
-    List<GroceryProduct> findProductsWithActivePromotions(@Param("today") LocalDate today);
+    // @Query("SELECT gp FROM GroceryProduct gp JOIN gp.promotion pr WHERE pr.startDate <= :today AND pr.endDate >= :today")
+    // List<GroceryProduct> findProductsWithActivePromotions(@Param("today") LocalDate today);
     
     @Query("SELECT gp FROM GroceryProduct gp WHERE gp.stockQuantity > 0")
     List<GroceryProduct> findInStock();

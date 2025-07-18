@@ -16,8 +16,6 @@ import com.danrley.product_management.common.repository.CategoryRepository;
 import com.danrley.product_management.core.domain.Domain;
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
 import com.danrley.product_management.domain.construction.repository.ConstructionProductRepository;
-import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
-import com.danrley.product_management.domain.furniture.repository.FurnitureProductRepository;
 import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 import com.danrley.product_management.domain.grocery.repository.GroceryProductRepository;
 
@@ -38,7 +36,6 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
 
   private final CategoryRepository categoryRepository;
   private final GroceryProductRepository groceryProductRepository;
-  private final FurnitureProductRepository furnitureProductRepository;
   private final ConstructionProductRepository constructionProductRepository;
 
   @Override
@@ -150,74 +147,6 @@ public class MultiDomainDatabaseSeeder implements CommandLineRunner {
 
       categoryRepository.saveAll(furnitureCategories);
       System.out.println("✅ Categorias de móveis inseridas!");
-    }
-
-    if (furnitureProductRepository.count() == 0) {
-      Category salaEstar = categoryRepository.findByNameAndDomain("Sala de Estar", Domain.FURNITURE).orElseThrow();
-      Category quarto = categoryRepository.findByNameAndDomain("Quarto", Domain.FURNITURE).orElseThrow();
-      Category cozinha = categoryRepository.findByNameAndDomain("Cozinha", Domain.FURNITURE).orElseThrow();
-      Category escritorio = categoryRepository.findByNameAndDomain("Escritório", Domain.FURNITURE).orElseThrow();
-
-      furnitureProductRepository.saveAll(Arrays.asList(
-          // SALA DE ESTAR (4 produtos)
-          new FurnitureProduct("Sofá 3 Lugares", "Tok&Stok", 1.0, UnitType.UN, 15, 899.99, salaEstar, true, false,
-              "Tecido", "Azul"),
-          new FurnitureProduct("Mesa de Centro", "MadeiraMadeira", 1.0, UnitType.UN, 25, 299.99, salaEstar, true, false,
-              "Vidro", "Transparente"),
-          new FurnitureProduct("Poltrona Reclinável", "La-Z-Boy", 1.0, UnitType.UN, 8, 1299.99, salaEstar, true, false,
-              "Couro", "Marrom"),
-          new FurnitureProduct("Estante TV", "Madesa", 1.0, UnitType.UN, 12, 189.99, salaEstar, true, false,
-              "MDF", "Branco"),
-
-          // QUARTO (4 produtos)
-          new FurnitureProduct("Cama Box Queen", "Ortobom", 1.0, UnitType.UN, 12, 799.99, quarto, true, false,
-              "Tecido", "Branco"),
-          new FurnitureProduct("Guarda-roupa 6 Portas", "Casas Bahia", 1.0, UnitType.UN, 6, 599.99, quarto, true, false,
-              "MDF", "Branco"),
-          new FurnitureProduct("Cômoda 4 Gavetas", "Madesa", 1.0, UnitType.UN, 20, 189.99, quarto, true, false,
-              "MDF", "Amadeirado"),
-          new FurnitureProduct("Criado-mudo", "MadeiraMadeira", 1.0, UnitType.UN, 25, 129.99, quarto, true, false,
-              "Madeira", "Pinus"),
-
-          // COZINHA (3 produtos)
-          new FurnitureProduct("Mesa de Jantar 6 Lugares", "Móveis Carraro", 1.0, UnitType.UN, 10, 449.99, cozinha,
-              true, false, "Madeira", "Carvalho"),
-          new FurnitureProduct("Cadeiras Estofadas (4x)", "Tramontina", 4.0, UnitType.UN, 20, 320.00, cozinha, true,
-              false, "Tecido", "Bege"),
-          new FurnitureProduct("Buffet Cozinha", "Madesa", 1.0, UnitType.UN, 8, 389.99, cozinha, true, false,
-              "MDF", "Branco"),
-
-          // ESCRITÓRIO (3 produtos)
-          new FurnitureProduct("Mesa de Escritório", "Politorno", 1.0, UnitType.UN, 18, 249.99, escritorio, true, false,
-              "MDF", "Branco"),
-          new FurnitureProduct("Cadeira de Escritório", "DT3 Office", 1.0, UnitType.UN, 15, 379.99, escritorio, true,
-              false, "Tecido", "Preto"),
-          new FurnitureProduct("Estante para Livros", "Madesa", 1.0, UnitType.UN, 12, 189.99, escritorio, true, false,
-              "MDF", "Amadeirado"),
-
-          // PRODUTOS ADICIONAIS (10 produtos)
-          new FurnitureProduct("Rack para TV 55'", "Móveis Bechara", 1.0, UnitType.UN, 15, 349.99, salaEstar, true, false,
-              "MDF", "Preto"),
-          new FurnitureProduct("Puff Redondo", "Divaloto", 1.0, UnitType.UN, 30, 89.99, salaEstar, true, false,
-              "Tecido", "Verde"),
-          new FurnitureProduct("Penteadeira com Espelho", "JB Bechara", 1.0, UnitType.UN, 8, 299.99, quarto, true, false,
-              "MDF", "Branco"),
-          new FurnitureProduct("Beliche Solteiro", "Santos Andirá", 1.0, UnitType.UN, 5, 699.99, quarto, true, false,
-              "Madeira", "Pinus"),
-          new FurnitureProduct("Aparador de Sala", "Móveis Carraro", 1.0, UnitType.UN, 12, 259.99, cozinha, true, false,
-              "Madeira", "Carvalho"),
-          new FurnitureProduct("Banquetas Altas (2x)", "Tok&Stok", 2.0, UnitType.UN, 20, 179.99, cozinha, true, false,
-              "Metal", "Preto"),
-          new FurnitureProduct("Gaveteiro 3 Gavetas", "Politorno", 1.0, UnitType.UN, 18, 149.99, escritorio, true, false,
-              "MDF", "Carvalho"),
-          new FurnitureProduct("Poltrona para Escritório", "Flexform", 1.0, UnitType.UN, 10, 459.99, escritorio, true, false,
-              "Couro", "Preto"),
-          new FurnitureProduct("Mesa Lateral", "MadeiraMadeira", 1.0, UnitType.UN, 25, 119.99, salaEstar, true, false,
-              "Vidro", "Fumê"),
-          new FurnitureProduct("Armário Aéreo Cozinha", "Itatiaia", 1.0, UnitType.UN, 14, 229.99, cozinha, true, false,
-              "Aço", "Branco")));
-
-      System.out.println("✅ Produtos de móveis inseridos! (24 itens)");
     }
   }
 

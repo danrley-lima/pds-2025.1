@@ -4,11 +4,12 @@ import java.time.LocalDate;
 
 import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.model.product.UnitType;
-import com.danrley.product_management.common.model.promotion.Promotion;
 import com.danrley.product_management.core.domain.Domain;
 import com.danrley.product_management.core.model.BaseCategory;
 import com.danrley.product_management.core.model.BaseProduct;
+import com.danrley.product_management.core.model.BasePromotion;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,49 +33,34 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "grocery_products")
  public class GroceryProduct extends BaseProduct {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  private String name;
-  private String brand;
   private Double unitWeight;
+  private Double unitPrice;
 
   @Enumerated(EnumType.STRING)
   private UnitType unitType;
 
-  private Integer stockQuantity;
-  private Double unitPrice;
-
-  @ManyToOne
-  @JoinColumn(name = "category_id")
-  private Category category;
-
-  private boolean available;
   private boolean priority;
 
   private LocalDate expirationDate;
 
+  @Nullable
   @OneToOne(mappedBy = "groceryProduct", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Promotion promotion;
+  protected GroceryPromotion groceryPromotion;
 
-  // Construtor do domínio
+  public GroceryProduct() {
+    super();
+  }
+
   public GroceryProduct(String name, String brand, Double unitWeight,
       UnitType unitType, Integer stockQuantity, Double unitPrice,
       Category category, boolean available, boolean priority) {
-    this.name = name;
-    this.brand = brand;
+    super(name, brand, stockQuantity, category, available);
     this.unitWeight = unitWeight;
     this.unitType = unitType;
-    this.stockQuantity = stockQuantity;
     this.unitPrice = unitPrice;
-    this.category = category;
-    this.available = available;
+    this.expirationDate = expirationDate;
     this.priority = priority;
   }
 
@@ -134,8 +120,8 @@ import lombok.NoArgsConstructor;
         unitType != null ? unitType.toString() : "UN",
         unitPrice,
         available,
-        promotion != null,
-        promotion != null ? promotion.getPromotionalPrice() : unitPrice,
+        groceryPromotion != null,
+        groceryPromotion != null ? groceryPromotion.getPromotionalPrice() : unitPrice,
         stockQuantity,
         priority);
   }
@@ -164,12 +150,12 @@ import lombok.NoArgsConstructor;
     this.category = category;
   }
 
-  public Promotion getPromotion() {
-    return promotion;
+  public GroceryPromotion getGroceryPromotion() {
+    return groceryPromotion;
   }
 
-  public void setPromotion(Promotion promotion) {
-    this.promotion = promotion;
+  public void setGroceryPromotion(GroceryPromotion groceryPromotion) {
+    this.groceryPromotion = groceryPromotion;
   }
 
   public void setId(Long id) {

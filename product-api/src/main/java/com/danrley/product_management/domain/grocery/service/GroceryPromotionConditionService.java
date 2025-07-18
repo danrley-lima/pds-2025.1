@@ -12,13 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.danrley.product_management.common.model.promotion.Promotion;
-import com.danrley.product_management.common.repository.PromotionRepository;
 import com.danrley.product_management.core.model.BaseProduct;
+import com.danrley.product_management.core.model.BasePromotion;
 import com.danrley.product_management.core.model.BasePromotionCondition;
 import com.danrley.product_management.domain.grocery.model.GroceryProduct;
+import com.danrley.product_management.domain.grocery.model.GroceryPromotion;
 import com.danrley.product_management.domain.grocery.model.GroceryPromotionCondition;
 import com.danrley.product_management.domain.grocery.repository.GroceryPromotionConditionRepository;
+import com.danrley.product_management.domain.grocery.repository.GroceryPromotionRepository;
 import com.danrley.product_management.core.service.BasePromotionConditionService;
 
 
@@ -31,7 +32,7 @@ public class GroceryPromotionConditionService implements BasePromotionConditionS
     private GroceryPromotionConditionRepository groceryPromotionConditionRepository;
 
     @Autowired
-    private PromotionRepository promotionRepository;
+    private GroceryPromotionRepository GroceryPromotionRepository;
 
     @Override
     public GroceryPromotionCondition createPromotion(List<BaseProduct> products) {
@@ -94,9 +95,9 @@ public class GroceryPromotionConditionService implements BasePromotionConditionS
         // Aplica promoção para cada produto elegível
         for (GroceryProduct product : products) {
             try {
-                Promotion promotion = new Promotion();
-                promotion.setBaseProduct(product);
-                promotionRepository.save(promotion);
+                GroceryPromotion promotion = new GroceryPromotion();
+                promotion.setGroceryProduct(product);
+                GroceryPromotionRepository.save(promotion);
             } catch (Exception e) {
                 logger.error("Erro ao aplicar promoção no produto ID {}: {}", 
                             product.getId(), e.getMessage());

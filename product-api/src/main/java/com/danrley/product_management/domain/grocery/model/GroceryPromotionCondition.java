@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "grocery_products")
 public class GroceryPromotionCondition extends BasePromotionCondition<GroceryProduct> {
 
     @Id

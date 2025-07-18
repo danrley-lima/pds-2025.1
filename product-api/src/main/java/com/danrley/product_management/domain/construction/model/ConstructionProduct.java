@@ -3,22 +3,21 @@ package com.danrley.product_management.domain.construction.model;
 import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.model.product.UnitType;
 import com.danrley.product_management.core.domain.Domain;
+import com.danrley.product_management.core.model.BaseCategory;
 import com.danrley.product_management.core.model.BaseProduct;
+import com.danrley.product_management.core.model.BasePromotion;
+import com.danrley.product_management.domain.grocery.model.GroceryPromotion;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * Produto específico para o domínio de construção.
@@ -27,19 +26,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "construction_products")
  public class ConstructionProduct extends BaseProduct {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @Column(nullable = false)
-  private String name;
-
-  private String brand;
 
   @Column(name = "unit_weight")
   private Double unitWeight;
@@ -48,33 +36,29 @@ import lombok.NoArgsConstructor;
   @Column(name = "unit_type")
   private UnitType unitType;
 
-  @Column(name = "stock_quantity")
-  private Integer stockQuantity;
-
   @Column(name = "unit_price")
   private Double unitPrice;
 
-  @ManyToOne
-  @JoinColumn(name = "category_id")
-  private Category category;
-
-  private boolean available = true;
-
   private boolean priority = false;
 
+  @Nullable
+  @OneToOne(mappedBy = "constructionProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+  protected ConstructionPromotion constructionPromotion;
+
   private String specifications;
+
+
+  public ConstructionProduct() {
+    super();
+  }
 
   public ConstructionProduct(String name, String brand, Double unitWeight, UnitType unitType,
       Integer stockQuantity, Double unitPrice, Category category,
       boolean available, boolean priority, String specifications) {
-    this.name = name;
-    this.brand = brand;
+    super(name, brand, stockQuantity, category, available);
     this.unitWeight = unitWeight;
     this.unitType = unitType;
-    this.stockQuantity = stockQuantity;
     this.unitPrice = unitPrice;
-    this.category = category;
-    this.available = available;
     this.priority = priority;
     this.specifications = specifications;
   }
@@ -85,6 +69,37 @@ import lombok.NoArgsConstructor;
   }
 
   @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public String getBrand() {
+    return brand;
+  }
+
+  @Override
+  public Double getUnitPrice() {
+    return unitPrice;
+  }
+
+  @Override
+  public BaseCategory getCategory() {
+    return category;
+  }
+
+  @Override
+  public Integer getStockQuantity() {
+    return stockQuantity;
+  }
+
+
+  @Override
   public boolean isAvailable() {
     return available;
   }
@@ -92,6 +107,14 @@ import lombok.NoArgsConstructor;
   @Override
   public boolean isPriority() {
     return priority;
+  }
+
+  public ConstructionPromotion getConstructionPromotion() {
+    return constructionPromotion;
+  }
+
+  public void setConstructionPromotion(ConstructionPromotion constructionPromotion) {
+    this.constructionPromotion = constructionPromotion;
   }
 
   @Override

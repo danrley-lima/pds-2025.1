@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import com.danrley.product_management.common.model.product.UnitType;
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
-import com.danrley.product_management.domain.furniture.model.FurnitureProduct;
 import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 
 public class ProductResponseDTO {
@@ -44,16 +43,6 @@ public class ProductResponseDTO {
     return dto;
   }
 
-  public static ProductResponseDTO fromFurnitureProduct(FurnitureProduct product) {
-    ProductResponseDTO dto = new ProductResponseDTO();
-    mapBaseFields(product, dto);
-
-    // Campos do furniture
-    dto.material = product.getMaterial();
-    dto.color = product.getColor();
-
-    return dto;
-  }
 
   public static ProductResponseDTO fromConstructionProduct(ConstructionProduct product) {
     ProductResponseDTO dto = new ProductResponseDTO();
@@ -69,19 +58,6 @@ public class ProductResponseDTO {
     // Mapeamento de campos base usando cast para BaseProduct
     if (product instanceof GroceryProduct) {
       GroceryProduct p = (GroceryProduct) product;
-      dto.id = p.getId();
-      dto.name = p.getName();
-      dto.brand = p.getBrand();
-      dto.unitWeight = p.getUnitWeight();
-      dto.unitType = p.getUnitType();
-      dto.stockQuantity = p.getStockQuantity();
-      dto.unitPrice = p.getUnitPrice();
-      dto.available = p.isAvailable();
-      dto.priority = p.isPriority();
-      dto.categoryName = p.getCategory() != null ? p.getCategory().getName() : null;
-      dto.categoryId = p.getCategory() != null ? p.getCategory().getId() : null;
-    } else if (product instanceof FurnitureProduct) {
-      FurnitureProduct p = (FurnitureProduct) product;
       dto.id = p.getId();
       dto.name = p.getName();
       dto.brand = p.getBrand();
