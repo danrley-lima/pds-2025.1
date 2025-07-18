@@ -123,13 +123,13 @@ public abstract class BaseProductController<T extends BaseProduct, S extends Bas
         .collect(Collectors.toList());
   }
 
-  @GetMapping("/available")
-  @Operation(summary = "Buscar produtos disponíveis", description = "Retorna produtos em estoque")
-  public List<ProductResponseDTO> getAvailable() {
-    return productService.getAvailable().stream()
-        .map(productService::toResponseDTO)
-        .collect(Collectors.toList());
-  }
+  // @GetMapping("/available")
+  // @Operation(summary = "Buscar produtos disponíveis", description = "Retorna produtos em estoque")
+  // public List<ProductResponseDTO> getAvailable() {
+  //   return productService.getAvailable().stream()
+  //       .map(productService::toResponseDTO)
+  //       .collect(Collectors.toList());
+  // }
 
   /**
    * Método abstrato para endpoints específicos do domínio.

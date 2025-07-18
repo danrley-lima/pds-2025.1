@@ -166,17 +166,17 @@ public class GroceryProductService implements BaseProductService<GroceryProduct>
     }
   }
 
-  /**
-   * Busca produtos com promoções ativas.
-   */
-  public List<GroceryProduct> getProductsWithActivePromotions() {
-    try {
-      LocalDate today = LocalDate.now();
-      return groceryProductRepository.findProductsWithActivePromotions(today);
-    } catch (Exception e) {
-      throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
-    }
-  }
+  // /**
+  //  * Busca produtos com promoções ativas.
+  //  */
+  // public List<GroceryProduct> getProductsWithActivePromotions() {
+  //   try {
+  //     LocalDate today = LocalDate.now();
+  //     return groceryProductRepository.findProductsWithActivePromotions(today);
+  //   } catch (Exception e) {
+  //     throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
+  //   }
+  // }
 
   /**
    * Busca produtos por categoria.

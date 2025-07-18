@@ -86,15 +86,15 @@ public class GroceryController extends BaseProductController<GroceryProduct, Gro
     return ResponseEntity.ok(responseProducts);
   }
 
-  @GetMapping("/with-promotions")
-  @Operation(summary = "Produtos em promoção", description = "Retorna produtos com promoções ativas")
-  public ResponseEntity<List<ProductResponseDTO>> getProductsWithPromotions() {
-    List<GroceryProduct> products = productService.getProductsWithActivePromotions();
-    List<ProductResponseDTO> responseProducts = products.stream()
-        .map(productService::toResponseDTO)
-        .toList();
-    return ResponseEntity.ok(responseProducts);
-  }
+  // @GetMapping("/with-promotions")
+  // @Operation(summary = "Produtos em promoção", description = "Retorna produtos com promoções ativas")
+  // public ResponseEntity<List<ProductResponseDTO>> getProductsWithPromotions() {
+  //   List<GroceryProduct> products = productService.getProductsWithActivePromotions();
+  //   List<ProductResponseDTO> responseProducts = products.stream()
+  //       .map(productService::toResponseDTO)
+  //       .toList();
+  //   return ResponseEntity.ok(responseProducts);
+  // }
 
   @GetMapping("/categories")
   @Operation(summary = "Lista categorias do supermercado", description = "Retorna todas as categorias disponíveis no supermercado")
