@@ -58,6 +58,34 @@ public class GroceryProductService implements BaseProductService<GroceryProduct>
   }
 
   @Override
+  public List<GroceryProduct> getProductsByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      throw new ProductValidationException("Lista de IDs de produtos não pode ser nula ou vazia");
+    }
+
+    try {
+      List<GroceryProduct> products = groceryProductRepository.findAllById(ids);
+
+      // Garante que todos os IDs foram encontrados, se necessário
+      if (products.size() != ids.size()) {
+        List<Long> foundIds = products.stream()
+            .map(GroceryProduct::getId)
+            .toList();
+
+        List<Long> missingIds = ids.stream()
+            .filter(id -> !foundIds.contains(id))
+            .toList();
+
+        throw new ProductNotFoundException("Produtos não encontrados para os IDs: " + missingIds);
+      }
+
+      return products;
+    } catch (Exception e) {
+      throw new ProductServiceException("Erro ao buscar produtos pelos IDs: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
   @Transactional
   public GroceryProduct create(ProductRequestDTO dto) {
     try {
@@ -167,15 +195,16 @@ public class GroceryProductService implements BaseProductService<GroceryProduct>
   }
 
   // /**
-  //  * Busca produtos com promoções ativas.
-  //  */
+  // * Busca produtos com promoções ativas.
+  // */
   // public List<GroceryProduct> getProductsWithActivePromotions() {
-  //   try {
-  //     LocalDate today = LocalDate.now();
-  //     return groceryProductRepository.findProductsWithActivePromotions(today);
-  //   } catch (Exception e) {
-  //     throw new ProductServiceException("Erro ao buscar produtos em promoção: " + e.getMessage(), e);
-  //   }
+  // try {
+  // LocalDate today = LocalDate.now();
+  // return groceryProductRepository.findProductsWithActivePromotions(today);
+  // } catch (Exception e) {
+  // throw new ProductServiceException("Erro ao buscar produtos em promoção: " +
+  // e.getMessage(), e);
+  // }
   // }
 
   /**

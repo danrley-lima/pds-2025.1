@@ -82,10 +82,8 @@ public class ConstructionRecommendationService extends BaseRecommendationService
       List<ProductOutDTO> foundProducts,
       List<ProductNotFoundDTO> notFoundProducts,
       Map<Long, BaseProduct> productMap) {
-    if (jsonNode.has("projects")) {
-      parseProjects(jsonNode.get("projects"), foundProducts, notFoundProducts, productMap);
-    } else if (jsonNode.has("products")) {
-      parseProducts(jsonNode, foundProducts, notFoundProducts, productMap);
+    if (jsonNode.has("products")) {
+      parseProducts(jsonNode.get("products"), foundProducts, notFoundProducts, productMap);
     } else {
       createFallback(foundProducts, jsonNode.toString());
     }

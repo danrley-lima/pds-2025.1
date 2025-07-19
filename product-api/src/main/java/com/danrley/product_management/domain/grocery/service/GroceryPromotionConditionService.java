@@ -2,6 +2,7 @@ package com.danrley.product_management.domain.grocery.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.danrley.product_management.common.dto.product.ProductResponseDTO;
+import com.danrley.product_management.common.dto.promotionCondition.PromotionConditionRequestDTO;
 import com.danrley.product_management.core.model.BaseProduct;
 import com.danrley.product_management.core.model.BasePromotion;
 import com.danrley.product_management.core.model.BasePromotionCondition;
@@ -24,7 +27,7 @@ import com.danrley.product_management.core.service.BasePromotionConditionService
 
 
 @Service
-public class GroceryPromotionConditionService implements BasePromotionConditionService<GroceryProduct> {
+public class GroceryPromotionConditionService implements BasePromotionConditionService<GroceryPromotion, GroceryProduct, GroceryPromotionCondition> {
 
     private static final Logger logger = LoggerFactory.getLogger(GroceryPromotionConditionService.class);
 
@@ -32,27 +35,38 @@ public class GroceryPromotionConditionService implements BasePromotionConditionS
     private GroceryPromotionConditionRepository groceryPromotionConditionRepository;
 
     @Autowired
-    private GroceryPromotionRepository GroceryPromotionRepository;
+    private GroceryProductService groceryProductService;
+
+    @Autowired
+    private GroceryPromotionService groceryPromotionService;
+
+    @Autowired
+    private GroceryPromotionRepository groceryPromotionRepository;
+
 
     @Override
-    public GroceryPromotionCondition createPromotion(List<BaseProduct> products) {
+    public List<GroceryPromotion> createPromotion(PromotionConditionRequestDTO requestDTO) {
         try {
-            GroceryPromotionCondition condition = new GroceryPromotionCondition();
+            List<Long> productIds = requestDTO.productIds;
+            double discount = requestDTO.discountPercentage;
 
-            // Filtra apenas produtos de grocery
-            List<GroceryProduct> groceryProducts = products.stream()
-                    .filter(product -> product instanceof GroceryProduct)
-                    .map(product -> (GroceryProduct) product)
-                    .collect(Collectors.toList());
-            
-            applyPromotion(groceryProducts);
-            
-            return groceryPromotionConditionRepository.save(condition);
+            // Busca todos os produtos pelos IDs
+            List<GroceryProduct> groceryProducts = groceryProductService.getProductsByIds(productIds);
+
+   
+
+            // Cria promoções usando o PromotionService
+            List<GroceryPromotion> promotions = groceryPromotionService.createPromotion(groceryProducts, discount);
+
+            // Salva todas as promoções e retorna
+            return groceryPromotionRepository.saveAll(promotions);
+
         } catch (Exception e) {
-            logger.error("Erro ao criar condições de promoção: {}", e.getMessage());
-            return new GroceryPromotionCondition();
+            logger.error("Erro ao criar promoções de grocery: {}", e.getMessage(), e);
+            return Collections.emptyList();
         }
     }
+
 
     @Override
     public GroceryPromotionCondition findById(Long id) {
@@ -77,33 +91,4 @@ public class GroceryPromotionConditionService implements BasePromotionConditionS
                 .collect(Collectors.toList());
     }
 
-    
-    private void applyPromotion(List<GroceryProduct> products) {
-        // Validação básica da lista
-        if (products == null || products.isEmpty()) {
-            logger.warn("Tentativa de aplicar promoção em lista vazia ou nula");
-            return;
-        }
-
-        if (products.isEmpty()) {
-            logger.info("Nenhum produto elegível encontrado para aplicação de promoção");
-            return;
-        }
-
-        logger.info("Aplicando promoções para {} produtos próximos ao vencimento", products.size());
-        
-        // Aplica promoção para cada produto elegível
-        for (GroceryProduct product : products) {
-            try {
-                GroceryPromotion promotion = new GroceryPromotion();
-                promotion.setGroceryProduct(product);
-                GroceryPromotionRepository.save(promotion);
-            } catch (Exception e) {
-                logger.error("Erro ao aplicar promoção no produto ID {}: {}", 
-                            product.getId(), e.getMessage());
-            }
-        }
-        
-        logger.info("Promoções aplicadas com sucesso para {} produtos", products.size());
-    }
 }

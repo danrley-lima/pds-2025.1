@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.danrley.product_management.common.dto.product.ProductRequestDTO;
 import com.danrley.product_management.common.dto.product.ProductResponseDTO;
 import com.danrley.product_management.core.model.BaseProduct;
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 
 /**
  * Interface base para serviços de produtos.
@@ -22,7 +23,9 @@ public interface BaseProductService<T extends BaseProduct> {
      * Busca produto por ID.
      */
     Optional<T> getById(Long id);
-    
+
+    List<T> getProductsByIds(List<Long> ids);
+
     /**
      * Cria um novo produto.
      */

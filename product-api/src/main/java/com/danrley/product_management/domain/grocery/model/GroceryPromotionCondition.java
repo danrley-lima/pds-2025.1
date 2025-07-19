@@ -2,6 +2,7 @@ package com.danrley.product_management.domain.grocery.model;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import com.danrley.product_management.core.model.BasePromotionCondition;
 
@@ -12,17 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class GroceryPromotionCondition extends BasePromotionCondition<GroceryProduct> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private static final int DEFAULT_DAYS_BEFORE_EXPIRY = 3;
 
     @Override
@@ -38,5 +36,17 @@ public class GroceryPromotionCondition extends BasePromotionCondition<GroceryPro
         
         return daysUntilExpiry <= DEFAULT_DAYS_BEFORE_EXPIRY;
     }
-    
+
+    @Override
+    public void applyCondition(List<GroceryProduct> products, double discountPercentage) {
+        for (GroceryProduct product : products) {
+            if (isEligible(product)) {
+                // Aplica a condição de promoção, por exemplo, reduzindo o preço
+                double discount = product.getUnitPrice() * discountPercentage;
+                product.setUnitPrice(product.getUnitPrice() - discount);
+
+            }
+        }
+    }
+
 }

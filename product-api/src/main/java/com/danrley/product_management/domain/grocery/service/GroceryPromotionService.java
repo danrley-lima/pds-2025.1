@@ -1,9 +1,12 @@
 package com.danrley.product_management.domain.grocery.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.danrley.product_management.common.dto.promotion.PromotionRequestDTO;
 import com.danrley.product_management.common.dto.promotion.PromotionResponseDTO;
@@ -11,11 +14,13 @@ import com.danrley.product_management.common.exception.custom.ProductNotFoundExc
 import com.danrley.product_management.common.exception.custom.ProductServiceException;
 import com.danrley.product_management.common.exception.custom.ProductValidationException;
 import com.danrley.product_management.core.service.BasePromotionService;
+import com.danrley.product_management.domain.grocery.model.GroceryProduct;
 import com.danrley.product_management.domain.grocery.model.GroceryPromotion;
 import com.danrley.product_management.domain.grocery.repository.GroceryPromotionRepository;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class GroceryPromotionService implements BasePromotionService<GroceryPromotion> {
 
     @Autowired
@@ -78,6 +83,42 @@ public class GroceryPromotionService implements BasePromotionService<GroceryProm
             groceryPromotionRepository.delete(promotion);
         } catch (Exception e) {
             throw new ProductServiceException("Erro ao deletar promoção: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public List<GroceryPromotion> createPromotion(List<GroceryProduct> products, double discountPercentage) {
+        if (products == null || products.isEmpty()) {
+            throw new ProductValidationException("Lista de produtos não pode ser nula ou vazia");
+        }
+
+        if (discountPercentage <= 0 || discountPercentage >= 100) {
+            throw new ProductValidationException("Percentual de desconto inválido. Deve estar entre 0 e 100.");
+        }
+
+        try {
+            List<GroceryPromotion> promotions = new ArrayList<>();
+
+            for (GroceryProduct product : products) {
+                GroceryPromotion promotion = new GroceryPromotion();
+
+                double promotionalPrice = product.getUnitPrice() * (1 - discountPercentage / 100);
+
+                promotion.setGroceryProduct(product);
+                promotion.setPromotionalPrice(promotionalPrice);
+
+                // Pode ajustar essas datas conforme necessário
+                promotion.setStartDate(LocalDate.now());
+                promotion.setEndDate(LocalDate.now().plusDays(7));
+
+                promotion.setDescription("Promoção automática de " + discountPercentage + "%");
+
+                promotions.add(promotion);
+            }
+
+            return groceryPromotionRepository.saveAll(promotions);
+        } catch (Exception e) {
+            throw new ProductServiceException("Erro ao criar promoções: " + e.getMessage(), e);
         }
     }
 

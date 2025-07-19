@@ -1,5 +1,8 @@
 package com.danrley.product_management.domain.construction.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.danrley.product_management.common.dto.product.ProductRequestDTO;
 import com.danrley.product_management.common.dto.product.ProductResponseDTO;
+import com.danrley.product_management.common.dto.promotionCondition.PromotionConditionRequestDTO;
 import com.danrley.product_management.common.exception.custom.CategoryNotFoundException;
 import com.danrley.product_management.common.exception.custom.ProductNotFoundException;
 import com.danrley.product_management.common.exception.custom.ProductServiceException;
@@ -18,7 +22,9 @@ import com.danrley.product_management.common.model.category.Category;
 import com.danrley.product_management.common.repository.CategoryRepository;
 import com.danrley.product_management.core.service.BaseProductService;
 import com.danrley.product_management.domain.construction.model.ConstructionProduct;
+import com.danrley.product_management.domain.construction.model.ConstructionPromotion;
 import com.danrley.product_management.domain.construction.repository.ConstructionProductRepository;
+import com.danrley.product_management.domain.construction.repository.ConstructionPromotionRepository;
 
 /**
  * Serviço para produtos de construção.
@@ -31,6 +37,9 @@ public class ConstructionProductService implements BaseProductService<Constructi
 
   @Autowired
   private CategoryRepository categoryRepository;
+
+  @Autowired
+  private ConstructionPromotionRepository constructionPromotionRepository;
 
   // Métodos base
 
@@ -116,6 +125,7 @@ public class ConstructionProductService implements BaseProductService<Constructi
       throw new ProductServiceException("Erro ao deletar produto: " + e.getMessage(), e);
     }
   }
+
 
   @Override
   public ProductResponseDTO toResponseDTO(ConstructionProduct entity) {
@@ -222,5 +232,11 @@ public class ConstructionProductService implements BaseProductService<Constructi
     if (dto.specifications != null) {
       product.setSpecifications(dto.specifications);
     }
+  }
+
+  @Override
+  public List<ConstructionProduct> getProductsByIds(List<Long> ids) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getProductsByIds'");
   }
 }

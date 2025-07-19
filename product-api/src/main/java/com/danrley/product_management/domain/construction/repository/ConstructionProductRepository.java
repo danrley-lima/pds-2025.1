@@ -24,6 +24,8 @@ public interface ConstructionProductRepository extends JpaRepository<Constructio
     // Buscar produtos em destaque
     List<ConstructionProduct> findByPriorityTrue();
 
+    List<ConstructionProduct> findByCategoryId(Long categoryId);
+
     // Buscar por faixa de preço
     List<ConstructionProduct> findByUnitPriceBetween(Double minPrice, Double maxPrice);
 
